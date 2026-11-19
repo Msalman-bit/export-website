@@ -16,15 +16,13 @@ services:
     # the standalone server (lighter than next start, so it fits the free plan's 512 MB) needs the browser files
     # and the public folder beside it
     buildCommand: npm ci && npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
-    startCommand: node .next/standalone/server.js
+    # the memory cap is for the running site only: the build (its type check) needs more and gets Render's default
+    startCommand: node --max-old-space-size=320 .next/standalone/server.js
     healthCheckPath: /robots.txt
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
         value: "22"
-      # keep the server inside the free plan's memory
-      - key: NODE_OPTIONS
-        value: --max-old-space-size=320
       # the database below, reached over Render's private network
       - key: DATABASE_URL
         fromDatabase:
