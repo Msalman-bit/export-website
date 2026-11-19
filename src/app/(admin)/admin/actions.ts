@@ -1,8 +1,9 @@
 'use server';
 
+import { randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 import QRCode from 'qrcode';
 import { getDb } from '@/lib/db/client';
 import * as s from '@/lib/db/schema';
@@ -15,7 +16,7 @@ import { encrypt, decrypt, randomToken } from '@/lib/security/crypto';
 import { rateLimit, limited, LIMITS } from '@/lib/security/rate-limit';
 import { keyFrom } from '@/lib/security/request';
 import { checkFile, storeFile, removeStored, UploadError, type UploadKind } from '@/lib/security/upload';
-import type { Permission } from '@/lib/auth/rbac';
+import { can, type Permission } from '@/lib/auth/rbac';
 import { audit } from '@/lib/audit';
 import { sendEmail } from '@/lib/email/send';
 import { statusUpdate, quotationSent, messageNotice } from '@/lib/email/templates';
@@ -478,12 +479,119 @@ export async function removeProductImage(fd: FormData) {
 export async function saveCategory(fd: FormData) {
   const { actor, db } = await staff('catalogue.write');
   const id = str(fd, 'id');
+  const [c] = uuid(id) ? await db.select({ parentId: s.categories.parentId }).from(s.categories).where(eq(s.categories.id, id)).limit(1) : [];
+  if (!c) back(CATS, 'That category no longer exists.', 'error');
   await db.update(s.categories).set({
     name: str(fd, 'name', 120), summary: str(fd, 'summary', 400), body: str(fd, 'body', 3000), published: fd.get('published') === 'on',
     seoTitle: str(fd, 'seoTitle', 160), seoDescription: str(fd, 'seoDescription', 300), sortOrder: Number(str(fd, 'sortOrder')) || 0, updatedAt: new Date(),
   }).where(eq(s.categories.id, id));
   await audit(actor, 'category.update', 'category', id, { published: fd.get('published') === 'on' });
-  back('/admin/categories', 'Category saved.');
+  backToSection(`cat-${c!.parentId ?? id}`, 'Category saved.');
+}
+
+/* The categories page is long (a section per family): each form below sends its message back to the section it
+   was sent from, the page opens scrolled there and shows the message in it. */
+const CATS = '/admin/categories';
+const backToSection: (section: string, msg: string, kind?: 'ok' | 'error') => never = (section, msg, kind = 'ok') =>
+  redirect(`${CATS}?at=${encodeURIComponent(section)}&${kind}=${encodeURIComponent(msg)}#${section}`);
+
+/** A new family (no parentId) or a new product type inside a family. It starts hidden, so its products can be
+    added before anyone sees it; a family brings the picture for its tile. Its web address comes from the name. */
+export async function createCategory(fd: FormData) {
+  const { u, actor, db } = await staff('catalogue.write');
+  const parentId = str(fd, 'parentId');
+  const isType = parentId !== '';
+  const here = isType && uuid(parentId) ? `cat-${parentId}` : 'new-family';
+  const fail = (msg: string): never => backToSection(here, msg, 'error');
+  const name = str(fd, 'name', 120).replace(/\s+/g, ' ');
+  const summary = str(fd, 'summary', 400);
+  if (isType && !uuid(parentId)) fail('Choose the family the product type belongs to.');
+  if (name.length < 2) fail(isType ? 'Give the product type a name.' : 'Give the family a name.');
+  const [fam] = isType ? await db.select().from(s.categories).where(and(eq(s.categories.id, parentId), isNull(s.categories.parentId))).limit(1) : [null];
+  if (isType && !fam) fail('That family no longer exists.');
+  const all = await db.select({ slug: s.categories.slug, name: s.categories.name, parentId: s.categories.parentId, sortOrder: s.categories.sortOrder }).from(s.categories);
+  const siblings = all.filter((c) => (c.parentId ?? '') === parentId);
+  if (siblings.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+    fail(isType ? `${fam!.name} already has a product type called “${name}”.` : `There is already a family called “${name}”.`);
+  }
+  const base = slugify(name);
+  if (!base) fail('Use letters or numbers in the name: it becomes the web address.');
+  // web addresses are unique across every family and type: a second "Protective accessories" becomes "...-2"
+  const taken = new Set(all.map((c) => c.slug));
+  let slug = base;
+  for (let n = 2; taken.has(slug); n++) slug = `${base}-${n}`;
+  if (!isType && !summary) fail('Write the family’s one-line summary: it shows under its name on the home page and in the catalogue.');
+  if (!isType && !hasFile(fd.get('file'))) fail('Add a picture for the family’s tile.');
+  if (!isType && !can(u.role, 'media.write')) fail('Your role cannot upload pictures.');
+
+  const id = randomUUID();
+  let image: s.ProductImage | null = null;
+  if (!isType) {
+    try {
+      const a = await upload(fd.get('file'), 'media', 'media', id, u.id);
+      if (!a || !a.mime.startsWith('image/')) { if (a) await dropOwnPicture(`/media/${a.id}`, id); fail('Choose a PNG, JPG or WEBP picture for the family.'); }
+      image = { url: `/media/${a!.id}`, alt: str(fd, 'alt', 200) || name, source: 'client' };
+    } catch (e) { if (e instanceof UploadError) fail(e.message); throw e; }
+  }
+  const sortOrder = siblings.reduce((m, c) => Math.max(m, c.sortOrder), -1) + 1;
+  await db.insert(s.categories).values({
+    id, slug, parentId: isType ? parentId : null, name, summary, body: isType ? '' : str(fd, 'body', 3000), image, sortOrder, published: false,
+    seoTitle: isType ? '' : `${name} manufacturer, private label and wholesale`, seoDescription: summary,
+  });
+  await audit(actor, 'category.create', 'category', id, { name, slug, family: isType ? fam!.name : null });
+  if (isType) backToSection(here, `Product type “${name}” added to ${fam!.name}. It stays hidden until you tick its Published box; add its products first (Products, New product).`);
+  backToSection(`cat-${id}`, `Family “${name}” added. It stays hidden until you tick its Published box; add its product types below and their products first.`);
+}
+
+/** A family's tile picture (home page, catalogue, its own page). A picture uploaded for this family before is deleted. */
+export async function setCategoryPicture(fd: FormData) {
+  const { u, actor, db } = await staff('catalogue.write');
+  const id = str(fd, 'id');
+  const [c] = uuid(id) ? await db.select().from(s.categories).where(eq(s.categories.id, id)).limit(1) : [];
+  if (!c || c.parentId) back(CATS, 'Only a family has a picture.', 'error');
+  const fail = (msg: string): never => backToSection(`cat-${id}`, msg, 'error');
+  if (!can(u.role, 'media.write')) fail('Your role cannot upload pictures.');
+  if (!hasFile(fd.get('file'))) fail('Choose a picture.');
+  try {
+    const a = await upload(fd.get('file'), 'media', 'media', id, u.id);
+    if (!a || !a.mime.startsWith('image/')) { if (a) await dropOwnPicture(`/media/${a.id}`, id); fail('Choose a PNG, JPG or WEBP picture.'); }
+    await db.update(s.categories).set({ image: { url: `/media/${a!.id}`, alt: str(fd, 'alt', 200) || c!.name, source: 'client' }, updatedAt: new Date() }).where(eq(s.categories.id, id));
+  } catch (e) { if (e instanceof UploadError) fail(e.message); throw e; }
+  await dropOwnPicture(c!.image?.url, id);
+  await audit(actor, 'category.image', 'category', id);
+  backToSection(`cat-${id}`, `New picture for ${c!.name}.`);
+}
+
+/** Deletes a family or product type that holds nothing: a typing mistake in a new name is fixed this way, since a
+    web address never changes. Anything with products (or a family with product types) is refused. */
+export async function deleteCategory(fd: FormData) {
+  const { actor, db } = await staff('catalogue.write');
+  const id = str(fd, 'id');
+  const [c] = uuid(id) ? await db.select().from(s.categories).where(eq(s.categories.id, id)).limit(1) : [];
+  if (!c) back(CATS, 'That category no longer exists.', 'error');
+  const here = `cat-${c!.parentId ?? id}`;
+  const [{ types }] = await db.select({ types: sql<number>`count(*)::int` }).from(s.categories).where(eq(s.categories.parentId, id));
+  const [{ products }] = await db.select({ products: sql<number>`count(*)::int` }).from(s.products).where(eq(s.products.categoryId, id));
+  if (types) backToSection(here, `${c!.name} still has ${types === 1 ? 'a product type' : `${types} product types`}. Delete those first (each must be empty).`, 'error');
+  if (products) backToSection(here, `${c!.name} still has ${products === 1 ? 'a product' : `${products} products`}. Move them to another type or delete them first.`, 'error');
+  await db.delete(s.categories).where(eq(s.categories.id, id));
+  await dropOwnPicture(c!.image?.url, id);
+  await audit(actor, 'category.delete', 'category', id, { name: c!.name, slug: c!.slug });
+  if (c!.parentId) backToSection(here, `${c!.name} deleted.`);
+  back(CATS, `${c!.name} deleted.`);
+}
+
+const hasFile = (f: FormDataEntryValue | null) => !!f && typeof f !== 'string' && f.size > 0;
+
+/** Deletes a picture that was uploaded for this category (never a generated one, or a library file used elsewhere). */
+async function dropOwnPicture(url: string | undefined, categoryId: string) {
+  const aid = url?.match(/^\/media\/([0-9a-f-]{36})$/i)?.[1];
+  if (!aid) return;
+  const db = await getDb();
+  const [a] = await db.select().from(s.attachments).where(and(eq(s.attachments.id, aid), eq(s.attachments.ownerId, categoryId))).limit(1);
+  if (!a) return;
+  await db.delete(s.attachments).where(eq(s.attachments.id, a.id));
+  await removeStored(a.storedName).catch(() => undefined);
 }
 
 export async function uploadMedia(fd: FormData) {

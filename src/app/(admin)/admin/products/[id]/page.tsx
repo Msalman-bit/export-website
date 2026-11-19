@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { asc, eq, isNotNull } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db/client';
 import * as s from '@/lib/db/schema';
 import { requireStaff } from '@/lib/auth/session';
@@ -18,7 +18,11 @@ export default async function ProductEdit({ params, searchParams }: { params: Pr
   if (!isNew && !/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const [p] = isNew ? [null] : await db.select().from(s.products).where(eq(s.products.id, id)).limit(1);
   if (!isNew && !p) notFound();
-  const subs = await db.select().from(s.categories).where(isNotNull(s.categories.parentId)).orderBy(asc(s.categories.name));
+  // product types grouped by family, so two types with the same name ("Protective accessories") are told apart,
+  // and a hidden one (a new family or type not published yet) is marked
+  const cats = await db.select().from(s.categories).orderBy(asc(s.categories.sortOrder), asc(s.categories.name));
+  const groups = cats.filter((c) => !c.parentId).map((f) => ({ f, subs: cats.filter((c) => c.parentId === f.id) })).filter((g) => g.subs.length);
+  const hidden = (c: typeof cats[number]) => (c.published ? '' : ' (hidden)');
   const v = (x: string | undefined | null) => x ?? '';
   const l = (x: string[] | undefined) => (x ?? []).join('\n');
   return (
@@ -31,7 +35,9 @@ export default async function ProductEdit({ params, searchParams }: { params: Pr
           {!isNew ? <input type="hidden" name="id" value={p!.id} /> : null}
           <div className="form-grid">
             <div className="field"><label htmlFor="name">Name</label><input id="name" name="name" defaultValue={v(p?.name)} required /></div>
-            <div className="field"><label htmlFor="categoryId">Product type</label><select id="categoryId" name="categoryId" defaultValue={v(p?.categoryId)} required><option value="" disabled>Choose</option>{subs.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
+            <div className="field"><label htmlFor="categoryId">Product type</label><select id="categoryId" name="categoryId" defaultValue={v(p?.categoryId)} required><option value="" disabled>Choose</option>{groups.map(({ f, subs }) => (
+              <optgroup key={f.id} label={`${f.name}${hidden(f)}`}>{subs.map((c) => <option key={c.id} value={c.id}>{c.name}{hidden(c)}</option>)}</optgroup>
+            ))}</select></div>
             <div className="field"><label htmlFor="sku">SKU</label><input id="sku" name="sku" defaultValue={v(p?.sku)} /></div>
             <div className="field"><label htmlFor="slug">Web address (slug)</label><input id="slug" name="slug" defaultValue={v(p?.slug)} /></div>
             <div className="field field--full"><label htmlFor="summary">Summary (one sentence)</label><input id="summary" name="summary" defaultValue={v(p?.summary)} /></div>

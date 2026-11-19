@@ -48,6 +48,15 @@ body.admin { background: var(--surface); }
 .mono { font-family: ui-monospace, Consolas, monospace; font-size: 14px; letter-spacing: .05em; word-break: break-all; }
 
 /* ---------- deleting a quotation: a quiet red trigger, then the warning and the one red button ---------- */
+/* categories: a family's tile picture beside its "change" form; product types separated by a rule */
+.cat-pic { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: start; }
+.cat-pic > img, .cat-pic__none { width: 160px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-sm); background: var(--surface); }
+.cat-pic__none { display: grid; place-items: center; }
+.cat-pic > details { flex: 1 1 280px; min-width: 0; }
+.cat-pic > details > summary { width: max-content; cursor: pointer; }
+.cat-pic__form { margin-top: var(--s-3); }
+.cat-type { display: grid; gap: var(--s-3); padding-bottom: var(--s-5); border-bottom: 1px solid var(--line); }
+.cat-delete { justify-self: start; }
 .danger-zone { border-top: 1px solid var(--line); padding-top: var(--s-4); }
 .danger-zone > summary { list-style: none; cursor: pointer; width: max-content; }
 .danger-zone > summary::-webkit-details-marker { display: none; }

@@ -61,6 +61,15 @@ everyone (the Catalogues page).
 ## Catalogue
 
 - **Categories:** publish only families and types you genuinely supply; unpublished ones vanish everywhere.
+  - **A new family** (for example "Basketball equipment"): **Add a family** at the top of the page. Give it a
+    name, a one-line summary and a picture for its tile. Its web address comes from the name
+    (`/products/basketball-equipment`) and never changes; menus show it without the word "equipment".
+  - **A new product type:** open a family's product types and use **Add a product type** at the bottom.
+  - New ones start **hidden**. Add the types, then their products (Products, New product: the type list is
+    grouped by family and marks hidden ones), then tick **Published** on the type and on the family and save.
+  - **Change the picture** under a family replaces its tile picture; one uploaded there before is deleted.
+  - **Delete this empty …** appears only on a family with no types or a type with no products: the way to
+    fix a misspelt new name. Anything holding products is refused.
 - **Products:** every commercial field is editable. Leave a field empty rather than guess: the site then
   says "Confirmed in your quotation". Lists take one item per line; "More specifications" takes
   `Label: value` per line. Upload photographs on the product page; remove concept pictures once real ones exist.

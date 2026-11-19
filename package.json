@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "node --test --test-concurrency=1 tests/e2e/1-journey.test.mjs tests/e2e/2-admin-flow.test.mjs tests/e2e/3-portal-flow.test.mjs tests/e2e/4-quotation-delete.test.mjs tests/e2e/5-inquiry-delete.test.mjs",
+    "test:e2e": "node --test --test-concurrency=1 tests/e2e/1-journey.test.mjs tests/e2e/2-admin-flow.test.mjs tests/e2e/3-portal-flow.test.mjs tests/e2e/4-quotation-delete.test.mjs tests/e2e/5-inquiry-delete.test.mjs tests/e2e/6-categories.test.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/db-migrate.ts",
     "db:seed": "tsx scripts/db-seed.ts",

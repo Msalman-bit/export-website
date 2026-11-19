@@ -5,7 +5,8 @@ import type { Family } from '@/lib/data';
 import { Img } from './Img';
 import { CATALOGUE } from '@/lib/catalogue-data';
 
-export const shortName = (f: { slug: string; name: string }) => CATALOGUE.find((c) => c.slug === f.slug)?.short ?? f.name;
+// a family added in the admin has no short name of its own: "Basketball equipment" reads "Basketball", like the others
+export const shortName = (f: { slug: string; name: string }) => CATALOGUE.find((c) => c.slug === f.slug)?.short ?? (f.name.replace(/\s+equipment$/i, '') || f.name);
 
 /* nav-mega (sections-library.md): five words, Products/Manufacturing/Resources/About open a full-width
    panel after 150ms of hover; a click on the word goes to its page. Search and language are two more

@@ -469,7 +469,11 @@ html.hero-seq main > section.hero--scroll .hero__media { min-height: 0; }
 .range-index:has(li:nth-child(9) > a:is(:hover, :focus-visible)) .range-index__pics > img:nth-child(9),
 .range-index:has(li:nth-child(10) > a:is(:hover, :focus-visible)) .range-index__pics > img:nth-child(10),
 .range-index:has(li:nth-child(11) > a:is(:hover, :focus-visible)) .range-index__pics > img:nth-child(11),
-.range-index:has(li:nth-child(12) > a:is(:hover, :focus-visible)) .range-index__pics > img:nth-child(12) { opacity: 1; transition: opacity var(--m-swap) var(--m-ease); }
+.range-index:has(li:nth-child(12) > a:is(:hover, :focus-visible)) .range-index__pics > img:nth-child(12),
+.range-index:has(li:nth-child(13) > a:is(:hover, :focus-visible)) .range-index__pics > img:nth-child(13),
+.range-index:has(li:nth-child(14) > a:is(:hover, :focus-visible)) .range-index__pics > img:nth-child(14),
+.range-index:has(li:nth-child(15) > a:is(:hover, :focus-visible)) .range-index__pics > img:nth-child(15),
+.range-index:has(li:nth-child(16) > a:is(:hover, :focus-visible)) .range-index__pics > img:nth-child(16) { opacity: 1; transition: opacity var(--m-swap) var(--m-ease); }
 .range-index__list { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-rows: minmax(0, 1fr); }
 .range-index__list li { border-bottom: 1px solid var(--line); min-height: 0; }
 .range-index__list li:last-of-type { border-bottom: 0; }
