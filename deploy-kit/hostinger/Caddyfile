@@ -1,0 +1,25 @@
+# HTTPS for the site. Caddy gets and renews the certificates itself (Let's Encrypt) as soon as both names point
+# at this server and ports 80 and 443 are open. The names come from SITE_HOST and ALT_HOST in .env.
+{
+	email {$ACME_EMAIL}
+}
+
+# the other name (with or without www) sends visitors to the main one
+{$ALT_HOST} {
+	redir https://{$SITE_HOST}{uri} permanent
+}
+
+{$SITE_HOST} {
+	encode zstd gzip
+	reverse_proxy app:3000 {
+		# the visitor's address, for the site's rate limits: set here from the connection itself, never taken
+		# from headers a visitor could send (a forged address would let a bot get round the limits)
+		header_up X-Real-IP {remote_host}
+		header_up -CF-Connecting-IP
+		header_up -CF-IPCountry
+	}
+}
+
+# Later, with Cloudflare in front of the site (HOSTINGER.md, step 10): replace the three header_up lines above with
+#     trusted_proxies static <Cloudflare's IP ranges, from https://www.cloudflare.com/ips/>
+# and keep Cloudflare's CF-Connecting-IP and CF-IPCountry headers; the site reads them first.

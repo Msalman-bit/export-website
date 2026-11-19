@@ -1,0 +1,277 @@
+{
+ "start": "2026-11-18T01:05:52.944Z",
+ "round": 3,
+ "idle": 0,
+ "errors": 1,
+ "status": "open",
+ "history": [
+  {
+   "at": "2026-11-18T14:04:50.621Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T14:15:35.009Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T14:17:43.521Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T14:26:17.466Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T14:38:45.894Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T14:40:48.489Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T14:42:10.295Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T14:55:21.835Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T20:32:18.130Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T20:42:43.704Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T20:43:38.455Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T20:58:09.468Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T21:11:03.845Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T21:24:24.730Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T21:30:19.695Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T21:31:27.644Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T22:03:23.445Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T22:28:32.711Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T22:35:29.581Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-18T23:05:37.244Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  }
+ ],
+ "max": 3,
+ "marker": {
+  "page": null,
+  "url": "http://localhost:3000/en",
+  "root": null,
+  "kind": "product",
+  "category": "sports equipment, footballs, balls, gloves, bats, pads, headguards, belts, kits, teamwear, bags, cones, bibs",
+  "primary": "Request a quote",
+  "rounds": 3,
+  "start": "2026-11-18T01:05:52.944Z",
+  "by": "gate.mjs --start"
+ },
+ "roundKey": "cba1164ced3cbc6d:dfc720eb",
+ "roundFree": false,
+ "idleFree": false,
+ "blockKey": null,
+ "fp": "cba1164ced3cbc6d",
+ "page": "http://localhost:3000/en",
+ "found": {
+  "fails": [
+   {
+    "check": "hero-fold",
+    "where": "section.hero.hero--film section.hero.hero--film \"FootballsRugby ballsHandballsCus\"",
+    "msg": "ends at y 2700, past the fold (900): 3.00 screens tall",
+    "fix": "the hero fills the first screen alone, its button inside it",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "layout",
+    "ids": [
+     "hero-fold"
+    ],
+    "wheres": [
+     "section.hero.hero--film section.hero.hero--film \"FootballsRugby ballsHandballsCus\""
+    ]
+   },
+   {
+    "check": "hero-maxchars",
+    "where": "section.hero.hero--film section.hero.hero--film \"FootballsRugby ballsHandballsCus\"",
+    "msg": "with a 41-character h1 (heroes.json maxChars): ends at y 2700, past the fold (900): 3.00 screens tall",
+    "fix": "shorten the h1 or give the hero room for the longest headline",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "layout",
+    "ids": [
+     "hero-maxchars"
+    ],
+    "wheres": [
+     "section.hero.hero--film section.hero.hero--film \"FootballsRugby ballsHandballsCus\""
+    ]
+   }
+  ],
+  "warns": [],
+  "crashed": [
+   "consistency.mjs timed out"
+  ],
+  "seconds": {
+   "consistency": 456,
+   "layout": 17
+  }
+ },
+ "open": [
+  {
+   "check": "hero-maxchars",
+   "where": "section.hero.hero--film section.hero.hero--film \"FootballsRugby ballsHandballsCus\"",
+   "msg": "with a 41-character h1 (heroes.json maxChars): ends at y 2700, past the fold (900): 3.00 screens tall",
+   "fix": "shorten the h1 or give the hero room for the longest headline",
+   "widths": [
+    1440,
+    390
+   ],
+   "from": "layout",
+   "ids": [
+    "hero-maxchars"
+   ],
+   "wheres": [
+    "section.hero.hero--film section.hero.hero--film \"FootballsRugby ballsHandballsCus\""
+   ]
+  }
+ ],
+ "waived": [
+  {
+   "check": "hero-fold",
+   "where": "section.hero.hero--film section.hero.hero--film \"FootballsRugby ballsHandballsCus\"",
+   "msg": "ends at y 2700, past the fold (900): 3.00 screens tall",
+   "fix": "the hero fills the first screen alone, its button inside it",
+   "widths": [
+    1440,
+    390
+   ],
+   "from": "layout",
+   "ids": [
+    "hero-fold"
+   ],
+   "wheres": [
+    "section.hero.hero--film section.hero.hero--film \"FootballsRugby ballsHandballsCus\""
+   ],
+   "reason": "client-directed: the hero runs three screens because its film is scrubbed by the scroll, as the owner asked; its words and both buttons sit inside the first screen"
+  }
+ ],
+ "warnCount": 0,
+ "at": "2026-11-18T13:56:05.006Z",
+ "session": "d32707f0-8e4c-4104-a8bb-e2e46fb46b0a",
+ "manual": true,
+ "openTold": true
+}

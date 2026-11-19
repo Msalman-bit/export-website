@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monolith Sports business card (85 x 55 mm, print template)</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..600&display=swap" rel="stylesheet">
+<style>
+  /* Print at 100% on 85 x 55 mm with 3 mm bleed; replace the person's details; the reverse is obsidian with the monogram. */
+  @page { size: 91mm 61mm; margin: 0; }
+  body { margin: 0; background: #e9ebee; font-family: Archivo, Arial, sans-serif; display: grid; gap: 24px; justify-content: center; padding: 24px; }
+  .card { width: 91mm; height: 61mm; box-sizing: border-box; padding: 3mm; position: relative; overflow: hidden; }
+  .inner { width: 85mm; height: 55mm; box-sizing: border-box; padding: 6mm; display: flex; flex-direction: column; justify-content: space-between; }
+  .front { background: #fff; color: #080808; }
+  .back { background: #080808; color: #fff; }
+  .back .inner { align-items: flex-start; justify-content: flex-end; }
+  .rule { position: absolute; left: 0; right: 0; bottom: 0; height: 2mm; background: #C5F900; }
+  .name { font-stretch: 82%; font-size: 15pt; letter-spacing: -0.02em; }
+  .role { font-size: 7.5pt; color: #5c5f63; margin-top: 1mm; }
+  .lines { font-size: 7.5pt; line-height: 1.5; }
+  .logo { height: 7mm; }
+  .tag { font-stretch: 82%; font-size: 9pt; letter-spacing: 0.02em; color: #C5F900; margin-top: 3mm; }
+  @media print { body { background: none; padding: 0; gap: 0; } .card { break-after: page; } }
+</style>
+</head>
+<body>
+  <div class="card front">
+    <div class="inner">
+      <img class="logo" src="../../public/brand/logo-primary.svg" alt="Monolith Sports">
+      <div>
+        <div class="name">Full Name</div>
+        <div class="role">Role · Export sales</div>
+      </div>
+      <div class="lines">name@monolithsports.example<br>monolithsports.example</div>
+    </div>
+  </div>
+  <div class="card back">
+    <div class="inner">
+      <img class="logo" src="../../public/brand/monogram.svg" alt="">
+      <div class="tag">Engineered for performance. Built for the world.</div>
+    </div>
+    <div class="rule"></div>
+  </div>
+</body>
+</html>

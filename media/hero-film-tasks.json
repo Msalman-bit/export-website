@@ -1,0 +1,209 @@
+{
+ "s1": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference photograph. Replace the football with a brand-new, hand-stitched match football of the classic 32-panel construction (20 hexagons and 12 pentagons) in plain matte white: every panel is the same clean white synthetic leather with a fine pebble grain; no black panels, no coloured accents, no print. Its seams are hand-stitched with natural white waxed polyester thread: tight, even lock stitches sunk into slightly recessed seam lines, each individual stitch just visible, the panels gently domed between the seams like a real hand-stitched ball. Keep exactly the same camera, lens, framing, seamless pure black background (#000000) and lighting as the reference photograph: a large soft key light from the upper left, a thin cool rim light from behind on the right, deep natural shadow on the lower right. Keep the same position and size in the frame (right of centre, its centre two thirds of the way across, vertically centred; the left half of the frame empty and black). No logo, no text, no printing, no graphics, no branding of any kind. A photorealistic studio product photograph, true-to-life materials, high detail, the whole subject in sharp focus.",
+  "taskId": "4ed34d492250e37b9937235092793d4d",
+  "created": "2026-11-19T03:27:12.158Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795058856535-20ygkq02ebm.png",
+  "credits": 10,
+  "done": "2026-11-19T03:27:45.963Z"
+ },
+ "s0-try1": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference photograph. The moment just before this exact football is stitched together, as in a premium product launch film. There is NO finished ball in this image. At the exact spot where the ball sat floats its core: a smooth, matte charcoal-grey rubber bladder wrapped in a cream laminated lining, a slightly smaller sphere. Its 32 matte white panels (the same hexagons and pentagons, the same white pebble-grain leather) hover around the core, each panel in its final place and orientation but lifted a few centimetres off the surface, with even dark gaps between neighbouring panels. Every panel edge is lined with a neat row of small stitch holes. Loose strands of natural white waxed thread already run through some of the holes and stretch across the gaps between neighbouring panels, slack, ready to pull tight. No needles, no hands, no tools, nothing else in the frame. Keep exactly the same camera, lens, framing, seamless pure black background (#000000) and lighting as the reference photograph: a large soft key light from the upper left, a thin cool rim light from behind on the right, deep natural shadow on the lower right. Keep the same position and size in the frame (right of centre, its centre two thirds of the way across, vertically centred; the left half of the frame empty and black). No logo, no text, no printing, no graphics, no branding of any kind. A photorealistic studio product photograph, true-to-life materials, high detail, the whole subject in sharp focus.",
+  "taskId": "6cde8de92f4934b5c8193aeba440305c",
+  "created": "2026-11-19T03:27:46.185Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795058921324-0gvng7r77rp.png",
+  "credits": 10,
+  "done": "2026-11-19T03:28:53.099Z"
+ },
+ "s0": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference photograph. The same football taken apart, as in a premium product launch film: there is NO finished ball in this image. Every one of its 32 white panels keeps exactly its place in the pattern, its shape and its orientation as in the reference, but is lifted straight outward along its own radius, about a tenth of the ball's diameter off the core, with even dark gaps between all neighbouring panels. Through the gaps you see the core at the exact spot where the ball sat: a smooth, matte charcoal-grey rubber bladder wrapped in a cream laminated lining. Every panel edge is lined with a neat row of small round stitch holes. Only a few seams have begun: along five or six seams spread around the ball, natural white waxed thread is already stitched through the first few holes in a neat zig-zag across the gap, its loose end trailing a short way into the gap. Every other hole is still empty. No needles, no hands, no tools, nothing else in the frame. Keep exactly the same camera, lens, framing, seamless pure black background (#000000) and lighting as the reference photograph: a large soft key light from the upper left, a thin cool rim light from behind on the right, deep natural shadow on the lower right. Keep the same position and size in the frame (right of centre, its centre two thirds of the way across, vertically centred; the left half of the frame empty and black). No logo, no text, no printing, no graphics, no branding of any kind. A photorealistic studio product photograph, true-to-life materials, high detail, the whole subject in sharp focus.",
+  "taskId": "17c37658d9d72251a5cbf868f6cb6c30",
+  "created": "2026-11-19T03:34:55.852Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795059324352-nbleb8r3gm.png",
+  "credits": 10,
+  "done": "2026-11-19T03:35:30.022Z"
+ },
+ "s0b": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference photograph. The same football a moment before its seams are pulled closed, as in a premium product launch film: there is NO finished ball in this image. Every one of its 32 white panels keeps exactly its place in the pattern, its shape and its orientation as in the reference, but is lifted straight outward along its own radius by only a little, leaving narrow, even dark gaps between all neighbouring panels; through the gaps you glimpse the cream lining over the charcoal rubber bladder at the exact spot where the ball sat. Along every seam, every single stitch hole is laced: natural white waxed thread runs through each hole in a neat, regular zig-zag across the gap, like a loosened shoelace, the thread still slightly slack. The lacing is tidy and even on every seam, never tangled. No needles, no hands, no tools, nothing else in the frame. Keep exactly the same camera, lens, framing, seamless pure black background (#000000) and lighting as the reference photograph: a large soft key light from the upper left, a thin cool rim light from behind on the right, deep natural shadow on the lower right. Keep the same position and size in the frame (right of centre, its centre two thirds of the way across, vertically centred; the left half of the frame empty and black). No logo, no text, no printing, no graphics, no branding of any kind. A photorealistic studio product photograph, true-to-life materials, high detail, the whole subject in sharp focus.",
+  "taskId": "6dd7fd1a9225ecb43f272d1bd6dd664d",
+  "created": "2026-11-19T03:34:55.840Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795059324714-ja5fro9c6g.png",
+  "credits": 10,
+  "done": "2026-11-19T03:35:29.622Z"
+ },
+ "p1": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference photograph. The same finished hand-stitched white football, now with a bold modern graphic printed on it, as in a premium product launch film: a sweep of sharp, angular lime-green (#C5F900) chevrons and triangles that flows diagonally across several panels from the lower left to the upper right, with a few thin deep-black accent lines running alongside it. The graphic is matte screen-printed ink sitting in the leather's pebble grain, following the curve of every panel, crisp-edged, and broken naturally by the recessed stitched seams, which stay exactly as they are. Most of the ball stays clean white. Keep the ball itself, its panels, stitching, position, size, framing, black background and lighting exactly as in the reference. No logo, no letters, no numbers, no words, no branding of any kind. A photorealistic studio product photograph, high detail, the whole ball in sharp focus.",
+  "taskId": "c694d8a2deb8698154cfc392e3408abc",
+  "created": "2026-11-19T03:40:34.393Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795059661787-v2bd0s7wbmo.png",
+  "credits": 10,
+  "done": "2026-11-19T03:41:08.474Z"
+ },
+ "d1": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Turn the reference photograph into a designer's hand-drawn technical sketch of this exact football, drawn in white pencil on matte black drawing paper. The drawing sits at exactly the same position and size in the frame as the ball in the reference (right of centre, its centre two thirds of the way across, vertically centred), and it shows exactly the same panels and graphic: the outline of the ball, every hexagon and pentagon seam in clean white pencil lines with a fine dotted stitch line beside each seam, and the chevron graphic drawn as crisp outlines filled with light lime-green (#C5F900) coloured-pencil hatching. Around the ball a few faint construction lines: a light guide circle, a centre cross and two compass arcs. Light pencil shading on the lower right gives the sphere its volume. The paper fills the whole frame, almost pure black with a very subtle paper grain; the left half of the frame stays empty paper. No hand, no pencil, no tools, no text, no letters, no numbers, no measurements, no logo.",
+  "taskId": "59f62b5774cc379a09b91ce51a9714ad",
+  "created": "2026-11-19T03:41:22.175Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795059721077-ocyymexkw8j.png",
+  "credits": 10,
+  "done": "2026-11-19T03:42:04.564Z"
+ },
+ "d0-hand": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference image. The same black drawing paper, the same framing and the same white pencil drawing, but only just begun: only the faint guide circle, the centre cross, the outer outline of the ball and three or four panel seams on its upper left are drawn; everything else on the page is still empty black paper. A designer's hand enters the frame from the lower right, holding a white pencil, the pencil tip resting on the paper at the end of the newest seam line. A real, relaxed, well-groomed adult hand with natural skin, five fingers, a clean shirt cuff at the wrist, lit softly from the upper left. The hand stays in the right third of the frame and the left half of the frame stays empty black paper. No text, no letters, no numbers, no logo, no other objects.",
+  "taskId": "eef88feff6f6d4b1e65a223ad632ff9f",
+  "created": "2026-11-19T03:42:04.816Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795059754191-di151vmyc6.png",
+  "credits": 10,
+  "done": "2026-11-19T03:42:38.608Z"
+ },
+ "d0": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference image. Remove the hand, the fingers, the wrist and the shirt cuff completely: there is no hand and no person anywhere in the image. Keep the white pencil exactly where it is, at the same angle, its tip resting on the paper at the end of the newest seam line, now floating on its own as if guided by an invisible hand, casting a faint soft shadow on the paper. Keep the black paper, the framing and the half-finished white pencil drawing exactly as they are, and fill where the hand was with the same empty black paper. No text, no letters, no numbers, no logo, no other objects.",
+  "taskId": "4a5bf2cbbbdb1f25d02e5df5122ab643",
+  "created": "2026-11-19T03:53:55.724Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795060475020-jlrp0ss8ceq.png",
+  "credits": 10,
+  "done": "2026-11-19T03:54:38.219Z"
+ },
+ "b0": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference photograph. Replace the football with only its inner core: a bare, smooth, matte charcoal-grey butyl rubber bladder, a perfect sphere slightly smaller than the football (about nine tenths of its diameter), centred on exactly the same spot, with a small black rubber valve on its upper left and a soft sheen from the key light. There are no panels, no lining, no thread and nothing else in the frame. Keep exactly the same camera, lens, framing, seamless pure black background (#000000) and lighting as the reference photograph: a large soft key light from the upper left, a thin cool rim light from behind on the right, deep natural shadow on the lower right. Keep the same position and size in the frame (right of centre, its centre two thirds of the way across, vertically centred; the left half of the frame empty and black). No logo, no text, no printing, no graphics, no branding of any kind. A photorealistic studio product photograph, true-to-life materials, high detail, the whole subject in sharp focus.",
+  "taskId": "193d8f67d5bfccc1eb0047dd904415c2",
+  "created": "2026-11-19T03:54:38.541Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795060506693-fdrbvu3s2a5.png",
+  "credits": 10,
+  "done": "2026-11-19T03:55:12.566Z"
+ },
+ "h1": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference photograph. Replace the football with a professional hand-stitched match handball centred on exactly the same spot, a little smaller than the football (about four fifths of its diameter). Its casing is soft, grippy white synthetic leather with a deep pebbled grip texture and a faint resin sheen, its panels laid out like a modern match handball (not hexagons and pentagons), joined by fine hand-stitched seams. It carries the same bold lime-green (#C5F900) chevron graphic with thin deep-black accent lines, sweeping diagonally from the lower left to the upper right and following the curve of the ball. Keep the framing, the seamless pure black background and the lighting exactly as in the reference. No logo, no letters, no numbers, no words, no branding of any kind. A photorealistic studio product photograph, high detail, the whole ball in sharp focus.",
+  "taskId": "1116f1fd6c52675d3768c27abee4850e",
+  "created": "2026-11-19T03:55:12.886Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795060871953-udajcd4aur.png",
+  "credits": 10,
+  "done": "2026-11-19T04:01:17.888Z"
+ },
+ "r1": {
+  "model": "gpt-image-2-5-sunburst-image-to-image",
+  "prompt": "Edit the reference photograph. Replace the football with a hand-stitched rugby ball centred on exactly the same spot: an elongated oval of four panels of white pebble-grip rubber joined by stitched seams running along its length, its long axis horizontal and tilted slightly up to the right, its length about one and a half times the football's diameter and its width about the football's diameter. It carries the same bold lime-green (#C5F900) chevron graphic with thin deep-black accent lines, sweeping along the ball and following its curve. Keep the framing, the seamless pure black background and the lighting exactly as in the reference. No logo, no letters, no numbers, no words, no branding of any kind. A photorealistic studio product photograph, high detail, the whole ball in sharp focus.",
+  "taskId": "0bc0a13e51025197b55541ca5ec2d8d7",
+  "created": "2026-11-19T04:01:18.113Z",
+  "url": "https://tempfile.aiquickdraw.com/gpt-image-2-5/1795060905231-9pac5kdblsl.png",
+  "credits": 10,
+  "done": "2026-11-19T04:01:51.775Z"
+ },
+ "draw-veo3": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. A single white pencil draws a football on black paper all by itself, as if guided by an invisible hand: with calm, confident strokes it completes every remaining panel seam with its dotted stitch line, then outlines the chevron graphic and fills it with lime-green coloured-pencil hatching, and adds light shading on the lower right. In the last second the pencil lifts off the paper and drifts smoothly out of the frame to the lower right, leaving the finished drawing. There is no hand and no person at any moment. Locked-off camera, no cuts, no zoom, no camera shake. Matte black drawing paper with a very subtle grain, soft light from the upper left. Clean, confident pencil strokes; the drawing stays exactly in place and only grows. No text, no letters, no numbers, no logo.",
+  "taskId": "48a64425128fe731be8b90b0448ca31c",
+  "created": "2026-11-19T04:05:39.962Z",
+  "url": "https://tempfile.aiquickdraw.com/v/2c90de58aa91e747b19bc174cfa7865d_0_1795061301.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:08:25.228Z"
+ },
+ "panels-veo3": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. Thin cream laminated lining wraps smoothly around the charcoal rubber bladder, then the 32 white pebble-grain leather panels of a hand-stitched football fly in from beyond the edges of the frame along straight radial lines, decelerate and stop in their exact places just off the core, leaving even narrow gaps; the first few seams already carry white waxed thread. Precise, weighty, perfectly smooth motion; every panel stays rigid and keeps its exact shape and place in the pattern; no morphing, no melting, no flicker, nothing popping in or out. The ball barely rotates. Locked-off camera, no cuts, no zoom, no camera shake. Seamless pure black background throughout, the same soft key light from the upper left and cool rim light on the right. No text, no logos, no people, no hands, no needles.",
+  "taskId": "3a09c7783d77c3e7cb7be3919a1a5bfe",
+  "created": "2026-11-19T04:05:39.983Z",
+  "url": "https://tempfile.aiquickdraw.com/v/4d3697b921188645bb6177dbe5a3cb56_0_1795061282.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:08:25.272Z"
+ },
+ "rugby-veo3": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. The handball makes a smooth half turn, and as a soft band of light sweeps across it, it stretches in one fluid movement along one axis into a hand-stitched white rugby ball with seams along its length, lying horizontal and tilted slightly up to the right, carrying the same lime-green chevron graphic. The surfaces stay crisp and detailed throughout: no melting, no smearing, no flicker. The ball stays centred on exactly the same spot. Locked-off camera, no cuts, no zoom, no camera shake. Seamless pure black background, the same key light from the upper left and rim light on the right. No text, no logos, no people, no hands.",
+  "taskId": "613c8fc8f6f33c48f7c9665e9c639474",
+  "created": "2026-11-19T04:05:39.972Z",
+  "url": "https://tempfile.aiquickdraw.com/v/dd13e63862858193883a591ba79aad62_0_1795061276.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:08:25.185Z"
+ },
+ "thread-veo3": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. The lifted white panels of a hand-stitched football draw slowly and evenly inward towards the core, each along its own radius. As they move in, the natural white waxed thread on the few seams already begun keeps running on through the next stitch holes, hole after hole, in a neat zig-zag across each gap, and from the ends of those seams it carries on into the neighbouring seams, until every single hole on every seam is laced and the thread is still slightly slack. The thread only ever grows out of thread that is already there, like a seam being sewn, never appearing from nowhere. Precise, weighty, perfectly smooth motion; every panel stays rigid and keeps its exact shape and place in the pattern; no morphing, no melting, no flicker, nothing popping in or out. The ball barely rotates. Locked-off camera, no cuts, no zoom, no camera shake. Seamless pure black background throughout, the same soft key light from the upper left and cool rim light on the right. No text, no logos, no people, no hands, no needles.",
+  "taskId": "8d06e5addc13d77d57cd083440f54f68",
+  "created": "2026-11-19T04:05:39.973Z",
+  "url": "https://tempfile.aiquickdraw.com/v/dfed67ed6bc57f5ab41e68efff7cd2dd_0_1795061295.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:08:25.248Z"
+ },
+ "core-veo3-try1": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. The pencil drawing of a football dissolves: its seams, graphic and construction lines fade away line by line and the black paper melts into a seamless pure black void, while the drawn outline of the ball fills and solidifies, in exactly its place, into a real, smooth, matte charcoal-grey rubber bladder with a small black valve. Smooth, magical but physically believable, the sphere exactly in place, no flicker. Locked-off camera, no cuts, no zoom, no camera shake. No text, no logos, no people, no hands, no needles.",
+  "taskId": "85a0d2bcee5184972d65846972b80157",
+  "created": "2026-11-19T04:05:39.970Z",
+  "url": "https://tempfile.aiquickdraw.com/v/80ceff488bf0ccd908ed956b29b67ef1_0_1795061281.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:08:25.343Z"
+ },
+ "tighten-veo3-try1": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. All the white waxed thread laced through every stitch hole of the football pulls tight at once, evenly: the narrow gaps between the panels close, the panels seat firmly against each other, and the zig-zag lacing sinks into tight, even lock stitches in slightly recessed seam lines, until the ball is one finished, plain white hand-stitched football. Precise, weighty, perfectly smooth motion; every panel stays rigid and keeps its exact shape and place in the pattern; no morphing, no melting, no flicker, nothing popping in or out. The ball barely rotates. Locked-off camera, no cuts, no zoom, no camera shake. Seamless pure black background throughout, the same soft key light from the upper left and cool rim light on the right. No text, no logos, no people, no hands, no needles.",
+  "taskId": "71be438cf3433cef9f998b20cca548db",
+  "created": "2026-11-19T04:05:39.990Z",
+  "url": "https://tempfile.aiquickdraw.com/v/77aed8c9077126305cac097a9820fc70_0_1795061291.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:08:25.314Z"
+ },
+ "print-veo3-try1": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. A slow band of bright light sweeps across the finished white hand-stitched football from the lower left to the upper right, and right behind it the lime-green chevron graphic with thin black accent lines prints onto the panels, as if ink soaks into the leather grain, crisp-edged and following the curve of every panel, broken naturally by the stitched seams. The ball, its panels and stitching do not change. Precise, weighty, perfectly smooth motion; every panel stays rigid and keeps its exact shape and place in the pattern; no morphing, no melting, no flicker, nothing popping in or out. The ball barely rotates. Locked-off camera, no cuts, no zoom, no camera shake. Seamless pure black background throughout, the same soft key light from the upper left and cool rim light on the right. No text, no logos, no people, no hands, no needles.",
+  "taskId": "da0bdb4f3feb44a86419f1ce36de1d4d",
+  "created": "2026-11-19T04:05:39.958Z",
+  "url": "https://tempfile.aiquickdraw.com/v/63c68ff47308675e63879d9a9dfa601b_0_1795061306.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:08:33.456Z"
+ },
+ "handball-veo3-try1": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. The printed football makes a smooth half turn, and as a soft band of light sweeps across it, it reshapes in one fluid movement into a professional hand-stitched handball with a grippy pebbled white casing, a little smaller, carrying the same lime-green chevron graphic. The surfaces stay crisp and detailed throughout: no melting, no smearing, no flicker. The ball stays in exactly the same spot. Locked-off camera, no cuts, no zoom, no camera shake. Seamless pure black background, the same key light from the upper left and rim light on the right. No text, no logos, no people, no hands.",
+  "taskId": "98e5157869d868f5959ad176d7f5acd4",
+  "created": "2026-11-19T04:05:39.961Z",
+  "url": "https://tempfile.aiquickdraw.com/v/4a383f1b951f4cf935b91c177505940e_0_1795061283.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:08:25.196Z"
+ },
+ "core-veo3": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. The white pencil lines, the construction lines and the lime-green hatching of the drawing fade out gently, line by line, and the faint paper grain fades into a seamless pure black void. At the same time, inside the drawn outline, the sphere fills with smooth matte charcoal-grey rubber and becomes a real rubber bladder with a small black valve, in exactly the same place and size. Nothing passes in front of the camera: no curtain, no wipe, no dark shapes, no vignette, no spotlight, no other objects. There is never a finished football in between: the drawing turns straight into the bare bladder. No light effects of any kind: no lens flare, no light sweep, no glow, no light rays; the background stays seamless pure black and the lighting stays exactly the same throughout. Locked-off camera, no cuts, no zoom, no camera shake. No text, no logos, no people, no hands.",
+  "taskId": "a5902a55ed6290251ec92034ce10bd37",
+  "created": "2026-11-19T04:15:40.396Z",
+  "url": "https://tempfile.aiquickdraw.com/v/5184ca78acf81c7bd0de40ad4a5bd91b_0_1795061882.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:18:09.135Z"
+ },
+ "tighten-veo3": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. All the white waxed thread laced through the stitch holes of the football pulls tight where it is: every stitch tightens in place, the narrow gaps between the panels close slowly and evenly, and the lacing sinks into tight, even lock stitches in slightly recessed seam lines, until it is one finished, plain white hand-stitched football. The thread never leaves the ball: no strands stretch away from it, nothing reaches towards the edges of the frame, no loose ends. The thread stays white the whole time, never dark. Gradual and even, with no sudden change at the end. No light effects of any kind: no lens flare, no light sweep, no glow, no light rays; the background stays seamless pure black and the lighting stays exactly the same throughout. Precise, weighty, perfectly smooth motion; every panel stays rigid and keeps its exact shape and place in the pattern; no morphing, no melting, no flicker, nothing popping in or out. The ball barely rotates. Locked-off camera, no cuts, no zoom, no camera shake. Seamless pure black background throughout, the same soft key light from the upper left and cool rim light on the right. No text, no logos, no people, no hands, no needles.",
+  "taskId": "8e831393c108a4eeb542e5af4d59fc77",
+  "created": "2026-11-19T04:15:40.392Z",
+  "url": "https://tempfile.aiquickdraw.com/v/8c41ef16986fd86df71eeed7c4deebc5_0_1795061889.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:18:17.456Z"
+ },
+ "print-veo3": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. The lime-green chevron graphic with thin black accent lines prints onto the finished white football: it appears progressively from the lower left to the upper right, as if ink soaks into the leather grain, crisp-edged, following the curve of the panels and broken naturally by the stitched seams. The ball stays a perfectly round football the whole time, its panels and stitching unchanged: no laces, never an American football, never any other ball. No light effects of any kind: no lens flare, no light sweep, no glow, no light rays; the background stays seamless pure black and the lighting stays exactly the same throughout. Precise, weighty, perfectly smooth motion; every panel stays rigid and keeps its exact shape and place in the pattern; no morphing, no melting, no flicker, nothing popping in or out. The ball barely rotates. Locked-off camera, no cuts, no zoom, no camera shake. Seamless pure black background throughout, the same soft key light from the upper left and cool rim light on the right. No text, no logos, no people, no hands, no needles.",
+  "taskId": "2a984dd2eab6ac9d3cd989e50fcb6c9d",
+  "created": "2026-11-19T04:15:40.417Z",
+  "url": "https://tempfile.aiquickdraw.com/v/bc2387fcc855989acecda9e30d5aab20_0_1795061868.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:17:52.647Z"
+ },
+ "handball-veo3": {
+  "model": "veo-3-1",
+  "prompt": "One continuous locked-off shot from a premium product launch film. The printed football gradually becomes a handball in exactly the same place: its smooth leather surface turns into a deep pebbled grip texture, its panels shift subtly into the handball panels, and it shrinks slightly to the size of the handball, keeping the same lime-green chevron graphic in the same place. It stays perfectly round the whole time: never an American football, never an oval, no laces. No spinning, it barely rotates. No light effects of any kind: no lens flare, no light sweep, no glow, no light rays; the background stays seamless pure black and the lighting stays exactly the same throughout. Locked-off camera, no cuts, no zoom, no camera shake. No text, no logos, no people, no hands.",
+  "taskId": "31dd60ce01975bdd76fbad8b431dbea1",
+  "created": "2026-11-19T04:15:40.400Z",
+  "url": "https://tempfile.aiquickdraw.com/v/643a01f311897b69a22a0569562cb7e8_0_1795061884.mp4",
+  "credits": 255,
+  "done": "2026-11-19T04:18:09.092Z"
+ }
+}

@@ -1,0 +1,539 @@
+{
+  "about": "Generated concept imagery for Monolith Sports (Kie AI, Flux-2 Pro; film: Veo 3.1). Every frame is a visual concept of a product type, not a photograph of Monolith's own products or premises: no factories, staff or people are generated. Replace each with the client's own photography as it is shot (docs/CONTENT-CHECKLIST.md). Run: node scripts/generate-media.mjs [--only id,id] [--video].",
+  "style": "Commercial studio product photograph for a premium sports equipment manufacturer, shot on a medium-format camera with a 100mm lens at f/8, every part of the product in crisp focus. Low-key lighting: one large softbox from the upper left, a narrow strip light behind for a clean rim, a deep charcoal seamless backdrop (#141414) falling off to near black, the product resting on a matte black surface with a soft contact shadow. Neutral true-to-life colour, gentle contrast, fine material texture visible, realistic construction and accurate real-world proportions. Every surface of the product is plain and unbranded: no printed or embossed words, letters, numbers, logos, symbols, tags, labels or watermarks anywhere in the image. No people, no hands, no faces.",
+  "items": [
+    {
+      "id": "hero-football",
+      "aspect": "16:9",
+      "resolution": "2K",
+      "use": "home hero (film poster)",
+      "prompt": "An extreme close studio view of a premium match football: the ball is enormous, its right side and lower edge running off the right edge and the bottom edge of the frame, filling the right 60% of the image. Classic panels of obsidian-black pentagons and white hexagons with deep hand-stitched seams, two thin electric-lime (#C5F900) accent lines on one hexagon, every panel plain with no lettering. Light from a softbox out of frame high on the right, a cool rim light, a few dust particles in the light. The left 40% of the frame is calm and almost black."
+    },
+    {
+      "id": "hero-football-phone",
+      "aspect": "9:16",
+      "resolution": "2K",
+      "use": "home hero, phone crop",
+      "prompt": "An extreme close studio view of a premium match football: the ball is enormous, filling the upper half of a tall frame and running off the top and right edges. Obsidian-black pentagons and white hexagons with deep hand-stitched seams, two thin electric-lime (#C5F900) accent lines on one hexagon, every panel plain with no lettering. Light from a softbox out of frame, a cool rim light. The lower half of the frame is calm, empty and almost black."
+    },
+    {
+      "id": "nav-footballs",
+      "aspect": "16:9",
+      "resolution": "1K",
+      "use": "nav menu card",
+      "prompt": "Five perfectly spherical association footballs (soccer balls) in a neat row on a plain matte black floor, each a different colourway: white with black pentagons, all black with lime seams, silver with white, navy with red, white with lime. The floor and background are completely empty: no text, no logo, no sign, no lettering anywhere."
+    },
+    {
+      "id": "range-football",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A white and obsidian-black hand-stitched football with a thin lime accent stands on a matte black surface; beside it lies one goalkeeper glove with a white latex palm and a black backhand."
+    },
+    {
+      "id": "range-rugby",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A white rugby ball with a fine pimpled grip surface, four stitched panels and electric-lime (#C5F900) panel edges, standing upright on a matte black surface at a slight angle."
+    },
+    {
+      "id": "range-cricket",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A natural willow cricket bat leaning on a matte black plinth, a red leather cricket ball with a raised white stitched seam in front of it, plain unbranded blade."
+    },
+    {
+      "id": "range-combat",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A pair of black leather boxing gloves with electric-lime (#C5F900) cuffs and white lace-up closures, one standing, one lying on its side, on a matte black surface."
+    },
+    {
+      "id": "range-fitness",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A black leather weightlifting belt with a steel prong buckle, coiled loosely, and a pair of black wrist wraps with a lime thumb loop beside it on a matte black surface."
+    },
+    {
+      "id": "range-racket",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A matte black padel racket with a perforated face and a silver frame edge, leaning on a black block, two yellow-green padel balls at its foot."
+    },
+    {
+      "id": "range-sportswear",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A plain obsidian-black football shirt with thin lime side panels and silver sleeve cuffs on a matte black hanger, seen from the back, completely plain fabric with no number, name, logo, tick or emblem anywhere, hanging against a charcoal backdrop."
+    },
+    {
+      "id": "range-accessories",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A black sports holdall with a silver zip, a short stack of lime marker discs and a folded lime mesh training bib beside it, on a matte black surface."
+    },
+    {
+      "id": "intro-stitching",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home intro (picture-develops)",
+      "prompt": "Extreme macro of a football being hand-stitched: a curved steel needle and waxed white thread pulled through the punched edges of a white synthetic leather hexagon and a black pentagon, the stitch holes and the grain of the material sharp, the ball's curve falling out of focus. No hands in the frame."
+    },
+    {
+      "id": "process-materials",
+      "aspect": "4:3",
+      "resolution": "2K",
+      "use": "process chapter: develop",
+      "prompt": "Rolls and folded swatches of football outer materials, white, black, silver and lime synthetic leather with a fine textured grain, arranged on a dark steel workbench, seen from a three-quarter angle."
+    },
+    {
+      "id": "process-prototype",
+      "aspect": "4:3",
+      "resolution": "2K",
+      "use": "process chapter: sample",
+      "prompt": "A single finished sample football on a dark steel workbench beside flat die-cut white and black hexagon and pentagon panels, a steel ruler and a pair of calipers."
+    },
+    {
+      "id": "process-inspection",
+      "aspect": "4:3",
+      "resolution": "2K",
+      "use": "process chapter: inspect",
+      "prompt": "A white and black football resting in a precision ring gauge on a dark steel inspection table, a digital scale with a blank dark display beside it and a coiled measuring tape."
+    },
+    {
+      "id": "process-packing",
+      "aspect": "4:3",
+      "resolution": "2K",
+      "use": "process chapter: ship",
+      "prompt": "Plain brown export cartons with blank white labels, stacked squarely on a wooden pallet and wrapped in clear stretch film, one open carton in front showing deflated footballs packed in clear polybags, dark warehouse background with soft overhead light."
+    },
+    {
+      "id": "custom-football",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home customisation, tall",
+      "prompt": "A custom club football printed in deep navy and crimson panels with a simple geometric shield emblem made only of shapes, standing on a matte black surface, three-quarter view."
+    },
+    {
+      "id": "custom-embroidery",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "use": "home customisation, small",
+      "prompt": "Macro of a dense satin-stitch embroidered emblem, an abstract chevron shape in silver and lime thread, on black technical jersey fabric, the thread texture sharp."
+    },
+    {
+      "id": "quality-seam",
+      "aspect": "16:9",
+      "resolution": "2K",
+      "use": "home quality band (bleed)",
+      "prompt": "An extreme close-up macro filling the entire frame edge to edge with the surface of a football: rows of tight hand-stitched seams where white hexagon panels meet a black pentagon, raking light from the left revealing every stitch and the fine grain of the outer material. No ball outline or background visible."
+    },
+    {
+      "id": "intro-panels",
+      "aspect": "4:3",
+      "resolution": "2K",
+      "use": "home intro trio",
+      "prompt": "A neat stack of die-cut football panels, white hexagons and black pentagons in synthetic leather, their punched stitch holes visible along every edge, on a dark steel workbench."
+    },
+    {
+      "id": "intro-thread",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "use": "home intro trio",
+      "prompt": "Three spools of thick waxed white polyester thread and two curved steel stitching needles lying on a dark steel workbench, close-up."
+    },
+    {
+      "id": "custom-range",
+      "aspect": "4:3",
+      "resolution": "2K",
+      "use": "home customisation split (picture-develops)",
+      "prompt": "Four perfectly spherical association footballs (soccer balls, round, never oval) in custom club colourways: deep navy and crimson, black and electric lime, white and silver, forest green and white, each with plain geometric panel graphics made only of shapes, grouped on a matte black surface, one in front."
+    },
+    {
+      "id": "terms-swatches",
+      "aspect": "4:3",
+      "resolution": "2K",
+      "use": "home quotation terms",
+      "prompt": "A specification flat lay on a dark steel desk: a fan of synthetic leather colour swatches in white, black, silver, navy and lime, a cut football hexagon panel, a coiled measuring tape and a steel ruler, seen from above at a slight angle."
+    },
+    {
+      "id": "faq-valve",
+      "aspect": "4:3",
+      "resolution": "2K",
+      "use": "home questions",
+      "prompt": "A close-up of a plain white football resting on a matte black surface, a black rubber inflation valve in the centre of a white hexagon panel, the stitched seams around it sharp, the rest of the ball falling softly out of focus. The ball surface is completely blank: no printing, no text, no logo, no symbols anywhere."
+    },
+    {
+      "id": "studio-hero",
+      "aspect": "16:9",
+      "resolution": "1K",
+      "use": "studio page social image",
+      "prompt": "Three footballs in different custom colourways (lime and black, navy and white, crimson and silver) arranged in a triangle on a matte black surface."
+    },
+    {
+      "id": "p-match-football",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A premium white match football with obsidian-black pentagons and thin lime accents, thermally bonded smooth panels, three-quarter view, centred."
+    },
+    {
+      "id": "p-training-football",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A brand-new training football in black with white hexagon outlines and lime stitched seams, clean, crisp synthetic leather, centred."
+    },
+    {
+      "id": "p-thermo-football",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A thermally bonded football with large seamless curved panels in white and silver, no visible stitching, smooth micro-textured surface, centred."
+    },
+    {
+      "id": "p-hand-stitched-football",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A classic hand-stitched football with 12 black pentagons and 20 white hexagons, deep visible stitched seams, centred."
+    },
+    {
+      "id": "p-machine-stitched-football",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A round machine-stitched football in white with lime and black hexagon panels, fine regular machine stitch lines, every panel plain with no marks or emblems, centred."
+    },
+    {
+      "id": "p-hybrid-football",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A perfectly round association football (soccer ball) in silver and black with deep stitched seams between hexagon and pentagon panels over a smooth bonded surface, no laces, centred."
+    },
+    {
+      "id": "p-futsal-football",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A round futsal ball with a smooth matte synthetic leather outer in lime and black hexagon panels, stitched seams, centred."
+    },
+    {
+      "id": "p-mini-football",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "Three mini skills footballs, small, in white, black and lime colourways, grouped together, centred."
+    },
+    {
+      "id": "p-goalkeeper-gloves",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of goalkeeper gloves with thick white latex palms, black backhands with lime finger detailing and a wide wrist strap, one palm up, one back up."
+    },
+    {
+      "id": "p-shin-guards",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of football shin guards with a moulded black shell, lime edge trim and a padded grey backing, standing upright."
+    },
+    {
+      "id": "p-match-rugby-ball",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A white match rugby ball with a pimpled grip surface and black and lime panel graphics made only of stripes, lying at an angle."
+    },
+    {
+      "id": "p-training-rugby-ball",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A tough training rugby ball in black and silver with a deep grip texture, lying at an angle."
+    },
+    {
+      "id": "p-rugby-headguard",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A padded rugby scrum cap headguard in black with lime stitching and a chin strap, on a plain dark head form without a face."
+    },
+    {
+      "id": "p-cricket-bat",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A natural willow cricket bat with a black rubber grip, plain blade with no stickers, lying diagonally across the frame."
+    },
+    {
+      "id": "p-cricket-ball",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A red leather cricket ball with a raised white six-row stitched seam, close-up, centred."
+    },
+    {
+      "id": "p-batting-gloves",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of white cricket batting gloves with padded finger rolls and black and lime trim."
+    },
+    {
+      "id": "p-wicketkeeping-gloves",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of cricket wicketkeeping gloves with a webbed thumb, white padded backs and black rubber-faced palms."
+    },
+    {
+      "id": "p-batting-pads",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of white cricket batting pads with vertical padded ribs and black straps, standing upright."
+    },
+    {
+      "id": "p-boxing-gloves",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of black boxing gloves with lime cuffs and hook-and-loop wrist closures, one facing forward, one in profile."
+    },
+    {
+      "id": "p-mma-gloves",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of black open-finger MMA gloves with padded knuckles and silver wrist straps."
+    },
+    {
+      "id": "p-punching-bag",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A tall black heavy punching bag with lime stitched seams hanging from short steel chains, full length in frame."
+    },
+    {
+      "id": "p-focus-pads",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of curved black focus pads with lime centre targets, one face on, one at an angle."
+    },
+    {
+      "id": "p-boxing-headguard",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A black boxing headguard with cheek protectors and lime trim, on a plain dark head form without a face."
+    },
+    {
+      "id": "p-hand-wraps",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "Two rolled black hand wraps with lime thumb loops, one partly unrolled across the surface."
+    },
+    {
+      "id": "p-weightlifting-gloves",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of half-finger weightlifting gloves in black with padded grey palms and lime wrist straps, completely plain fabric with no printed words or logos anywhere."
+    },
+    {
+      "id": "p-lifting-belt",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A thick black leather lifting belt with a single steel prong buckle and lime edge stitching, curved standing on its edge."
+    },
+    {
+      "id": "p-wrist-wraps",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of black and lime striped elastic wrist wraps, each rolled, with thumb loops visible."
+    },
+    {
+      "id": "p-resistance-bands",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A set of five fabric resistance loop bands in graded tones from silver to black, stacked, beside a black drawstring pouch."
+    },
+    {
+      "id": "p-lifting-straps",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A pair of black cotton lifting straps with padded wrists and lime stitching, laid in loose curves."
+    },
+    {
+      "id": "p-padel-cover",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A padded black padel racket cover with a silver zip, shaped to the racket, lying flat at an angle."
+    },
+    {
+      "id": "p-tennis-bag",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A black tennis racket bag with two padded compartments, a silver zip and a lime zip pull, standing upright."
+    },
+    {
+      "id": "p-badminton-cover",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A slim black badminton racket cover with lime piping and a silver zip, a white feather shuttlecock beside it."
+    },
+    {
+      "id": "p-football-kit",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A football shirt in obsidian black with silver sleeves and thin lime side panels, plain with no crest or numbers, laid flat with matching black shorts below it."
+    },
+    {
+      "id": "p-training-top",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A quarter-zip training top in charcoal grey with lime shoulder piping, plain, laid flat."
+    },
+    {
+      "id": "p-tracksuit",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A black full-zip tracksuit jacket with silver side stripes and matching pants, plain, laid flat."
+    },
+    {
+      "id": "p-activewear",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A folded set of black leggings and a fitted grey sports top with flatlock seams, plain, on a matte black surface."
+    },
+    {
+      "id": "p-compression-top",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A long-sleeve black compression base layer with silver flatlock seams, plain, laid flat."
+    },
+    {
+      "id": "p-custom-teamwear",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A club teamwear set laid out flat together: a navy match shirt, a navy zip coach jacket, white shorts and plain navy socks with a crimson top band, every garment completely plain with no crests, letters or symbols."
+    },
+    {
+      "id": "p-holdall",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A black sports holdall with a separate boot compartment at one end, silver zips and a lime zip pull, three-quarter view."
+    },
+    {
+      "id": "p-ball-bag",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A black mesh ball bag with a drawstring, holding six perfectly round white and black footballs that keep their shape, standing upright, three-quarter view."
+    },
+    {
+      "id": "p-cones",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A stack of flat marker discs in lime, white and black on a black carry stand, with two tall lime training cones beside it."
+    },
+    {
+      "id": "p-bibs",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A neat stack of folded lime mesh training bibs with black bound edges, one bib unfolded on top."
+    },
+    {
+      "id": "p-agility-ladder",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A black webbing agility ladder with flat lime rungs laid out in a gentle curve across a matte black surface, seen from above at an angle."
+    },
+    {
+      "id": "p-match-football-detail",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "use": "product gallery second view",
+      "prompt": "Close-up detail of a premium white match football with obsidian-black panels and thin lime accents: the smooth thermally bonded seam lines and the fine micro-texture of the outer, filling the frame."
+    },
+    {
+      "id": "p-training-football-detail",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "use": "product gallery second view",
+      "prompt": "Close-up detail of a black training football with white hexagon outlines: deep machine stitching with lime thread along the seams, the textured outer sharp."
+    },
+    {
+      "id": "p-machine-stitched-football-detail",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "use": "product gallery second view",
+      "prompt": "Close-up detail of a machine-stitched football in white with lime and black panels: regular machine stitch lines along the seams."
+    },
+    {
+      "id": "p-goalkeeper-gloves-detail",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "use": "product gallery second view",
+      "prompt": "Close-up of the white latex palm of a goalkeeper glove with its fine grip texture and roll-finger edges, black backhand visible at the edge."
+    },
+    {
+      "id": "p-shin-guards-detail",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "use": "product gallery second view",
+      "prompt": "Close-up of the inside of a football shin guard: the padded grey backing, the moulded black shell edge with lime trim."
+    },
+    {
+      "id": "p-boxing-gloves-detail",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "use": "product gallery second view",
+      "prompt": "Close-up of a black boxing glove cuff with its lime hook-and-loop strap and stitched padding, the leather grain sharp."
+    },
+    {
+      "id": "p-football-kit-detail",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "use": "product gallery second view",
+      "prompt": "Close-up of a black football shirt fabric: the silver sleeve seam, a thin lime side panel and the breathable mesh texture, completely plain with no logos."
+    },
+    {
+      "id": "range-futsal",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A low-bounce futsal ball, a little smaller than a football, with a white surface and bold black and electric-lime (#C5F900) panel graphics, resting on a matte black surface beside a smaller junior futsal ball in black and lime."
+    },
+    {
+      "id": "range-handball",
+      "aspect": "3:4",
+      "resolution": "2K",
+      "use": "home range card",
+      "prompt": "A brand-new white match handball with a fine pebbled grip surface, stitched panels and bold angular black and electric-lime (#C5F900) panels, resting on a matte black surface beside a smaller brand-new junior handball in grey and lime. Every panel is a plain colour: no emblem, badge, crest, box, word or printed mark anywhere on either ball."
+    },
+    {
+      "id": "p-training-futsal-ball",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A brand-new, clean training futsal ball, slightly smaller than a football, with a matte white outer and black and grey stitched panels joined with lime stitching, resting on its own. Every panel is a plain colour: no emblem, word, number or printed mark anywhere on the ball."
+    },
+    {
+      "id": "p-junior-futsal-ball",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A brand-new small junior futsal ball with white and electric-lime (#C5F900) stitched panels and plain black panel shapes, resting on its own. Every panel is a plain colour: no emblem, word, number or printed mark anywhere on the ball."
+    },
+    {
+      "id": "p-match-handball",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A brand-new professional match handball with a fine pebbled grip surface, stitched panels and bold angular black and electric-lime (#C5F900) panels over white, resting on its own. Every panel is a plain colour: no emblem, badge, crest, word or printed mark anywhere on the ball."
+    },
+    {
+      "id": "p-training-handball",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A brand-new, clean training handball with a deep pebbled grip texture and neat stitched panels in grey and black with lime stitching, resting on its own. Unused and spotless. Every panel is a plain colour: no emblem, word or printed mark anywhere on the ball."
+    },
+    {
+      "id": "p-junior-handball",
+      "aspect": "1:1",
+      "resolution": "2K",
+      "prompt": "A small, soft junior handball with a smooth soft-touch outer in electric-lime (#C5F900) and white panels, resting on its own."
+    }
+  ],
+  "film": {
+    "id": "hero-film",
+    "first_frame": "hero-football",
+    "prompt": "Slow, smooth cinematic camera move: the camera glides in a gentle arc around the football resting on the dark carbon-fibre floor while the ball turns slowly on the spot, dust particles drift through the single beam of light, the rim light traces the stitched seams, the background stays near black. Calm, premium, no cuts, no text, no people.",
+    "aspect_ratio": "16:9",
+    "duration": 8
+  }
+}

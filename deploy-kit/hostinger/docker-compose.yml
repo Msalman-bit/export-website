@@ -1,0 +1,74 @@
+# Monolith Sports on one server (a Hostinger KVM VPS, or any Linux server with Docker):
+#   app    the website (built from the Dockerfile in this folder)
+#   db     its PostgreSQL database
+#   caddy  HTTPS in front: it gets and renews the certificates itself once the domain points at the server
+# Start or update:  docker compose up -d --build        Logs:  docker compose logs -f app
+# Settings come from .env in this folder (copy .env.hostinger.example to .env). See HOSTINGER.md.
+name: monolith
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: monolith
+      POSTGRES_USER: monolith
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U monolith -d monolith"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: &logs
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  app:
+    build: .
+    image: monolith-sports:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # the database container above, on the private network between the containers (no SSL needed there)
+      DATABASE_URL: postgres://monolith:${POSTGRES_PASSWORD}@db:5432/monolith?sslmode=disable
+      # buyers' logos and artwork, kept on their own volume so a rebuild never loses them
+      UPLOAD_DIR: /app/storage/uploads
+      PORT: "3000"
+    volumes:
+      - uploads:/app/storage
+    depends_on:
+      db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/robots.txt || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    logging: *logs
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_HOST: ${SITE_HOST:?Set SITE_HOST in .env}
+      ALT_HOST: ${ALT_HOST:?Set ALT_HOST in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?Set ACME_EMAIL in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      app: { condition: service_healthy }
+    logging: *logs
+
+volumes:
+  db-data:
+  uploads:
+  caddy-data:
+  caddy-config:

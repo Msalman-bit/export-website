@@ -1,0 +1,25 @@
+node_modules/
+.next/
+out/
+storage/
+storage-backup-*/
+shots/
+*.tsbuildinfo
+next-env.d.ts
+.env
+.env.local
+.env.*.local
+.taste-skill/chrome-*
+.taste-skill/gate/
+npm-debug.log*
+.DS_Store
+
+media/raw/
+deploy/
+
+# kept on this PC only: the design checker's screenshots and run files, and the old hero film's frames (backup)
+.taste-skill/cons*/
+.taste-skill/pages/
+.taste-skill/*.pid
+.taste-skill/*.txt
+media/hero-seq-kling-frames/

@@ -1,0 +1,56 @@
+{
+ "k1": {
+  "model": "nano-banana-pro",
+  "prompt": "Photorealistic studio product photograph, 16:9. A brand-new hand-stitched match football (soccer ball) of the classic 32-panel construction: 20 matte white hexagonal panels and 12 deep black pentagonal panels, fine lock-stitched seams with slightly recessed stitch lines, a subtle pebble-grain leather texture, and two of the white hexagons carry thin lime-green (#C5F900) accent lines. No logo, no text, no printing, no branding of any kind. The ball floats in mid-air with no support, right of centre: its centre two thirds of the way across the frame and vertically centred, its diameter a little under half the frame height, the left half of the frame empty. Seamless pure black background (#000000) with no floor, no horizon and no gradient banding. Low-key lighting: a large soft key light from the upper left, a thin cool rim light from behind on the right tracing the edge of the ball, deep natural shadow on its lower right side. Medium-format camera, 100 mm lens, f/8, the whole ball sharp.",
+  "taskId": "d9c810bb570c71ab0559a0bcb5070085",
+  "created": "2026-11-18T03:18:17.242Z",
+  "url": "https://tempfile.aiquickdraw.com/workers/images/image_e8d449ece3917a3c1295c3f801915607.png",
+  "credits": 18,
+  "done": "2026-11-18T03:19:40.528Z"
+ },
+ "k0": {
+  "model": "nano-banana-pro",
+  "prompt": "Edit the reference photograph. A technical exploded view of this same football, like the opening shot of a premium product launch film. There is NO complete football in this image. At the exact spot where the ball sat there is now only its core: a smooth, matte charcoal-grey butyl rubber bladder, a slightly smaller sphere, with a small black valve. Around it, pulled outward evenly along radial lines, float the layers built on top of it: first a shell of cream laminated cotton-polyester lining pieces, each a gently curved hexagon or pentagon of fabric, hovering a short distance off the bladder; further out, the outer stitched panels of the ball — matte white hexagons, black pentagons and two white hexagons with thin lime-green accent lines — each curved like a real ball panel, with stitch holes along its edges. The outermost panels reach beyond the edges of the frame and are cropped by them. Precise, clean, evenly spaced, nothing touching. Keep exactly the same camera, lens, framing, seamless pure black background and lighting as the reference photograph, and the same position and size in the frame (right of centre, centre two thirds across, vertically centred). No logo, no text, no printing, no gold stamp, no branding of any kind. Photorealistic studio product photograph, true-to-life materials, high detail.",
+  "taskId": "12ccca2db6ff6fcdd5521cf32ef665de",
+  "created": "2026-11-18T03:22:56.738Z",
+  "url": "https://tempfile.aiquickdraw.com/workers/images/image_8f250125b8b41302398ba82280633adb.png",
+  "credits": 18,
+  "done": "2026-11-18T03:24:19.772Z"
+ },
+ "k2": {
+  "model": "nano-banana-pro",
+  "prompt": "Edit the reference photograph. Replace the football with a hand-stitched rugby ball in the same spot: an elongated oval ball made of four panels of white pebble-grip rubber with black stitched seams running along its length and one thin lime-green (#C5F900) accent band around its middle, its long axis horizontal and tilted slightly up to the right, its length about one and a half times the football's diameter and its width about the football's diameter. The same low-key light, rim light and shadow. Keep exactly the same camera, lens, framing, seamless pure black background and lighting as the reference photograph, and the same position and size in the frame (right of centre, centre two thirds across, vertically centred). No logo, no text, no printing, no gold stamp, no branding of any kind. Photorealistic studio product photograph, true-to-life materials, high detail.",
+  "taskId": "1e77a398671302b0db65fb946f21d62d",
+  "created": "2026-11-18T03:19:40.814Z",
+  "url": "https://tempfile.aiquickdraw.com/workers/images/image_e61639de33de6417b72fa6e7a104fa6b.png",
+  "credits": 18,
+  "done": "2026-11-18T03:20:39.687Z"
+ },
+ "k3": {
+  "model": "nano-banana-pro",
+  "prompt": "Edit the reference photograph. Replace the football with a professional indoor match handball, centred on the same spot and noticeably smaller than the football (about 80% of its diameter). Its casing is soft, grippy synthetic leather with a deep pebbled grip texture and a faint glossy resin sheen, hand-stitched panels, and bold angular graphic panels in black and lime green (#C5F900) over white in the style of a modern match handball, clearly different from the football: no hexagon-and-pentagon pattern. The same low-key light, rim light and shadow. Keep exactly the same camera, lens, framing, seamless pure black background and lighting as the reference photograph, and the same position and size in the frame (right of centre, centre two thirds across, vertically centred). No logo, no text, no printing, no gold stamp, no branding of any kind. Photorealistic studio product photograph, true-to-life materials, high detail.",
+  "taskId": "1acd791fcfec7ef380bbdfa55238ba4c",
+  "created": "2026-11-18T03:25:15.561Z",
+  "url": "https://tempfile.aiquickdraw.com/workers/images/image_0009f47204174fe7fe3b5eb1ace75a28.png",
+  "credits": 18,
+  "done": "2026-11-18T03:27:03.419Z"
+ },
+ "k0b": {
+  "model": "nano-banana-pro",
+  "prompt": "Edit the reference photograph. The moment just before this football is finished, as in a premium product launch film. The ball's core — a matte charcoal-grey rubber bladder wrapped in cream laminated lining — sits at the exact spot where the ball sat, slightly smaller than the finished ball. Its outer stitched panels — matte white hexagons, black pentagons and two white hexagons with thin lime-green accent lines — have closed in around it and hover a few centimetres off the surface with even gaps between them, each panel in its final place and orientation, about to lock together. The cream lining shows through the gaps. Keep exactly the same camera, lens, framing, seamless pure black background and lighting as the reference photograph, and the same position and size in the frame (right of centre, centre two thirds across, vertically centred). No logo, no text, no printing, no gold stamp, no branding of any kind. Photorealistic studio product photograph, true-to-life materials, high detail.",
+  "taskId": "6c6f2752d1b99a5659c40e75ecd278ac",
+  "created": "2026-11-18T03:22:56.734Z",
+  "url": "https://tempfile.aiquickdraw.com/workers/images/image_6eeb6a27c5a557b10d501588ef662c11.png",
+  "credits": 18,
+  "done": "2026-11-18T03:24:19.959Z"
+ },
+ "kling-take": {
+  "model": "kling-4.0/keyframe-to-video",
+  "taskId": "c7df6321baec82786fb42129f8a3b148",
+  "prompt": "One continuous locked-off shot in the style of a premium product launch film, every movement precise, weighty and perfectly smooth. @first_frame: an exploded view of a football — the charcoal rubber bladder at the centre, the cream lining layers and the stitched outer panels pulled apart along radial lines, the outer panels beyond the frame. The parts glide inward along straight lines and decelerate: the lining settles onto the bladder and the panels close in around it, @keyframe_1. The panels lock together edge to edge, seam by seam, into @keyframe_2, a complete football that turns slowly. The turning football then smoothly stretches and its panels flow and re-stitch into @keyframe_3, a white rugby ball with a lime-green band. The rugby ball keeps turning, smoothly rounds off and its panels flow into @last_frame, a professional handball with white, black and lime-green panels. No cuts, no flashes, no morphing artefacts. Locked-off camera, no cuts, no camera shake. Seamless pure black background throughout. Photorealistic leather, stitching and light; the same soft key light from the upper left and cool rim light on the right. No text, no logos, no people, no hands.",
+  "created": "2026-11-18T03:27:16.650Z",
+  "url": "https://tempfile.aiquickdraw.com/k/c7df6321baec82786fb42129f8a3b148_1_1794972792_1863.mp4",
+  "credits": 510,
+  "done": "2026-11-18T03:33:31.355Z"
+ }
+}

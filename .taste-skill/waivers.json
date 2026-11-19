@@ -1,0 +1,7 @@
+[
+  { "check": "pinned", "target": "main#top > section.hero.hero--film > div.wrap \"Footballs Rugby balls Handballs C", "reason": "client-directed: the owner asked for an Apple-style hero whose film plays with the scroll, so the frame is held for two screens of scroll by design (desktop)" },
+  { "check": "pinned", "target": "main#top > section.hero.hero--film > div.wrap \"Custom sports equipment, made in Pakista", "reason": "client-directed: the same scroll film hero on a phone, held while its film plays with the scroll, as the owner asked" },
+  { "check": "hero-screen", "target": "main#top > section.hero.hero--film", "reason": "client-directed: the scroll film hero is three screens of scroll by design; each screen shows the hero alone, fitted inside the held frame" },
+  { "check": "hero-fold", "target": "section.hero.hero--film", "reason": "client-directed: the hero runs three screens because its film is scrubbed by the scroll, as the owner asked; its words and both buttons sit inside the first screen" },
+  { "check": "empty-area", "target": "main#top > section.hero.hero--film", "reason": "client-directed: the scroll film hero's rows are scroll distance for the film, not empty layout; the held frame is full on every screen" }
+]

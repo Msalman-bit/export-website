@@ -1,0 +1,791 @@
+{
+ "hero-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "32285bc6eeaae9a59741149d3987e8e3",
+  "prompt": "An extreme close studio view of a premium match football: the ball is enormous, its right side and lower edge running off the right edge and the bottom edge of the frame, filling the right 60% of the image. Classic panels of obsidian-black pentagons and white hexagons with deep hand-stitched seams, two thin electric-lime (#C5F900) accent lines on one hexagon, every panel plain with no lettering. Light from a softbox out of frame high on the right, a cool rim light, a few dust particles in the light. The left 40% of the frame is calm and almost black.",
+  "created": "2026-11-18T02:28:05.929Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/32285bc6eeaae9a59741149d3987e8e3_1794968909817.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:28:38.026Z"
+ },
+ "p-boxing-gloves": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "6eb58a6b091135d9eeb4c8d0765c32e7",
+  "prompt": "A pair of black boxing gloves with lime cuffs and hook-and-loop wrist closures, one facing forward, one in profile.",
+  "created": "2026-11-18T01:28:45.795Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/6eb58a6b091135d9eeb4c8d0765c32e7_1794965385615.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:29:48.703Z"
+ },
+ "hero-football-phone": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "4331f873ef3e3aef91ca91a54bd8f7ba",
+  "prompt": "An extreme close studio view of a premium match football: the ball is enormous, filling the upper half of a tall frame and running off the top and right edges. Obsidian-black pentagons and white hexagons with deep hand-stitched seams, two thin electric-lime (#C5F900) accent lines on one hexagon, every panel plain with no lettering. Light from a softbox out of frame, a cool rim light. The lower half of the frame is calm, empty and almost black.",
+  "created": "2026-11-18T02:28:05.886Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/4331f873ef3e3aef91ca91a54bd8f7ba_1794968901945.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:28:25.303Z"
+ },
+ "nav-footballs": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "2fcc7cd2e4931882d418ccf8c46715a8",
+  "prompt": "Five perfectly spherical association footballs (soccer balls) in a neat row on a plain matte black floor, each a different colourway: white with black pentagons, all black with lime seams, silver with white, navy with red, white with lime. The floor and background are completely empty: no text, no logo, no sign, no lettering anywhere.",
+  "created": "2026-11-18T01:56:52.720Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/2fcc7cd2e4931882d418ccf8c46715a8_1794967052365.jpg",
+  "credits": 5,
+  "done": "2026-11-18T01:57:36.858Z"
+ },
+ "range-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "f33d4361c0afb7a8bcd613f222e3ffed",
+  "prompt": "A white and obsidian-black hand-stitched football with a thin lime accent stands on a matte black surface; beside it lies one goalkeeper glove with a white latex palm and a black backhand.",
+  "created": "2026-11-18T01:30:07.332Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/f33d4361c0afb7a8bcd613f222e3ffed_1794965437610.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:30:39.082Z"
+ },
+ "range-rugby": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "64880103179744c1f559cdd762d7e314",
+  "prompt": "A white rugby ball with a fine pimpled grip surface, four stitched panels and electric-lime (#C5F900) panel edges, standing upright on a matte black surface at a slight angle.",
+  "created": "2026-11-18T01:30:07.338Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/64880103179744c1f559cdd762d7e314_1794965427232.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:30:32.788Z"
+ },
+ "range-cricket": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "7c6b368ef1e804551561837a4c6bc8e3",
+  "prompt": "A natural willow cricket bat leaning on a matte black plinth, a red leather cricket ball with a raised white stitched seam in front of it, plain unbranded blade.",
+  "created": "2026-11-18T01:30:32.964Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/7c6b368ef1e804551561837a4c6bc8e3_1794965497989.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:31:41.992Z"
+ },
+ "range-combat": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "c1170c1f427aa84244ec9f0ff3ad9eba",
+  "prompt": "A pair of black leather boxing gloves with electric-lime (#C5F900) cuffs and white lace-up closures, one standing, one lying on its side, on a matte black surface.",
+  "created": "2026-11-18T01:30:32.982Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/c1170c1f427aa84244ec9f0ff3ad9eba_1794965485773.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:31:29.640Z"
+ },
+ "range-fitness": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "6553c0e39fbeb4ec463477a484a1b324",
+  "prompt": "A black leather weightlifting belt with a steel prong buckle, coiled loosely, and a pair of black wrist wraps with a lime thumb loop beside it on a matte black surface.",
+  "created": "2026-11-18T01:30:33.024Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/6553c0e39fbeb4ec463477a484a1b324_1794965482837.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:31:29.573Z"
+ },
+ "range-racket": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "0228bf29e8481d6c645949d6d9fd0819",
+  "prompt": "A matte black padel racket with a perforated face and a silver frame edge, leaning on a black block, two yellow-green padel balls at its foot.",
+  "created": "2026-11-18T01:30:33.002Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/0228bf29e8481d6c645949d6d9fd0819_1794965486296.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:31:35.833Z"
+ },
+ "range-sportswear": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "e9163a780a435dea8e69d88e8290ce0f",
+  "prompt": "A plain obsidian-black football shirt with thin lime side panels and silver sleeve cuffs on a matte black hanger, seen from the back, completely plain fabric with no number, name, logo, tick or emblem anywhere, hanging against a charcoal backdrop.",
+  "created": "2026-11-18T01:56:52.742Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/e9163a780a435dea8e69d88e8290ce0f_1794967074388.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:57:55.735Z"
+ },
+ "range-accessories": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "8a5e41ccd6a0cb1fc79234dbf586aeee",
+  "prompt": "A black sports holdall with a silver zip, a short stack of lime marker discs and a folded lime mesh training bib beside it, on a matte black surface.",
+  "created": "2026-11-18T01:31:29.808Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/8a5e41ccd6a0cb1fc79234dbf586aeee_1794965555374.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:32:38.829Z"
+ },
+ "intro-stitching": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "d92749d80a79d95238dd8efb54c331ec",
+  "prompt": "Extreme macro of a football being hand-stitched: a curved steel needle and waxed white thread pulled through the punched edges of a white synthetic leather hexagon and a black pentagon, the stitch holes and the grain of the material sharp, the ball's curve falling out of focus. No hands in the frame.",
+  "created": "2026-11-18T01:31:29.878Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/d92749d80a79d95238dd8efb54c331ec_1794965512870.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:31:55.483Z"
+ },
+ "process-materials": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "2bfb9df6398b1cd5adf72ba25fc38e12",
+  "prompt": "Rolls and folded swatches of football outer materials, white, black, silver and lime synthetic leather with a fine textured grain, arranged on a dark steel workbench, seen from a three-quarter angle.",
+  "created": "2026-11-18T01:31:36.074Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/2bfb9df6398b1cd5adf72ba25fc38e12_1794965550435.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:32:32.604Z"
+ },
+ "process-prototype": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "cbd3c5dcc6ed5ef0e8585b1b37735e3a",
+  "prompt": "A single finished sample football on a dark steel workbench beside flat die-cut white and black hexagon and pentagon panels, a steel ruler and a pair of calipers.",
+  "created": "2026-11-18T01:31:42.226Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/cbd3c5dcc6ed5ef0e8585b1b37735e3a_1794965552458.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:32:38.870Z"
+ },
+ "process-inspection": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "d83776ba6584e7d9bd6cbbd7faf9abcb",
+  "prompt": "A white and black football resting in a precision ring gauge on a dark steel inspection table, a digital scale with a blank dark display beside it and a coiled measuring tape.",
+  "created": "2026-11-18T01:31:42.399Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/d83776ba6584e7d9bd6cbbd7faf9abcb_1794965554064.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:32:38.914Z"
+ },
+ "process-packing": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "798baa9e8dcfc459793cab3c3128810d",
+  "prompt": "Plain brown export cartons with blank white labels, stacked squarely on a wooden pallet and wrapped in clear stretch film, one open carton in front showing deflated footballs packed in clear polybags, dark warehouse background with soft overhead light.",
+  "created": "2026-11-18T01:53:26.976Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/798baa9e8dcfc459793cab3c3128810d_1794966859175.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:54:23.520Z"
+ },
+ "custom-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "235bbb955209be020563664402d7cf48",
+  "prompt": "A custom club football printed in deep navy and crimson panels with a simple geometric shield emblem made only of shapes, standing on a matte black surface, three-quarter view.",
+  "created": "2026-11-18T01:32:32.826Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/235bbb955209be020563664402d7cf48_1794965578628.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:33:04.500Z"
+ },
+ "custom-embroidery": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "55a93601a70d6153e9cb198e795aa3d5",
+  "prompt": "Macro of a dense satin-stitch embroidered emblem, an abstract chevron shape in silver and lime thread, on black technical jersey fabric, the thread texture sharp.",
+  "created": "2026-11-18T01:32:39.064Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/55a93601a70d6153e9cb198e795aa3d5_1794965610250.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:33:35.770Z"
+ },
+ "quality-seam": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "e0f9a307b27f9c2b5c364db18464a5d9",
+  "prompt": "An extreme close-up macro filling the entire frame edge to edge with the surface of a football: rows of tight hand-stitched seams where white hexagon panels meet a black pentagon, raking light from the left revealing every stitch and the fine grain of the outer material. No ball outline or background visible.",
+  "created": "2026-11-18T01:53:26.994Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/e0f9a307b27f9c2b5c364db18464a5d9_1794966909515.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:55:13.494Z"
+ },
+ "studio-hero": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "72dcfee04cc27716a88b6da7ec38c277",
+  "prompt": "Three footballs in different custom colourways (lime and black, navy and white, crimson and silver) arranged in a triangle on a matte black surface.",
+  "created": "2026-11-18T01:32:39.181Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/72dcfee04cc27716a88b6da7ec38c277_1794965607776.jpg",
+  "credits": 5,
+  "done": "2026-11-18T01:33:29.466Z"
+ },
+ "p-match-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "ee9cb05726fd6bc7e85e0e627f8b1cd2",
+  "prompt": "A premium white match football with obsidian-black pentagons and thin lime accents, thermally bonded smooth panels, three-quarter view, centred.",
+  "created": "2026-11-18T01:33:04.709Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/ee9cb05726fd6bc7e85e0e627f8b1cd2_1794965611931.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:33:36.301Z"
+ },
+ "p-training-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "16e627acf79b74fc37e94ff6082aef8a",
+  "prompt": "A brand-new training football in black with white hexagon outlines and lime stitched seams, clean, crisp synthetic leather, centred.",
+  "created": "2026-11-18T01:53:26.980Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/16e627acf79b74fc37e94ff6082aef8a_1794966867009.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:54:29.805Z"
+ },
+ "p-thermo-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "128ad6c3ddc90fc692d1b563ac47d92d",
+  "prompt": "A thermally bonded football with large seamless curved panels in white and silver, no visible stitching, smooth micro-textured surface, centred.",
+  "created": "2026-11-18T01:33:29.780Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/128ad6c3ddc90fc692d1b563ac47d92d_1794965642785.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:34:07.662Z"
+ },
+ "p-hand-stitched-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "3867976cff90fc7aa5db8b8f92acdcdb",
+  "prompt": "A classic hand-stitched football with 12 black pentagons and 20 white hexagons, deep visible stitched seams, centred.",
+  "created": "2026-11-18T01:33:35.994Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/3867976cff90fc7aa5db8b8f92acdcdb_1794965672906.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:34:38.870Z"
+ },
+ "p-machine-stitched-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "d61e9b3bfec2d625d2e35fd61b963343",
+  "prompt": "A round machine-stitched football in white with lime and black hexagon panels, fine regular machine stitch lines, every panel plain with no marks or emblems, centred.",
+  "created": "2026-11-18T01:54:23.749Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/d61e9b3bfec2d625d2e35fd61b963343_1794966942514.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:55:44.761Z"
+ },
+ "p-hybrid-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "d3f5b435c0ca6574b2702f32e113315d",
+  "prompt": "A perfectly round association football (soccer ball) in silver and black with deep stitched seams between hexagon and pentagon panels over a smooth bonded surface, no laces, centred.",
+  "created": "2026-11-18T01:54:23.791Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/d3f5b435c0ca6574b2702f32e113315d_1794966910923.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:55:14.408Z"
+ },
+ "p-futsal-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "8f7f3987c05fb7f00aeba28fc8696116",
+  "prompt": "A round futsal ball with a smooth matte synthetic leather outer in lime and black hexagon panels, stitched seams, centred.",
+  "created": "2026-11-18T01:54:30.031Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/8f7f3987c05fb7f00aeba28fc8696116_1794966929959.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:55:32.632Z"
+ },
+ "p-mini-football": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "f82ec24d93ba5739e2a2ca54bcecba08",
+  "prompt": "Three mini skills footballs, small, in white, black and lime colourways, grouped together, centred.",
+  "created": "2026-11-18T01:34:33.309Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/f82ec24d93ba5739e2a2ca54bcecba08_1794965697296.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:34:58.647Z"
+ },
+ "p-goalkeeper-gloves": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "0ed1573332fee24ac8fa7ab883f10b55",
+  "prompt": "A pair of goalkeeper gloves with thick white latex palms, black backhands with lime finger detailing and a wide wrist strap, one palm up, one back up.",
+  "created": "2026-11-18T01:34:39.126Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/0ed1573332fee24ac8fa7ab883f10b55_1794965732028.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:35:35.504Z"
+ },
+ "p-shin-guards": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "74f65c8e926f0f59f19488038ff446f4",
+  "prompt": "A pair of football shin guards with a moulded black shell, lime edge trim and a padded grey backing, standing upright.",
+  "created": "2026-11-18T01:34:39.641Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/74f65c8e926f0f59f19488038ff446f4_1794965812772.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:36:56.488Z"
+ },
+ "p-match-rugby-ball": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "4ba8dfc16f2d00a58fcc98b5e03db423",
+  "prompt": "A white match rugby ball with a pimpled grip surface and black and lime panel graphics made only of stripes, lying at an angle.",
+  "created": "2026-11-18T01:34:45.472Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/4ba8dfc16f2d00a58fcc98b5e03db423_1794965793401.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:36:37.743Z"
+ },
+ "p-training-rugby-ball": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "a0a1b83ef377c6b46cd4aec82f942525",
+  "prompt": "A tough training rugby ball in black and silver with a deep grip texture, lying at an angle.",
+  "created": "2026-11-18T01:34:58.881Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/a0a1b83ef377c6b46cd4aec82f942525_1794965747054.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:35:49.044Z"
+ },
+ "p-rugby-headguard": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "c51b52e95a89d5bf3243629d4ebb0a6c",
+  "prompt": "A padded rugby scrum cap headguard in black with lime stitching and a chin strap, on a plain dark head form without a face.",
+  "created": "2026-11-18T01:35:02.378Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/c51b52e95a89d5bf3243629d4ebb0a6c_1794965749264.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:35:52.546Z"
+ },
+ "p-cricket-bat": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "8756f8def3312fea01d95f64e4a60fc4",
+  "prompt": "A natural willow cricket bat with a black rubber grip, plain blade with no stickers, lying diagonally across the frame.",
+  "created": "2026-11-18T01:35:35.730Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/8756f8def3312fea01d95f64e4a60fc4_1794965762696.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:36:07.244Z"
+ },
+ "p-cricket-ball": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "c8708f68f0163ed47e4b01d50738f4ef",
+  "prompt": "A red leather cricket ball with a raised white six-row stitched seam, close-up, centred.",
+  "created": "2026-11-18T01:35:49.264Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/c8708f68f0163ed47e4b01d50738f4ef_1794965808239.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:36:51.743Z"
+ },
+ "p-batting-gloves": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "5af9279cfbc0a19c24454193f6d2dd76",
+  "prompt": "A pair of white cricket batting gloves with padded finger rolls and black and lime trim.",
+  "created": "2026-11-18T01:35:52.771Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/5af9279cfbc0a19c24454193f6d2dd76_1794965818621.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:37:01.583Z"
+ },
+ "p-wicketkeeping-gloves": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "3dadd03152767530469e851b6a64e3ff",
+  "prompt": "A pair of cricket wicketkeeping gloves with a webbed thumb, white padded backs and black rubber-faced palms.",
+  "created": "2026-11-18T01:36:07.469Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/3dadd03152767530469e851b6a64e3ff_1794965862716.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:37:47.205Z"
+ },
+ "p-batting-pads": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "287d9c82dd811823fed7bd7ed43d5cfc",
+  "prompt": "A pair of white cricket batting pads with vertical padded ribs and black straps, standing upright.",
+  "created": "2026-11-18T01:36:37.958Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/287d9c82dd811823fed7bd7ed43d5cfc_1794965825615.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:37:09.473Z"
+ },
+ "p-mma-gloves": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "c474acb5fb8d9b5dbf48e0f90a418a41",
+  "prompt": "A pair of black open-finger MMA gloves with padded knuckles and silver wrist straps.",
+  "created": "2026-11-18T01:36:51.958Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/c474acb5fb8d9b5dbf48e0f90a418a41_1794965873373.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:38:00.548Z"
+ },
+ "p-punching-bag": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "ce4200bbeeda262041da0b3705cf7df1",
+  "prompt": "A tall black heavy punching bag with lime stitched seams hanging from short steel chains, full length in frame.",
+  "created": "2026-11-18T01:36:56.767Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/ce4200bbeeda262041da0b3705cf7df1_1794965973131.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:39:38.326Z"
+ },
+ "p-focus-pads": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "3a4db5f3ef0436958f539d135607ed1d",
+  "prompt": "A pair of curved black focus pads with lime centre targets, one face on, one at an angle.",
+  "created": "2026-11-18T01:37:01.804Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/3a4db5f3ef0436958f539d135607ed1d_1794965872935.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:37:58.112Z"
+ },
+ "p-boxing-headguard": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "3038ac667ba4c35f39fa1edd503106e7",
+  "prompt": "A black boxing headguard with cheek protectors and lime trim, on a plain dark head form without a face.",
+  "created": "2026-11-18T01:37:09.718Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/3038ac667ba4c35f39fa1edd503106e7_1794965976013.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:39:38.959Z"
+ },
+ "p-hand-wraps": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "f919ce31fc3d05a926dfb6f58c04226b",
+  "prompt": "Two rolled black hand wraps with lime thumb loops, one partly unrolled across the surface.",
+  "created": "2026-11-18T01:37:47.432Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/f919ce31fc3d05a926dfb6f58c04226b_1794965969987.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:39:33.343Z"
+ },
+ "p-weightlifting-gloves": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "0a8528a13d0be644cb8868749eaba376",
+  "prompt": "A pair of half-finger weightlifting gloves in black with padded grey palms and lime wrist straps, completely plain fabric with no printed words or logos anywhere.",
+  "created": "2026-11-18T01:55:13.731Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/0a8528a13d0be644cb8868749eaba376_1794966940035.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:55:45.194Z"
+ },
+ "p-lifting-belt": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "03169587e95ded15070b0b1531d2f710",
+  "prompt": "A thick black leather lifting belt with a single steel prong buckle and lime edge stitching, curved standing on its edge.",
+  "created": "2026-11-18T01:38:00.791Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/03169587e95ded15070b0b1531d2f710_1794965938420.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:39:03.280Z"
+ },
+ "p-wrist-wraps": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "119adb91d46f9f7324ba40650561b2c3",
+  "prompt": "A pair of black and lime striped elastic wrist wraps, each rolled, with thumb loops visible.",
+  "created": "2026-11-18T01:39:03.499Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/119adb91d46f9f7324ba40650561b2c3_1794966086405.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:41:32.930Z"
+ },
+ "p-resistance-bands": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "11ee5fdca7cc3d37e655c4e352cc9dd4",
+  "prompt": "A set of five fabric resistance loop bands in graded tones from silver to black, stacked, beside a black drawstring pouch.",
+  "created": "2026-11-18T01:39:32.146Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/11ee5fdca7cc3d37e655c4e352cc9dd4_1794965997373.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:40:03.887Z"
+ },
+ "p-lifting-straps": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "4a0b9e699154ac67f012de3c42a14fee",
+  "prompt": "A pair of black cotton lifting straps with padded wrists and lime stitching, laid in loose curves.",
+  "created": "2026-11-18T01:39:33.550Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/4a0b9e699154ac67f012de3c42a14fee_1794966035068.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:40:42.151Z"
+ },
+ "p-padel-cover": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "9ae6faf7fe90f454157ed95a2220a83a",
+  "prompt": "A padded black padel racket cover with a silver zip, shaped to the racket, lying flat at an angle.",
+  "created": "2026-11-18T01:39:38.582Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/9ae6faf7fe90f454157ed95a2220a83a_1794966050001.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:40:53.439Z"
+ },
+ "p-tennis-bag": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "38de694f20cc657ed67b13e77753944a",
+  "prompt": "A black tennis racket bag with two padded compartments, a silver zip and a lime zip pull, standing upright.",
+  "created": "2026-11-18T01:39:39.180Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/38de694f20cc657ed67b13e77753944a_1794966035599.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:40:41.629Z"
+ },
+ "p-badminton-cover": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "3e0d246b6f0cf5cc598d16f17e0e56b2",
+  "prompt": "A slim black badminton racket cover with lime piping and a silver zip, a white feather shuttlecock beside it.",
+  "created": "2026-11-18T01:40:04.175Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/3e0d246b6f0cf5cc598d16f17e0e56b2_1794966029761.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:40:35.773Z"
+ },
+ "p-football-kit": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "b684677a88fc653b04ab87259368a3b6",
+  "prompt": "A football shirt in obsidian black with silver sleeves and thin lime side panels, plain with no crest or numbers, laid flat with matching black shorts below it.",
+  "created": "2026-11-18T01:40:36.018Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/b684677a88fc653b04ab87259368a3b6_1794966099078.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:41:44.656Z"
+ },
+ "p-training-top": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "a257e4e4ef34cef47133ec99f13e225c",
+  "prompt": "A quarter-zip training top in charcoal grey with lime shoulder piping, plain, laid flat.",
+  "created": "2026-11-18T01:40:41.854Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/a257e4e4ef34cef47133ec99f13e225c_1794966093582.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:41:38.173Z"
+ },
+ "p-tracksuit": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "0c0a52cd4be0d7a33cf8fb2747fcb09e",
+  "prompt": "A black full-zip tracksuit jacket with silver side stripes and matching pants, plain, laid flat.",
+  "created": "2026-11-18T01:40:42.435Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/0c0a52cd4be0d7a33cf8fb2747fcb09e_1794966091499.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:41:38.772Z"
+ },
+ "p-activewear": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "1eb1759cab1bd5fb5befa5579d63370b",
+  "prompt": "A folded set of black leggings and a fitted grey sports top with flatlock seams, plain, on a matte black surface.",
+  "created": "2026-11-18T01:40:53.634Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/1eb1759cab1bd5fb5befa5579d63370b_1794966105984.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:41:50.282Z"
+ },
+ "p-compression-top": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "e958b32c8658b24eb41c1b33995cfaca",
+  "prompt": "A long-sleeve black compression base layer with silver flatlock seams, plain, laid flat.",
+  "created": "2026-11-18T01:41:33.167Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/e958b32c8658b24eb41c1b33995cfaca_1794966149092.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:42:36.486Z"
+ },
+ "p-custom-teamwear": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "3a4f5815da6a3b23be2f94988cc638f5",
+  "prompt": "A club teamwear set laid out flat together: a navy match shirt, a navy zip coach jacket, white shorts and plain navy socks with a crimson top band, every garment completely plain with no crests, letters or symbols.",
+  "created": "2026-11-18T01:55:14.663Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/3a4f5815da6a3b23be2f94988cc638f5_1794966942492.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:55:46.090Z"
+ },
+ "p-holdall": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "102d5d6fc5868fd90855c690795a14a8",
+  "prompt": "A black sports holdall with a separate boot compartment at one end, silver zips and a lime zip pull, three-quarter view.",
+  "created": "2026-11-18T01:41:39.031Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/102d5d6fc5868fd90855c690795a14a8_1794966155011.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:42:41.612Z"
+ },
+ "p-ball-bag": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "14d5282a68f73669520140dde7034146",
+  "prompt": "A black mesh ball bag with a drawstring, holding six perfectly round white and black footballs that keep their shape, standing upright, three-quarter view.",
+  "created": "2026-11-18T01:55:32.842Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/14d5282a68f73669520140dde7034146_1794966975203.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:56:16.736Z"
+ },
+ "p-cones": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "b048f3bcf582c2201a050d339b5e3cdf",
+  "prompt": "A stack of flat marker discs in lime, white and black on a black carry stand, with two tall lime training cones beside it.",
+  "created": "2026-11-18T01:41:50.525Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/b048f3bcf582c2201a050d339b5e3cdf_1794966383442.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:46:24.967Z"
+ },
+ "p-bibs": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "44ecb6cf73065cf4688b8cc83935c541",
+  "prompt": "A neat stack of folded lime mesh training bibs with black bound edges, one bib unfolded on top.",
+  "created": "2026-11-18T01:42:35.077Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/44ecb6cf73065cf4688b8cc83935c541_1794966218688.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:43:43.947Z"
+ },
+ "p-agility-ladder": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "45e9de9e4681aae574d30ed4ece75583",
+  "prompt": "A black webbing agility ladder with flat lime rungs laid out in a gentle curve across a matte black surface, seen from above at an angle.",
+  "created": "2026-11-18T01:42:36.706Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/45e9de9e4681aae574d30ed4ece75583_1794966214702.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:43:40.406Z"
+ },
+ "intro-panels": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "2b98c7ae10101ce82105913286365fb1",
+  "prompt": "A neat stack of die-cut football panels, white hexagons and black pentagons in synthetic leather, their punched stitch holes visible along every edge, on a dark steel workbench.",
+  "created": "2026-11-18T01:46:47.478Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/2b98c7ae10101ce82105913286365fb1_1794966456542.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:47:37.955Z"
+ },
+ "intro-thread": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "30071de22c5503d12b866cd745e386b4",
+  "prompt": "Three spools of thick waxed white polyester thread and two curved steel stitching needles lying on a dark steel workbench, close-up.",
+  "created": "2026-11-18T01:46:47.438Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/30071de22c5503d12b866cd745e386b4_1794966470263.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:47:56.639Z"
+ },
+ "custom-range": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "c847735525b3cdc80384016cb345a541",
+  "prompt": "Four perfectly spherical association footballs (soccer balls, round, never oval) in custom club colourways: deep navy and crimson, black and electric lime, white and silver, forest green and white, each with plain geometric panel graphics made only of shapes, grouped on a matte black surface, one in front.",
+  "created": "2026-11-18T01:56:52.715Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/c847735525b3cdc80384016cb345a541_1794967089374.jpg",
+  "credits": 7,
+  "done": "2026-11-18T01:58:14.317Z"
+ },
+ "hero-film": {
+  "model": "veo-3-1",
+  "taskId": "b12559e1f048ca44177158b1c55a6be1",
+  "created": "2026-11-18T02:28:38.454Z",
+  "url": "https://tempfile.aiquickdraw.com/v/76619999e576c948f3198a18cd568f9e_0_1794966786.mp4",
+  "credits": 65,
+  "done": "2026-11-18T02:31:00.000Z",
+  "note": "regenerated from the new hero still; the first film (65 credits) was replaced"
+ },
+ "terms-swatches": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "de6b6dcfa7de6f5ca7a14bafd64ee46d",
+  "prompt": "A specification flat lay on a dark steel desk: a fan of synthetic leather colour swatches in white, black, silver, navy and lime, a cut football hexagon panel, a coiled measuring tape and a steel ruler, seen from above at a slight angle.",
+  "created": "2026-11-18T02:28:05.884Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/de6b6dcfa7de6f5ca7a14bafd64ee46d_1794968914576.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:28:37.762Z"
+ },
+ "faq-valve": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "69cc1ceee51e65d33601a49896244474",
+  "prompt": "A close-up of a plain white football resting on a matte black surface, a black rubber inflation valve in the centre of a white hexagon panel, the stitched seams around it sharp, the rest of the ball falling softly out of focus. The ball surface is completely blank: no printing, no text, no logo, no symbols anywhere.",
+  "created": "2026-11-18T02:30:57.607Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/69cc1ceee51e65d33601a49896244474_1794969162290.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:32:50.377Z"
+ },
+ "p-match-football-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "90d149d26fd969c66e457d00450b66e9",
+  "prompt": "Close-up detail of a premium white match football with obsidian-black panels and thin lime accents: the smooth thermally bonded seam lines and the fine micro-texture of the outer, filling the frame.",
+  "created": "2026-11-18T02:42:10.613Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/90d149d26fd969c66e457d00450b66e9_1794969755761.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:42:42.676Z"
+ },
+ "p-training-football-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "91ab42c07d19283157c0dd578a8abcca",
+  "prompt": "Close-up detail of a black training football with white hexagon outlines: deep machine stitching with lime thread along the seams, the textured outer sharp.",
+  "created": "2026-11-18T02:42:10.613Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/91ab42c07d19283157c0dd578a8abcca_1794969759725.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:42:42.489Z"
+ },
+ "p-thermo-football-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "e52e1b1a8dcb1a8ce32f81ea98e868f2",
+  "prompt": "Close-up detail of a thermally bonded football in white and silver: two large curved panels meeting in a smooth, stitch-free bonded seam, raking light.",
+  "created": "2026-11-18T02:42:10.609Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/e52e1b1a8dcb1a8ce32f81ea98e868f2_1794969753456.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:42:36.260Z"
+ },
+ "p-hand-stitched-football-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "a2e3912c565a3da8b4897e2c21cbc3c4",
+  "prompt": "Close-up detail of a hand-stitched football: tight waxed white thread stitches where a black pentagon meets white hexagons, the stitch holes sharp.",
+  "created": "2026-11-18T02:42:10.626Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/a2e3912c565a3da8b4897e2c21cbc3c4_1794969755088.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:42:42.509Z"
+ },
+ "p-machine-stitched-football-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "121e67efe9a311d3ead025e341b654ce",
+  "prompt": "Close-up detail of a machine-stitched football in white with lime and black panels: regular machine stitch lines along the seams.",
+  "created": "2026-11-18T02:42:10.636Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/121e67efe9a311d3ead025e341b654ce_1794969757083.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:42:42.502Z"
+ },
+ "p-hybrid-football-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "5d19ca5cdeb14a932af2561eb4cb0ec0",
+  "prompt": "Close-up detail of a silver and black hybrid football: stitched seams over a smooth bonded surface, the inflation valve in one panel.",
+  "created": "2026-11-18T02:42:36.495Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/5d19ca5cdeb14a932af2561eb4cb0ec0_1794969809077.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:43:33.130Z"
+ },
+ "p-futsal-football-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "913d2adb7036ae2970403e17072aea01",
+  "prompt": "Close-up detail of a lime and black futsal ball: the matte synthetic leather outer and its stitched seams, filling the frame.",
+  "created": "2026-11-18T02:42:42.719Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/913d2adb7036ae2970403e17072aea01_1794969823284.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:43:45.530Z"
+ },
+ "p-mini-football-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "b04207f0677cb074d141540f30a39e02",
+  "prompt": "Three small mini footballs in white, black and lime held in a neat row on a matte black surface, seen from a low angle, close.",
+  "created": "2026-11-18T02:42:42.734Z"
+ },
+ "p-goalkeeper-gloves-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "e1cafb84f9db535a550f7d71b07cdcba",
+  "prompt": "Close-up of the white latex palm of a goalkeeper glove with its fine grip texture and roll-finger edges, black backhand visible at the edge.",
+  "created": "2026-11-18T02:42:42.725Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/e1cafb84f9db535a550f7d71b07cdcba_1794969814436.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:43:39.403Z"
+ },
+ "p-shin-guards-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "8f5de78162ba89878972dee1adb5c73e",
+  "prompt": "Close-up of the inside of a football shin guard: the padded grey backing, the moulded black shell edge with lime trim.",
+  "created": "2026-11-18T02:42:42.958Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/8f5de78162ba89878972dee1adb5c73e_1794969815170.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:43:39.533Z"
+ },
+ "p-boxing-gloves-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "0f0f4532d64c5fa58620a376a7e7afe9",
+  "prompt": "Close-up of a black boxing glove cuff with its lime hook-and-loop strap and stitched padding, the leather grain sharp.",
+  "created": "2026-11-18T02:43:33.333Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/0f0f4532d64c5fa58620a376a7e7afe9_1794969873032.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:44:35.917Z"
+ },
+ "p-football-kit-detail": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "a28c7156cbfb0a7a870d367a66da016e",
+  "prompt": "Close-up of a black football shirt fabric: the silver sleeve seam, a thin lime side panel and the breathable mesh texture, completely plain with no logos.",
+  "created": "2026-11-18T02:43:39.656Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/a28c7156cbfb0a7a870d367a66da016e_1794969866756.jpg",
+  "credits": 7,
+  "done": "2026-11-18T02:44:30.011Z"
+ },
+ "range-futsal": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "3772ffbb05a634cfb5330ebab7daa11c",
+  "prompt": "A low-bounce futsal ball, a little smaller than a football, with a white surface and bold black and electric-lime (#C5F900) panel graphics, resting on a matte black surface beside a smaller junior futsal ball in black and lime.",
+  "created": "2026-11-18T04:01:53.063Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/3772ffbb05a634cfb5330ebab7daa11c_1794974644597.jpg",
+  "credits": 7,
+  "done": "2026-11-18T04:04:10.637Z"
+ },
+ "range-handball": {
+  "model": "nano-banana-pro",
+  "taskId": "556cdf3a813cc3cce1c3238926acbbef",
+  "prompt": "A brand-new white match handball with a fine pebbled grip surface, stitched panels and bold angular black and electric-lime (#C5F900) panels, resting on a matte black surface beside a smaller brand-new junior handball in grey and lime. Every panel is a plain colour: no emblem, badge, crest, box, word or printed mark anywhere on either ball.",
+  "created": "2026-11-18T04:06:56.789Z",
+  "url": "https://tempfile.aiquickdraw.com/vnp/556cdf3a813cc3cce1c3238926acbbef_0_1794974858.jpeg",
+  "credits": 18,
+  "done": "2026-11-18T04:07:41.012Z"
+ },
+ "p-training-futsal-ball": {
+  "model": "nano-banana-pro",
+  "taskId": "ffdabe616f4294d15fb8c4f719558656",
+  "prompt": "A brand-new, clean training futsal ball, slightly smaller than a football, with a matte white outer and black and grey stitched panels joined with lime stitching, resting on its own. Every panel is a plain colour: no emblem, word, number or printed mark anywhere on the ball.",
+  "created": "2026-11-18T04:06:56.781Z",
+  "url": "https://tempfile.aiquickdraw.com/vnp/ffdabe616f4294d15fb8c4f719558656_0_1794974863.jpeg",
+  "credits": 18,
+  "done": "2026-11-18T04:07:47.562Z"
+ },
+ "p-junior-futsal-ball": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "80af08843492190fee2cdb2258af0003",
+  "prompt": "A brand-new small junior futsal ball with white and electric-lime (#C5F900) stitched panels and plain black panel shapes, resting on its own. Every panel is a plain colour: no emblem, word, number or printed mark anywhere on the ball.",
+  "created": "2026-11-18T04:05:19.463Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/80af08843492190fee2cdb2258af0003_1794974771396.jpg",
+  "credits": 7,
+  "done": "2026-11-18T04:06:16.185Z"
+ },
+ "p-match-handball": {
+  "model": "nano-banana-pro",
+  "taskId": "294d661c9b2939df525009efbaea80b7",
+  "prompt": "A brand-new professional match handball with a fine pebbled grip surface, stitched panels and bold angular black and electric-lime (#C5F900) panels over white, resting on its own. Every panel is a plain colour: no emblem, badge, crest, word or printed mark anywhere on the ball.",
+  "created": "2026-11-18T04:06:56.793Z",
+  "url": "https://tempfile.aiquickdraw.com/vnp/294d661c9b2939df525009efbaea80b7_0_1794974857.jpeg",
+  "credits": 18,
+  "done": "2026-11-18T04:07:41.533Z"
+ },
+ "p-training-handball": {
+  "model": "nano-banana-pro",
+  "taskId": "8c75c1c3d6062e65bf8610b70b020003",
+  "prompt": "A brand-new, clean training handball with a deep pebbled grip texture and neat stitched panels in grey and black with lime stitching, resting on its own. Unused and spotless. Every panel is a plain colour: no emblem, word or printed mark anywhere on the ball.",
+  "created": "2026-11-18T04:06:56.784Z",
+  "url": "https://tempfile.aiquickdraw.com/ggc/8c75c1c3d6062e65bf8610b70b020003_1794974852423.jpeg",
+  "credits": 18,
+  "done": "2026-11-18T04:07:40.980Z"
+ },
+ "p-junior-handball": {
+  "model": "flux-2/pro-text-to-image",
+  "taskId": "e8b9de4f4582aaf96745ac51c4a90676",
+  "prompt": "A small, soft junior handball with a smooth soft-touch outer in electric-lime (#C5F900) and white panels, resting on its own.",
+  "created": "2026-11-18T03:58:42.616Z",
+  "url": "https://tempfile.aiquickdraw.com/a2/e8b9de4f4582aaf96745ac51c4a90676_1794974494900.jpg",
+  "credits": 7,
+  "done": "2026-11-18T04:01:37.511Z"
+ }
+}
