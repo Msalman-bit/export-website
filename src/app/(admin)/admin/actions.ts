@@ -79,9 +79,11 @@ export async function mfaSetupData(): Promise<{ secret: string; qr: string; uri:
     await db.update(s.users).set({ mfaSecret: encrypt(secret) }).where(eq(s.users.id, user.id));
   }
   const uri = otpauthUri(secret, user.email);
-  // a quiet zone of four modules (the white border scanners need to find the code's corners) and a size phones
-  // read easily from a screen
-  return { secret, uri, qr: await QRCode.toDataURL(uri, { margin: 4, width: 320, errorCorrectionLevel: 'M' }) };
+  // drawn as SVG, so every square stays exactly even however the screen scales it (a pixel image shrunk to fit
+  // made them 5, 6 or 7 pixels wide, which phone scanners misread), with a two-square white border inside the frame;
+  // the lowest redundancy level keeps the code as sparse as possible, ample for a code read off a screen
+  const svg = await QRCode.toString(uri, { type: 'svg', margin: 2, errorCorrectionLevel: 'L' });
+  return { secret, uri, qr: `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}` };
 }
 
 export async function mfaConfirm(_: unknown, fd: FormData): Promise<{ message?: string }> {

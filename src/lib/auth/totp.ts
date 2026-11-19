@@ -51,5 +51,6 @@ export function verifyTotp(secret: string, code: string, at = Date.now()): boole
 }
 
 export function otpauthUri(secret: string, account: string, issuer = 'Monolith Sports'): string {
-  return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(account)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&algorithm=SHA1&digits=6&period=30`;
+  // SHA-1, 6 digits and 30 seconds are every authenticator app's defaults: left out, they only made the QR code denser
+  return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(account)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}`;
 }
