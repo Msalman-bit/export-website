@@ -5,4 +5,9 @@ Caddyfile            text eol=lf
 deploy-kit/**        text eol=lf
 .env*.example        text eol=lf
 # images and frames are never touched
-*.webp *.avif *.png *.jpg *.ico *.pdf  binary
+*.webp               binary
+*.avif               binary
+*.png                binary
+*.jpg                binary
+*.ico                binary
+*.pdf                binary
