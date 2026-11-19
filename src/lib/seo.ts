@@ -3,7 +3,8 @@ import { LOCALES, HREFLANG, type Locale } from './i18n/config';
 import { getSettings } from './data';
 
 export function siteUrl(): string {
-  return (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/, '');
+  // SITE_URL on the live site; on Render without it, the address Render gives the service
+  return (process.env.SITE_URL || process.env.RENDER_EXTERNAL_URL || 'http://localhost:3000').replace(/\/$/, '');
 }
 
 /** Title, description, canonical, hreflang alternates (indexed languages only), Open Graph and robots. */

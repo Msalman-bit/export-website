@@ -59,6 +59,8 @@ export function proxy(req: NextRequest) {
 
   const res = NextResponse.next({ request: { headers: requestHeaders } });
   res.headers.set('Content-Security-Policy', policy);
+  // a preview copy (SITE_NOINDEX=1, for example the free Render preview) is kept out of search engines
+  if (process.env.SITE_NOINDEX === '1') res.headers.set('X-Robots-Tag', 'noindex, nofollow');
   if (LOCALES.includes(first) && req.cookies.get('ms_locale')?.value !== first) {
     res.cookies.set('ms_locale', first, { path: '/', maxAge: 60 * 60 * 24 * 365, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' });
   }

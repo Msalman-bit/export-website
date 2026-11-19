@@ -1,0 +1,33 @@
+# A one-click preview of the site on Render's free plan:
+#   https://render.com/deploy?repo=https://github.com/Msalman-bit/export-website
+# It is a preview, not the live shop:
+#   - it sleeps after 15 minutes without visitors; the next visit takes about a minute to wake it
+#   - its built-in database (and any uploaded file) starts fresh whenever it wakes, restarts or updates, so
+#     inquiries, accounts and uploads made on it are not kept; the catalogue and pages always are
+#   - it is hidden from search engines (SITE_NOINDEX)
+#   - every push to main updates it
+# The real site goes on the Hostinger VPS: deploy-kit/hostinger/HOSTINGER.md.
+services:
+  - type: web
+    name: monolith-sports
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /robots.txt
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # the site's encryption key: Render generates a random one
+      - key: APP_SECRET
+        generateValue: true
+      # keep the preview out of Google and other search engines
+      - key: SITE_NOINDEX
+        value: "1"
+      # the first administrator: Render asks you for these when you create the preview
+      - key: SEED_ADMIN_EMAIL
+        sync: false
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
