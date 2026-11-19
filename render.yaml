@@ -1,9 +1,9 @@
 # A one-click preview of the site on Render's free plan:
 #   https://render.com/deploy?repo=https://github.com/Msalman-bit/export-website
 # It is a preview, not the live shop:
-#   - it sleeps after 15 minutes without visitors; the next visit takes about a minute to wake it
-#   - its built-in database (and any uploaded file) starts fresh whenever it wakes, restarts or updates, so
-#     inquiries, accounts and uploads made on it are not kept; the catalogue and pages always are
+#   - the site sleeps after 15 minutes without visitors; the next visit takes about a minute to wake it
+#   - its data is in a free Render PostgreSQL database (kept while the site sleeps; Render's free databases expire
+#     after about 30 days); files uploaded on it (logos, artwork) are not kept when it sleeps or updates
 #   - it is hidden from search engines (SITE_NOINDEX)
 #   - every push to main updates it
 # The real site goes on the Hostinger VPS: deploy-kit/hostinger/HOSTINGER.md.
@@ -13,13 +13,25 @@ services:
     runtime: node
     plan: free
     region: frankfurt
-    buildCommand: npm ci && npm run build
-    startCommand: npm start
+    # the standalone server (lighter than next start, so it fits the free plan's 512 MB) needs the browser files
+    # and the public folder beside it
+    buildCommand: npm ci && npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
+    startCommand: node .next/standalone/server.js
     healthCheckPath: /robots.txt
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
         value: "22"
+      # keep the server inside the free plan's memory
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=320
+      # the database below, reached over Render's private network
+      - key: DATABASE_URL
+        fromDatabase:
+          name: monolith-db
+          property: connectionString
+      - key: DATABASE_SSL
+        value: disable
       # the site's encryption key: Render generates a random one
       - key: APP_SECRET
         generateValue: true
@@ -31,3 +43,12 @@ services:
         sync: false
       - key: SEED_ADMIN_PASSWORD
         sync: false
+
+databases:
+  - name: monolith-db
+    plan: free
+    region: frankfurt
+    databaseName: monolith
+    user: monolith
+    # reachable only from Render's private network (the site above), never from the internet
+    ipAllowList: []

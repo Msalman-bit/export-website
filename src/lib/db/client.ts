@@ -27,7 +27,9 @@ async function open(): Promise<DB> {
     const pool = new Pool({
       connectionString: url,
       max: Number(process.env.DATABASE_POOL_MAX || 10),
-      ssl: /sslmode=disable|localhost|127\.0\.0\.1/.test(url) ? undefined : { rejectUnauthorized: false },
+      // no SSL for a database on the same private network (localhost, a Docker or Render internal address with
+      // DATABASE_SSL=disable or sslmode=disable); SSL for any other
+      ssl: /sslmode=disable|localhost|127\.0\.0\.1/.test(url) || process.env.DATABASE_SSL === 'disable' ? undefined : { rejectUnauthorized: false },
     });
     const pg = drizzle(pool, { schema });
     await migrate(pg, { migrationsFolder: MIGRATIONS });
