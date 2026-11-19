@@ -14,10 +14,12 @@ export default async function MfaSetup() {
       <header className="page-head"><h1>Set up two-factor sign-in</h1>
         <p>Every staff account signs in with a password and a code from an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password, Authy).</p></header>
       <ol className="prose" style={{ paddingLeft: '1.2em' }}>
-        <li>Scan this code with the app, or type the key below into it.</li>
+        <li>Scan this code with the app, or type the key below into it. In Microsoft Authenticator, add it as
+          <strong> Other account (Google, Facebook, etc.)</strong>, not as a work or school account.</li>
         <li>Type the six-digit code the app shows.</li>
       </ol>
-      <img className="qr" src={data.qr} alt="QR code for the authenticator app" width={200} height={200} />
+      <img className="qr" src={data.qr} alt="QR code for the authenticator app" width={240} height={240} />
+      <p className="t-small muted">Or type this key into the app (spaces do not matter):</p>
       <p className="mono">{data.secret.match(/.{1,4}/g)?.join(' ')}</p>
       <MfaForm label="Turn on two-factor sign-in" />
     </div>

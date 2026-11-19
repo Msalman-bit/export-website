@@ -79,7 +79,9 @@ export async function mfaSetupData(): Promise<{ secret: string; qr: string; uri:
     await db.update(s.users).set({ mfaSecret: encrypt(secret) }).where(eq(s.users.id, user.id));
   }
   const uri = otpauthUri(secret, user.email);
-  return { secret, uri, qr: await QRCode.toDataURL(uri, { margin: 0, width: 200 }) };
+  // a quiet zone of four modules (the white border scanners need to find the code's corners) and a size phones
+  // read easily from a screen
+  return { secret, uri, qr: await QRCode.toDataURL(uri, { margin: 4, width: 320, errorCorrectionLevel: 'M' }) };
 }
 
 export async function mfaConfirm(_: unknown, fd: FormData): Promise<{ message?: string }> {
