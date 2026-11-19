@@ -23,6 +23,10 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
+      # replaces a memory cap that used to be set here, which also held back the build; the start command caps the
+      # running site instead. (Render keeps a removed variable's old value, so it is overwritten, not just dropped.)
+      - key: NODE_OPTIONS
+        value: --no-deprecation
       # the database below, reached over Render's private network
       - key: DATABASE_URL
         fromDatabase:
