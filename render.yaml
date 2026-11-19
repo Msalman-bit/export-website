@@ -17,7 +17,9 @@ services:
     # and the public folder beside it
     buildCommand: npm ci && npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
     # the memory cap is for the running site only: the build (its type check) needs more and gets Render's default
-    startCommand: node --max-old-space-size=320 .next/standalone/server.js
+    # HOSTNAME=0.0.0.0: the standalone server listens on HOSTNAME, which Render sets to the machine's own name, so
+    # Render's front door could not reach it; 0.0.0.0 listens on every address
+    startCommand: HOSTNAME=0.0.0.0 node --max-old-space-size=320 .next/standalone/server.js
     healthCheckPath: /robots.txt
     autoDeploy: true
     envVars:
