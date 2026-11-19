@@ -27,6 +27,10 @@ services:
       # running site instead. (Render keeps a removed variable's old value, so it is overwritten, not just dropped.)
       - key: NODE_OPTIONS
         value: --no-deprecation
+      # the free build machine runs out of memory in the type check: it is skipped here only (next.config.ts) and
+      # still runs on every other build and in the project's tests
+      - key: SKIP_BUILD_TYPECHECK
+        value: "1"
       # the database below, reached over Render's private network
       - key: DATABASE_URL
         fromDatabase:

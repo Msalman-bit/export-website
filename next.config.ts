@@ -37,6 +37,10 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: { bodySizeLimit: '12mb' },
   },
+  // Render's free build machine has too little memory for the type check (SKIP_BUILD_TYPECHECK=1 in render.yaml).
+  // It changes nothing in the site: the types are still checked here (npm run typecheck, the tests) and in every
+  // other build, the Hostinger package included.
+  typescript: { ignoreBuildErrors: process.env.SKIP_BUILD_TYPECHECK === '1' },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },
