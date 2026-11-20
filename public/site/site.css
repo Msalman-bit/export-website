@@ -157,6 +157,27 @@
 @media (max-width: 1023px) { .filters { position: static; } }
 .filters fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: var(--s-2); }
 .filters legend { font-weight: 500; margin-bottom: var(--s-2); }
+/* a phone or a tablet, where the filters stack above the products (with script: html.m-enter is set before the first
+   paint, so nothing jumps), folds them into one row, "Filter (2 on)", that opens the list by height in 250ms, like the
+   homepage's market list; the products start right under it instead of 900px of checkboxes lower. Without script, or
+   from 1024px up (the filters beside the products), the list shows as before */
+.filters__toggle { display: none; }
+.filters__panel, .filters__inner { display: contents; }
+@media (max-width: 1023px) {
+  html.m-enter .filters { gap: 0; }
+  html.m-enter .filters__toggle { display: inline-flex; align-items: center; gap: var(--s-2); justify-self: start; min-height: 44px; padding: 0; border: 0; background: none;
+    font: inherit; font-weight: 500; color: var(--ink); cursor: pointer;
+    text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; text-decoration-color: var(--line-strong); }
+  html.m-enter .filters__toggle::after { content: ""; width: 8px; height: 8px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translateY(-2px); transition: transform var(--m-in) var(--m-ease); }
+  html.m-enter .filters.is-open .filters__toggle::after { transform: rotate(-135deg) translateY(-2px); }
+  html.m-enter .filters__panel { display: grid; grid-template-rows: 0fr; visibility: hidden;
+    transition: grid-template-rows 250ms var(--m-ease), visibility 0s linear 250ms; }
+  html.m-enter .filters.is-open .filters__panel { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows 250ms var(--m-ease), visibility 0s; }
+  html.m-enter .filters__inner { display: grid; gap: var(--s-5); min-height: 0; overflow: hidden; }
+  html.m-enter .filters__inner > :first-child { margin-top: var(--s-4); }
+}
+@media (prefers-reduced-motion: reduce) { .filters__panel, .filters__toggle::after { transition: none !important; } }
 .chk { display: flex; align-items: center; gap: var(--s-3); min-height: 36px; font-size: var(--t-body); cursor: pointer; }
 .chk input:not(.m-check) { width: 18px; height: 18px; accent-color: var(--ink); }
 .prod-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }

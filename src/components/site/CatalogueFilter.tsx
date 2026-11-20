@@ -17,6 +17,9 @@ export function CatalogueFilter({ locale, labels, types, constructions, products
   const [type, setType] = useState<string[]>(initial.type);
   const [construction, setConstruction] = useState<string[]>(initial.construction);
   const [studio, setStudio] = useState(initial.studio);
+  // a phone folds the filters into one row ("Filter", with the number switched on); a wider screen always shows them
+  const [open, setOpen] = useState(false);
+  const active = type.length + construction.length + (studio ? 1 : 0);
 
   const shown = useMemo(() => products.filter((p) =>
     (!type.length || type.includes(p.type)) && (!construction.length || p.constructions.some((c) => construction.includes(c))) && (!studio || p.studio)), [products, type, construction, studio]);
@@ -30,7 +33,11 @@ export function CatalogueFilter({ locale, labels, types, constructions, products
 
   return (
     <div className="cat-layout">
-      <form className="filters" method="get" aria-label="Filter products" onSubmit={(e) => e.preventDefault()}>
+      <form className={`filters${open ? ' is-open' : ''}`} method="get" aria-label="Filter products" onSubmit={(e) => e.preventDefault()}>
+        <button type="button" className="filters__toggle" aria-expanded={open} aria-controls="filters-panel" onClick={() => setOpen(!open)}>
+          Filter{active ? ` (${active} on)` : ''}
+        </button>
+        <div className="filters__panel" id="filters-panel"><div className="filters__inner">
         <fieldset>
           <legend>{labels.type}</legend>
           {types.map((o) => (
@@ -55,6 +62,7 @@ export function CatalogueFilter({ locale, labels, types, constructions, products
         {type.length || construction.length || studio ? (
           <button type="button" className="btn-text" onClick={() => { setType([]); setConstruction([]); setStudio(false); sync([], [], false); }}>Clear filters</button>
         ) : null}
+        </div></div>
       </form>
       <div className="block">
         <p className="result-count" role="status">{shown.length} {shown.length === 1 ? labels.result : labels.results}</p>

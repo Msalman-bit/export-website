@@ -22,8 +22,10 @@ export async function generateMetadata({ params }: Props) {
   });
 }
 
-/* A family's landing page: its story, then every product with filters for type and construction.
-   The filters work without script (a GET form) and instantly with it (CatalogueFilter). */
+/* A family's landing page: the products first (the name, one line, then every product with filters for type and
+   construction), the family's longer story and photograph after them, where a buyer who wants more reads on and
+   search engines still find it. The filters work without script (a GET form) and instantly with it
+   (CatalogueFilter); on a phone they fold into one row. */
 export default async function FamilyPage({ params, searchParams }: Props) {
   const locale = await localeFrom(params);
   const { family } = await params;
@@ -39,17 +41,11 @@ export default async function FamilyPage({ params, searchParams }: Props) {
     studio: sp.studio === '1',
   };
   return (
-    <PageShell locale={locale} crumbs={[{ name: t['nav.products'], path: '/products' }, { name: f.name, path: `/products/${f.slug}` }]} enter="media">
-      <div className="split-page">
-        <header className="page-head">
-          <h1>{f.name}</h1>
-          <p>{f.summary}</p>
-          <p className="t-body">{f.body}</p>
-        </header>
-        <figure className="split-page__media" style={{ aspectRatio: '4 / 3', position: 'static' }}>
-          <Img url={f.image?.url} alt={f.image?.alt ?? f.name} sizes="(max-width: 1023px) 100vw, 520px" prefer={960} eager />
-        </figure>
-      </div>
+    <PageShell locale={locale} crumbs={[{ name: t['nav.products'], path: '/products' }, { name: f.name, path: `/products/${f.slug}` }]} enter="content">
+      <header className="page-head">
+        <h1>{f.name}</h1>
+        <p>{f.summary}</p>
+      </header>
       <CatalogueFilter
         locale={locale}
         labels={{ type: t['filter.type'], construction: t['filter.construction'], studio: t['filter.studio'], result: t['filter.result'], results: t['filter.results'], all: t['filter.all'] }}
@@ -62,6 +58,22 @@ export default async function FamilyPage({ params, searchParams }: Props) {
           href: `/${locale}/products/${f.slug}/${p.slug}`, image: p.images[0] ?? null,
         }))}
       />
+      {f.body || f.image ? (
+        <section className="block fam-about" aria-labelledby="fam-about-h">
+          <div className="split-page">
+            <div className="block">
+              {/* "About football equipment": the first letter lowered only for an ordinary word, never an acronym */}
+              <h2 id="fam-about-h">About {/^[A-Z][a-z]/.test(f.name) ? f.name.charAt(0).toLowerCase() + f.name.slice(1) : f.name}</h2>
+              {f.body ? <p className="t-body">{f.body}</p> : null}
+            </div>
+            {f.image ? (
+              <figure className="split-page__media" style={{ aspectRatio: '4 / 3', position: 'static' }}>
+                <Img url={f.image.url} alt={f.image.alt ?? f.name} sizes="(max-width: 1023px) 100vw, 520px" prefer={960} />
+              </figure>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
     </PageShell>
   );
 }
