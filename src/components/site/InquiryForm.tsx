@@ -60,6 +60,33 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
     return e;
   };
 
+  /* Inline checks (not only on send): a field is checked as the visitor leaves it, once they have typed in it
+     or changed it, and a shown error updates or clears the moment it is fixed. A field that was only passed
+     through is never marked, so an empty form is not scolded before anyone has started. */
+  const touched = useRef(new Set<string>());
+  const recheck = (also: string[] = []) => {
+    if (!formRef.current) return;
+    const e = validate(new FormData(formRef.current));
+    const next: Record<string, string> = {};
+    for (const k of [...Object.keys(errors), ...also]) if (e[k]) next[k] = e[k];
+    setErrors(next);
+    // the count under the form follows the fixes ("3 fields to fix.", then nothing once all are right)
+    const n = Object.keys(next).length;
+    if (/to fix|needs a change/.test(status)) setStatus(n === 0 ? '' : n === 1 ? '1 field to fix.' : `${n} fields to fix.`);
+  };
+  const leave = (ev: React.FocusEvent<HTMLFormElement>) => {
+    const name = (ev.target as unknown as HTMLInputElement).name;
+    if (name && name !== 'mode' && touched.current.has(name)) recheck([name]);
+  };
+  const edit = (ev: React.FormEvent<HTMLFormElement>) => {
+    const name = (ev.target as unknown as HTMLInputElement).name;
+    if (!name || name === 'mode') return;
+    touched.current.add(name);
+    if (Object.keys(errors).length) recheck();
+  };
+  // a product quantity changes the list (state), not a form field: an error on it is rechecked once it has
+  useEffect(() => { if (Object.keys(errors).some((k) => k.startsWith('items.'))) recheck(); }, [items]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const focusFirst = (e: Record<string, string>) => {
     const first = Object.keys(e)[0];
     const el = formRef.current?.querySelector<HTMLElement>(`[name="${first}"], #${CSS.escape(first.replace(/\./g, '-'))}`);
@@ -116,7 +143,7 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
   };
 
   return (
-    <form ref={formRef} className="block" onSubmit={submit} noValidate>
+    <form ref={formRef} className="block" onSubmit={submit} onBlur={leave} onInput={edit} noValidate>
       {initialMode === 'quote' || initialMode === 'sample' ? (
         <fieldset className="seg" aria-label="Request type">
           <label><input type="radio" name="mode" value="quote" checked={mode === 'quote'} onChange={() => setMode('quote')} /><span>Quotation for a bulk order</span></label>

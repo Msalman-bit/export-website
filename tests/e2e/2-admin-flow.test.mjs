@@ -53,6 +53,7 @@ test('staff sign-in with two-factor, then quotation, order, production and shipm
   if (page.status === 200) {
     secret = page.html.match(/class="mono">([A-Z2-7 ]+)</)?.[1].replace(/\s/g, '');
     assert.ok(secret, 'the setup page shows the key');
+    fs.mkdirSync('.taste-skill', { recursive: true }); // a fresh copy has no such folder yet
     fs.writeFileSync(MFA_FILE, secret);
     r = await submit('/admin/mfa/setup', page.html, 'Turn on two-factor sign-in', { code: totp(secret) });
   } else {

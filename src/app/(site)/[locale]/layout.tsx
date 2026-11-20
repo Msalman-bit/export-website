@@ -1,4 +1,5 @@
 import Script from 'next/script';
+import { KIT_VERSION } from '@/lib/kit-version';
 import { headers, cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { localeFrom, getDict } from '@/lib/i18n/server';
@@ -28,7 +29,9 @@ const ROOT = `:root {
   --ly-scale: 0.9;
 }`;
 
-const ENTER = "document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)";
+// m-enter: the hero's one entrance. The empty touchstart listener makes iOS Safari show :active, so a button
+// answers the moment a finger lands on it, as it does under a mouse (iOS skips :active without one).
+const ENTER = "document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700);document.addEventListener('touchstart',function(){},{passive:true})";
 const HERO_SEQ = "try{if(matchMedia('(prefers-reduced-motion: no-preference)').matches&&(innerWidth<640||innerHeight>=420)){document.documentElement.classList.add('hero-seq');var c=navigator.connection,s=c&&c.saveData?'sm':innerWidth>=1024?'lg':(devicePixelRatio||1)>=1.5?'md':'sm',l=document.createElement('link');l.rel='preload';l.as='image';l.href='/assets/img/hero-film/'+s+'/0001.avif';l.type='image/avif';l.setAttribute('fetchpriority','high');document.head.appendChild(l)}}catch(e){}";
 const MO = "document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)";
 
@@ -54,7 +57,7 @@ export default async function SiteLayout({ children, params }: { children: React
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..600&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="/assets/system.css" />
+        <link rel="stylesheet" href={`/assets/system.css?v=${KIT_VERSION}`} />
         <link rel="stylesheet" href="/assets/ui/cards.css" />
         <link rel="stylesheet" href="/assets/motion/motion.css" />
         <link rel="stylesheet" href="/assets/backgrounds/backgrounds.css" />
@@ -87,7 +90,7 @@ export default async function SiteLayout({ children, params }: { children: React
             </Script>
           </>
         ) : null}
-        <Script src="/assets/system.js" type="module" strategy="afterInteractive" nonce={nonce} />
+        <Script src={`/assets/system.js?v=${KIT_VERSION}`} type="module" strategy="afterInteractive" nonce={nonce} />
         <Script src="/assets/motion/motion.js" type="module" strategy="afterInteractive" nonce={nonce} />
         <Script src="/assets/layout/layout.js" type="module" strategy="afterInteractive" nonce={nonce} />
       </body>

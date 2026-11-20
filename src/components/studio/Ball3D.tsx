@@ -71,11 +71,19 @@ export function Ball3D({ look, onFail, onReady }: { look: BallLook; onFail: () =
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; });
     io.observe(el);
     const render = () => renderer.render(scene, camera);
+    // the slow turn gives way to the hand: it stops while the ball is held (the drag keeps its own momentum,
+    // OrbitControls' damping) and eases back in 1.5 s after it is let go, never jumping to full speed
+    const TURN = 0.25;
+    let held = false, resumeAt = 0, turn = still ? 0 : TURN;
+    controls.addEventListener('start', () => { held = true; turn = 0; }); // it stops under the finger at once
+    controls.addEventListener('end', () => { held = false; resumeAt = performance.now() + 1500; });
     const tick = (t: number) => {
       raf = requestAnimationFrame(tick);
       const dt = Math.min(0.05, (t - last) / 1000); last = t;
       if (!visible) return;
-      if (!still) ball.rotation.y += dt * 0.25;
+      const want = still || held || t < resumeAt ? 0 : TURN;
+      turn += (want - turn) * Math.min(1, dt * 1.5); // eases back up to speed over about two seconds
+      ball.rotation.y += dt * turn;
       controls.update();
       render();
     };

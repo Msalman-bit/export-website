@@ -750,3 +750,53 @@ html.hero-seq .hero--scroll .hero__lead { position: absolute; width: 1px; height
   html.hero-seq .hero--scroll .hero-chapters { max-width: min(34rem, 46vw); }
   html.hero-seq .hero--scroll .hero-chapter__text { max-width: min(30rem, 42vw); }
 }
+
+/* ---------------------------------------------------------------- touch, materials, contrast (Apple design pass)
+   A tap answers with the site's own press state (motion.css), never the browser's grey flash; a control has no
+   double-tap-to-zoom wait; a long press on a button does not select its label or open the link callout. */
+a, button, input, select, textarea, label, summary, [role="button"] { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.btn, .nav__toggle, .nav__expand, .gallery__thumbs button { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
+/* the phone menu sheet comes down out of the bar and goes back up into it (system.js holds .is-closing for 140ms
+   before taking it away); the links drop 8px, the actions rise 8px from the bottom; scrolling the sheet never
+   carries on into the page under it */
+@media (max-width: 1023px) {
+  .nav.is-open :is(.nav__links, .nav__actions) {
+    overscroll-behavior: contain;
+    transition: opacity var(--m-panel, 200ms) var(--m-ease, ease-out), transform var(--m-panel, 200ms) var(--m-ease, ease-out);
+  }
+  @starting-style {
+    .nav.is-open .nav__links { opacity: 0; transform: translateY(-8px); }
+    .nav.is-open .nav__actions { opacity: 0; transform: translateY(8px); }
+  }
+  .nav.is-closing .nav__links { opacity: 0; transform: translateY(-8px); }
+  .nav.is-closing .nav__actions { opacity: 0; transform: translateY(8px); }
+  .nav.is-closing :is(.nav__links, .nav__actions) { transition-duration: var(--m-close, 120ms); pointer-events: none; }
+}
+/* reduced motion: the sheet fades in and out where it stands */
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  @starting-style { .nav.is-open :is(.nav__links, .nav__actions) { transform: none; } }
+  .nav.is-closing :is(.nav__links, .nav__actions) { transform: none; }
+}
+
+/* reduced transparency: the hero's glass step backing turns solid */
+@media (prefers-reduced-transparency: reduce) {
+  html.hero-seq .hero-steps { background: #0c0c0e; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* more contrast: secondary text darker on white and lighter on black, hairlines and outlines firmer */
+@media (prefers-contrast: more) {
+  :root { --p-muted: #3d3d3d; --p-inv-muted: #c8c8c8; }
+  :root, .ground-base, .ground-surface, .ground-inverse {
+    --line: color-mix(in oklab, var(--ink) 30%, transparent);
+    --line-strong: color-mix(in oklab, var(--ink) 55%, transparent);
+  }
+  .btn--secondary { border-color: currentColor; }
+  html.hero-seq .hero-steps { background: #0c0c0e; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* the zoomed product photo on a touch screen: it follows the finger (Gallery.tsx), so the page does not scroll */
+.gallery__main.is-zoomed.is-touch { touch-action: none; cursor: grabbing; }
+/* the gallery hint speaks to the hand in use: a pointer clicks and moves, a finger taps and drags */
+.gallery__hint-touch { display: none; }
+@media (hover: none) { .gallery__hint-fine { display: none; } .gallery__hint-touch { display: inline; } }

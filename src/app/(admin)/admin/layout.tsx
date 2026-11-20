@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { KIT_VERSION } from '@/lib/kit-version';
 import { readSession } from '@/lib/auth/session';
 import { can, ROLE_LABELS, type Permission } from '@/lib/auth/rbac';
 import type { StaffRole } from '@/lib/db/schema';
@@ -34,7 +35,9 @@ const NAV: { path: string; label: string; perm?: Permission; group: string }[] =
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await readSession('staff');
-  const path = (await headers()).get('x-pathname') ?? '/admin';
+  const h = await headers();
+  const path = h.get('x-pathname') ?? '/admin';
+  const nonce = h.get('x-nonce') ?? undefined;
   const signedIn = !!user?.session.mfaVerified;
   const items = NAV.filter((n) => !n.perm || (user && can(user.role, n.perm)));
   const groups = [...new Set(items.map((i) => i.group))];
@@ -45,10 +48,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..600&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="/assets/system.css" />
+        <link rel="stylesheet" href={`/assets/system.css?v=${KIT_VERSION}`} />
         <style>{ROOT}</style>
         <link rel="stylesheet" href="/site/site.css" />
         <link rel="stylesheet" href="/site/admin.css" />
+        {/* iOS Safari shows :active (the press) only once a touchstart listener exists */}
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: "document.addEventListener('touchstart',function(){},{passive:true})" }} />
       </head>
       <body className="admin">
         {signedIn ? (

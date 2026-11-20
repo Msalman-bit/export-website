@@ -67,3 +67,10 @@ body.admin { background: var(--surface); }
   border-radius: var(--r-md); background: color-mix(in oklab, #b3261e 5%, var(--bg)); }
 .btn--danger { background: #b3261e; color: #fff; border-color: #b3261e; }
 .btn--danger:hover { background: #8f1e18; border-color: #8f1e18; }
+
+/* a press answers at once (the public site's motion layer is not loaded here): buttons dip 1.5% for 90ms;
+   under reduced motion they only darken */
+.btn { transition: transform 90ms cubic-bezier(.2, .8, .2, 1), background-color 120ms ease, border-color 120ms ease; }
+.btn:active { transform: scale(.985); }
+.btn--primary:active { background: color-mix(in oklab, var(--action) 80%, var(--bg)); }
+@media (prefers-reduced-motion: reduce) { .btn:active { transform: none; } }

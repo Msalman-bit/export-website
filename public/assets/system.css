@@ -63,19 +63,21 @@
   --card-pad: 16px;     /* card padding (cards.css sets its own for cards with a panel) */
   --card-gap: 16px;     /* gap between cards */
 
-  /* type scale (the only sizes on the page) */
-  --t-label: 13px;
-  --t-small: 14px;
-  --t-body: 16px;
-  --t-lead: 18px;
-  --t-card: 18px;
-  --t-h3: 24px;
-  /* straight lines from the phone size at 390 to the desktop size at 1440 (system.md's table) */
-  --t-h2: clamp(30px, 1.72vw + 23.3px, 48px);
-  --t-h1: clamp(38px, 3.24vw + 25.4px, 72px);
+  /* type scale (the only sizes on the page), in rem: at the browser's default text size (16px) these are
+     13 / 14 / 16 / 18 / 18 / 24px exactly, and they grow with a visitor's own larger text setting */
+  --t-label: 0.8125rem;
+  --t-small: 0.875rem;
+  --t-body: 1rem;
+  --t-lead: 1.125rem;
+  --t-card: 1.125rem;
+  --t-h3: 1.5rem;
+  /* straight lines from the phone size at 390 to the desktop size at 1440 (system.md's table):
+     30 to 48px for the h2, 38 to 72px for the h1 at the default text size */
+  --t-h2: clamp(1.875rem, 1.72vw + 1.456rem, 3rem);
+  --t-h1: clamp(2.375rem, 3.24vw + 1.5875rem, 4.5rem);
   /* a big number stays a step under the h2 (VI-11): 38 at 1440, 28 at 390, so it never reads as a
      section heading; a stats row and a price set their own, smaller still */
-  --t-stat: clamp(28px, .952vw + 24.29px, 38px);
+  --t-stat: clamp(1.75rem, .952vw + 1.518rem, 2.375rem);
 
   /* radius: one scale (soft by default; data-radius on <html> switches it) */
   --r-sm: 8px;  --r-md: 12px; --r-lg: 20px; --r-btn: 8px;
