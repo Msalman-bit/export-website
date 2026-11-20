@@ -191,10 +191,11 @@
    it arrives a beat after the rest: it fades in over 200ms instead of popping in (opacity only, so reduced motion keeps it) */
 .form-section > :is(.empty, .basket, .basket__none) { transition: opacity 200ms var(--m-ease); }
 @starting-style { .form-section > :is(.empty, .basket, .basket__none) { opacity: 0; } }
-/* an empty list is one quiet line under the search, not a second box inside the Products box */
-.basket__none { margin: 0; font-size: var(--t-small); line-height: 1.6; color: color-mix(in oklab, var(--muted) 75%, var(--ink)); }
-.basket__none .link { display: inline; font-weight: 500; }
-.basket__none .link::after { content: none; }   /* a link inside a sentence: underlined, no arrow */
+/* an empty list: one quiet line under the search, and "Browse the catalogue" on its own line in the site's one link look
+   (underline, arrow; 44px tall on a phone, as the kit makes every link), its left edge on the text's; no second box
+   inside the Products box */
+.basket__none { display: grid; justify-items: start; gap: var(--s-2); }
+.basket__none p { margin: 0; font-size: var(--t-small); line-height: 1.6; color: color-mix(in oklab, var(--muted) 75%, var(--ink)); }
 /* the quote form's "Add a product": the matches drop out of the box under it (150ms, from 4px up; opacity only under
    reduced motion), each a 52px row with its picture, name, type and code */
 .picker__box { position: relative; }
