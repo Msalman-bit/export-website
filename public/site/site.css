@@ -143,6 +143,8 @@
 .split-page { display: grid; gap: var(--s-8); grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; }
 .split-page__media { margin: 0; overflow: clip; border-radius: var(--r-lg); aspect-ratio: 4 / 5; background: var(--surface); position: sticky; top: calc(var(--nav) + var(--s-6)); }
 .split-page__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* two equal columns (the product page's description and specification); one column from the tablet down */
+.split-page--even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 @media (max-width: 1023px) { .split-page { grid-template-columns: 1fr; } .split-page__media { position: static; aspect-ratio: 4 / 3; } }
 
 /* catalogue */
@@ -164,6 +166,10 @@
 .tile .sku { font-size: var(--t-label); color: var(--muted); font-variant-numeric: tabular-nums; }
 .result-count { color: var(--muted); font-size: var(--t-small); }
 .empty { padding: var(--s-7); border: 1px solid var(--line); border-radius: var(--r-lg); display: grid; gap: var(--s-3); justify-items: start; }
+/* the quote form's product list (or its empty note) is read from this browser's saved list after the page loads, so
+   it arrives a beat after the rest: it fades in over 200ms instead of popping in (opacity only, so reduced motion keeps it) */
+.form-section > :is(.empty, .basket) { transition: opacity 200ms var(--m-ease); }
+@starting-style { .form-section > :is(.empty, .basket) { opacity: 0; } }
 
 /* product detail */
 .pdp { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-8); align-items: start; }
@@ -200,7 +206,7 @@
 .buy__actions { display: grid; gap: var(--s-3); }
 .buy__actions .btn { width: 100%; }
 .buy__row { display: flex; gap: var(--s-3); align-items: end; }
-.buy__row .field { flex: 0 0 140px; }
+.buy__row .field { flex: 0 1 140px; min-width: 0; }   /* shrinks on a 320px phone, where 140px beside the button ran 29px past the screen */
 .buy__row .btn { flex: 1 1 auto; }
 .status-line { font-size: var(--t-small); min-height: 1.5em; }
 .status-line__msg { display: inline-block; transition: opacity 200ms var(--m-ease), transform 200ms var(--m-ease); }
@@ -224,6 +230,9 @@
 .field input[type="file"] { padding: var(--s-3); height: auto; }
 .form-section { display: grid; gap: var(--s-5); padding: var(--s-7); border: 1px solid var(--line); border-radius: var(--r-lg); }
 .form-section > h2 { font-size: var(--t-h3); }
+/* a phone: the form's boxes (and the empty-list box inside one) pad 24px, not 48px, so two boxes deep still fit a
+   320px screen (at 48px each the quote form ran 45px past it) */
+@media (max-width: 639px) { .form-section, .empty { padding: var(--s-5); } }
 .notice { padding: var(--s-5); border-left: 3px solid var(--ink); background: var(--surface); display: grid; gap: var(--s-2); }
 .notice--ok { border-left-color: var(--ink); }
 .notice--error { border-left-color: #b3261e; }
@@ -268,10 +277,22 @@
 .swatch { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-strong); cursor: pointer; padding: 0; background: var(--sw); position: relative; }
 .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink); }
 .seg { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+/* a file field is as wide as its "Choose files / No file chosen" by default (337px): on a 320px phone it pushed the
+   quote form past the screen; it takes its column's width instead */
+.field input[type="file"] { width: 100%; max-width: 100%; min-width: 0; }
 .seg label { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--r-sm); cursor: pointer; font-size: var(--t-body); }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
 .seg input:checked + span { font-weight: 500; }
 .seg label:has(input:checked) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+/* the request-type options answer like the other buttons and the gallery's thumbnails: the outline moves over in
+   120ms (150ms on a pointer's hover), a press sinks 3% in 90ms; under reduced motion only the colours change */
+.seg label { box-shadow: inset 0 0 0 0 var(--ink);
+  transition: border-color var(--m-out) var(--m-ease), box-shadow var(--m-out) var(--m-ease), transform var(--m-press) var(--m-ease); }
+@media (hover: hover) and (pointer: fine) {
+  .seg label:hover:not(:has(input:checked)) { border-color: color-mix(in oklab, var(--ink) 40%, transparent); transition-duration: var(--m-in), var(--m-in), var(--m-press); }
+}
+.seg label:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) { .seg label:active { transform: none; } }
 .seg label:has(input:focus-visible) { outline: 2px solid var(--action); outline-offset: 2px; }
 
 /* account and portal */
@@ -300,9 +321,11 @@
 .msg--staff { background: var(--bg); border: 1px solid var(--line); }
 .msg__meta { font-size: var(--t-small); color: var(--muted); }
 
-/* ---------- the pinned chapters at rest (640 to 1023): exactly two screens ---------- */
+/* ---------- a tablet (640 to 1023): every section ends on its content. Held to whole screens, the shorter ones
+   (the brand intro, the eight steps at rest, the quality band) left 450 to 850px of empty page under their content;
+   now the gap between sections is the sections' own padding ---------- */
 @media (min-width: 640px) and (max-width: 1023px) {
-  main > #process[data-moment="pinned-chapters"]:not(.is-live) { min-height: 200svh; }
+  main > section.section:not(.hero), main > #process[data-moment="pinned-chapters"]:not(.is-live) { min-height: 0; }
 }
 
 /* ---------- 320 to 359: the bar and the big button fit the narrowest phones ---------- */
@@ -313,6 +336,22 @@
   .closing__cta .btn--xl { font-size: 18px; padding-inline: var(--s-4); }
 }
 .footer__langs { margin-top: var(--s-2); flex-wrap: wrap; }
+/* the secondary action is a text link: its 8px side padding moves into the row's gap, so when a narrow column wraps
+   it under the main button (the FAQ at 1024) its words still start on the column's left line, not 8px in */
+@media (min-width: 640px) {
+  html:is([data-buttons="arrow"], [data-buttons="block"]) .btn-row { column-gap: calc(var(--s-3) + var(--s-2)); }
+  html:is([data-buttons="arrow"], [data-buttons="block"]) .btn-row > .btn--secondary { padding-inline: 0; }
+}
+/* touch screens (the tablet down): every small link a finger can hit, 44px tall. The language codes are 44px boxes
+   with their letters on the column's left line; the breadcrumb's rows are 44px; the filter rows 44px */
+@media (max-width: 1023px) {
+  .footer__langs { gap: 0; }
+  .footer__langs a { display: inline-flex; align-items: center; min-width: 44px; min-height: 44px; }
+  .crumbs { row-gap: 0; }
+  .crumbs li { display: flex; align-items: center; min-height: 44px; }
+  .crumbs a { display: inline-flex; align-items: center; min-height: 44px; }
+  .chk { min-height: 44px; }
+}
 
 /* ---------- round 2: the map larger on small laptops, air between tile rows on tablets, no film on phones ---------- */
 @media (min-width: 1024px) and (max-width: 1279px) {
@@ -373,7 +412,6 @@
 .quality__text { justify-items: start; }
 /* the phone: these sections hold two screens */
 @media (max-width: 639px) {
-  #terms, #faq { --hm: 2; }
   .side-photo { aspect-ratio: 16 / 9; }
   .quality__photo { height: 260px; }
 }
@@ -462,6 +500,29 @@ html.hero-seq main > section.hero--scroll .hero__media { min-height: 0; }
 @media (max-height: 760px) {
   html.hero-seq main > section.hero--scroll { --hgap: 16px; --hpadb: 16px; }
 }
+/* on a phone the film's black frame runs edge to edge: from the header's lower border to the foot of the
+   screen, square corners, no margin at the sides; the words keep the page's 24px gutter (in line with the
+   logo) and clear the home bar at the bottom */
+@media (max-width: 639px) {
+  :root main > section.hero.hero--film { --hgap: 0px; --hpadb: 0px; }
+  main > section.hero.hero--film > .wrap { width: 100%; }
+  .hero--film .hero__media { border-radius: 0; }
+  .hero--film .hero__over { padding: var(--s-6) var(--gut) calc(var(--s-6) + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* ---------- a desktop (1024 up): each section's last picture takes what its screen leaves, as the range's picture
+   does, so every section's content ends on its bottom padding and the gap between sections is one gap (it ran 188
+   to 354px, depending on how far short of its screen each section's content stopped) ---------- */
+@media (min-width: 1024px) {
+  main > #about .trio { flex: 1 1 auto; min-height: 0; grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+  main > #about .trio > figure { height: auto; min-height: 240px; }
+  main > #quality .quality__photo { flex: 1 1 auto; height: auto; min-height: 260px; }
+  main > #terms > .wrap.terms-split, main > #faq > .wrap.faq-split { grid-template-rows: minmax(0, 1fr); }
+  main > #faq .faq-split__text { align-self: stretch; }
+  main > #faq .side-photo--faq { flex: 1 1 auto; aspect-ratio: auto; min-height: 220px; }
+  main > #markets .export { flex: 1 1 auto; align-items: center; }
+  /* (the customise picture keeps its 4:3: taller, its crop lost one of its four footballs) */
+}
 
 /* ---------- the range as an index: one picture beside the ten families. The first family's picture
    shows at rest; pointing at (or tabbing to) a family brings up its own. On a tablet and a phone the
@@ -544,7 +605,9 @@ html.hero-seq main > section.hero--scroll .hero__media { min-height: 0; }
    screen's foot (the bottom padding every section keeps), so the screen ends where its content ends and the
    gap to the next section is the page's one gap */
 @media (min-width: 1024px) {
-  main #process[data-moment].is-live > .mo-pc__grid { align-items: stretch; grid-template-rows: minmax(0, 1fr); padding-bottom: calc(var(--padb) + var(--bar, 0px)); }
+  /* flex: none: from 1024 to 1279 the kit's section column (flex: 1 0 auto on the .wrap) stretched the held screen to
+     the section's two screens, so the picture frame ran 1344px tall and its photographs were blown up 1.9x */
+  main #process[data-moment].is-live > .mo-pc__grid { flex: none; align-items: stretch; grid-template-rows: minmax(0, 1fr); padding-bottom: calc(var(--padb) + var(--bar, 0px)); }
   main #process[data-moment].is-live .mo-pc__text { align-self: start; }
   main #process[data-moment].is-live .mo-pc__visuals { aspect-ratio: auto; height: 100%; max-height: none; }
 }
@@ -573,11 +636,14 @@ html.hero-seq main > section.hero--scroll .hero__media { min-height: 0; }
    (the sections' padding) instead of an empty band under a short one ---------- */
 @media (max-width: 639px) {
   main > #terms > .wrap.terms-split, main > #faq > .wrap.faq-split, main > #customise > .wrap { display: flex; flex-direction: column; align-items: stretch; row-gap: 0; }
-  main > #terms .side-photo--tall { flex: 1 1 auto; aspect-ratio: auto; min-height: 220px; }
+  /* the pricing and FAQ photographs: one upright 4:5 shape, never taller than the screen (stretched to fill two
+     screens they ran 700 to 950px tall); the two sections end on their content */
+  main > #terms .side-photo--tall { flex: none; aspect-ratio: 4 / 5; min-height: 0; }
+  main > #terms .side-photo--tall img { object-position: 50% 22%; }   /* the whole hexagon panel above the swatches */
   main > #faq .faq-split__text { display: contents; }
   main > #faq .faq-split__text > .section-head { order: 1; }
   main > #faq .faq { order: 2; margin-top: var(--s-6); }
-  main > #faq .side-photo--faq { order: 3; flex: 1 1 auto; aspect-ratio: auto; min-height: 220px; margin-top: var(--s-6); }
+  main > #faq .side-photo--faq { order: 3; flex: none; aspect-ratio: 4 / 5; min-height: 0; margin-top: var(--s-6); }
   main > #faq .faq-split__text > .btn-row { order: 4; margin-top: var(--s-6); }
   main > #customise .develop { flex: 1 1 auto; min-height: 220px; margin-top: var(--s-6); }
   main > #customise .develop img { height: 100%; object-fit: cover; }
@@ -653,6 +719,8 @@ html.hero-seq main > section.hero--scroll .hero__media { min-height: 0; }
   transition: opacity 520ms var(--m-ease) calc(var(--i) * 22ms), transform 760ms var(--m-ease-enter) calc(var(--i) * 22ms),
               filter 520ms var(--m-ease) calc(var(--i) * 22ms);
 }
+/* a printed page shows every word, whatever was scrolled to */
+@media print { .tw-wait .tw__in, .tl-wait .tl__c { opacity: 1; transform: none; filter: none; transition: none; } }
 
 /* primary links: the label rolls up and its copy rolls in from below; out faster than in */
 .roll { display: inline-grid; overflow: clip; vertical-align: top; line-height: 1.25; }
@@ -803,6 +871,10 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
 @media (prefers-reduced-transparency: reduce) {
   html.hero-seq .hero-steps { background: #0c0c0e; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
+
+/* small grey notes (a form's privacy line, a date, a menu's second line): at the small size the palette's grey read
+   5.4:1 on white; a quarter of the ink brings them past 7:1 (on a dark ground the same mix lightens them) */
+.t-small.muted { color: color-mix(in oklab, var(--muted) 75%, var(--ink)); }
 
 /* more contrast: secondary text darker on white and lighter on black, hairlines and outlines firmer */
 @media (prefers-contrast: more) {

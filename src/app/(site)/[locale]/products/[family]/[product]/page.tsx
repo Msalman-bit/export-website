@@ -83,7 +83,7 @@ export default async function ProductPage({ params }: Props) {
         </div>
       </div>
 
-      <div className="split-page" style={{ gridTemplateColumns: 'minmax(0, 6fr) minmax(0, 6fr)' }}>
+      <div className="split-page split-page--even">
         <section className="block" aria-labelledby="desc-h">
           <h2 id="desc-h">About this product</h2>
           <div className="prose"><p>{p.description}</p></div>

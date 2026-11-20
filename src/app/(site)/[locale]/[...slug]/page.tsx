@@ -16,6 +16,15 @@ type Params = { params: Promise<{ locale: string; slug: string[] }> };
 const one = async (p: Params['params']) => { const { slug } = await p; return slug.length === 1 ? slug[0] : ''; };
 
 const SECTION_NAME: Record<string, string> = { company: 'About', manufacturing: 'Manufacturing', support: 'Support', legal: 'Legal' };
+/* what each content page's picture shows (the same words the homepage uses for the same picture), for screen
+   readers and image search; a picture without an entry stays decorative */
+const IMAGE_ALT: Record<string, string> = {
+  'intro-stitching': 'A curved needle pulling waxed white thread through the edges of a white hexagon and a black pentagon',
+  'process-prototype': 'A finished sample football beside die-cut panels, a steel ruler and calipers',
+  'process-packing': 'Export cartons stacked on a wrapped pallet with deflated footballs packed in polybags',
+  'custom-embroidery': 'An embroidered chevron emblem in silver and lime thread on black jersey fabric',
+  'custom-football': 'A football printed in navy and crimson panels with a geometric shield emblem',
+};
 const FORMS: Record<string, 'contact' | 'distributor' | 'partnership'> = {
   contact: 'contact', 'become-a-distributor': 'distributor', partnerships: 'partnership',
 };
@@ -73,7 +82,7 @@ export default async function ContentPage({ params }: Params) {
           {form ? <LeadForm locale={locale} type={form} /> : null}
           {form && process.env.TURNSTILE_SITE_KEY ? <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" nonce={(await headers()).get('x-nonce') ?? undefined} /> : null}
         </div>
-        {image ? <figure className="split-page__media"><Img url={`gen:${image}`} alt={page.title} sizes="(max-width: 1023px) 100vw, 520px" prefer={960} decorative /></figure> : null}
+        {image ? <figure className="split-page__media"><Img url={`gen:${image}`} alt={IMAGE_ALT[image] ?? ''} sizes="(max-width: 1023px) 100vw, 520px" prefer={960} decorative={!IMAGE_ALT[image]} /></figure> : null}
       </div>
     </PageShell>
   );

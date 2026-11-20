@@ -247,7 +247,9 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
         {turnstileKey ? <div className="cf-turnstile" data-sitekey={turnstileKey} /> : null}
         {errors.form ? <p className="err">{errors.form}</p> : null}
         <div className="btn-row"><button className="btn btn--primary" type="submit" aria-busy={busy || undefined} disabled={busy}>{BUTTON[mode]}</button></div>
-        <p className="status-line" role="status">{status}</p>
+        {/* keyed by its words: a new message arrives (fades in and rises 6px), the same one repeated while a field is
+            being fixed stays still */}
+        <p className="status-line" role="status">{status ? <span key={status} className="status-line__msg">{status}</span> : null}</p>
         <p className="t-small muted">You get a reference number at once and a copy by email. We use these details only to answer this request (<a className="link" href={`/${locale}/privacy`}>privacy policy</a>).</p>
       </section>
     </form>

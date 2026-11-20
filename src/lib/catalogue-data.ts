@@ -46,7 +46,7 @@ export const CATALOGUE: SeedFamily[] = [
         summary: 'A ball for daily sessions at clubs, academies and schools, quoted by the hundred.',
         description: 'Training balls are ordered in volume and take the most wear, so the quotation sets the outer material and the stitching to the surface they will be used on: grass, artificial turf or hard courts.',
         construction: 'Machine-stitched or hand-stitched', branding: BALL_BRANDING, packaging: BALL_PACKING } },
-      { slug: 'thermally-bonded-footballs', name: 'Thermally bonded footballs', product: { name: 'Thermally bonded football', code: 'FB-TBD', image: 'p-thermo-football', studio: 'football',
+      { slug: 'thermally-bonded-footballs', name: 'Thermally bonded footballs', product: { name: 'Thermally bonded football', code: 'FB-THB', image: 'p-thermo-football', studio: 'football',
         summary: 'Panels joined by heat and adhesive instead of thread, for a smooth, closed surface.',
         description: 'In a thermally bonded ball the panels are bonded to the carcass rather than sewn, so there are no stitch holes on the surface. Panel shapes are free of the classic 32-panel pattern, which leaves room for your own design.',
         construction: 'Thermally bonded panels', branding: BALL_BRANDING, packaging: BALL_PACKING } },

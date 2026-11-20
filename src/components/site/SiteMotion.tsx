@@ -80,15 +80,33 @@ function revealType() {
     splitLetters(el); el.classList.add('tl-wait'); waiting.push(el);
   });
   if (!waiting.length) return () => {};
+  const show = (el: Element) => { el.classList.add('is-in'); io.unobserve(el); };
   const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      e.target.classList.add('is-in');
-      io.unobserve(e.target);
-    }
+    for (const e of entries) if (e.isIntersecting) show(e.target);
   }, { rootMargin: '0px 0px -12% 0px' });
   waiting.forEach((el) => io.observe(el));
-  return () => io.disconnect();
+  // a second way in, so no heading word stays hidden if the observer never reports (an old in-app browser, a page
+  // restored from the background): on scroll, any waiting heading inside the same line (88% of the window) shows
+  let raf = 0;
+  const check = () => {
+    raf = 0;
+    const line = window.innerHeight * 0.88;
+    for (const el of waiting) {
+      if (el.classList.contains('is-in')) continue;
+      const r = el.getBoundingClientRect();
+      if (r.top < line && r.bottom > 0) show(el);
+    }
+  };
+  const onScroll = () => { if (!raf) raf = requestAnimationFrame(check); };
+  const showAll = () => waiting.forEach(show); // printing: every word on the paper
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('beforeprint', showAll);
+  return () => {
+    io.disconnect();
+    if (raf) cancelAnimationFrame(raf);
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('beforeprint', showAll);
+  };
 }
 
 /* ---------- primary links: the label rolls up and its copy rolls in from below ---------- */

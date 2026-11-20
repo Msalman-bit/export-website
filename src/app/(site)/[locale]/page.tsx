@@ -259,7 +259,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                 <p lang={enLang}>Orders, samples, currencies and certificates.</p>
               </div>
               <div className="btn-row">
-                <a className="btn btn--primary" href={L('/inquiry')}>Ask for a quotation<Arrow /></a>
+                <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}<Arrow /></a>
                 {pages.has('faq') ? <a className="btn btn--secondary" href={L('/faq')}>Read every answer</a> : null}
               </div>
               <figure className="side-photo side-photo--faq"><picture>{faqPhone ? <source media="(max-width: 639px)" srcSet={faqPhone.srcSet} sizes="100vw" /> : null}<Img url="gen:faq-valve" alt="The inflation valve in a white hexagon panel of a football, its stitched seams sharp" sizes="(max-width: 1023px) 100vw, 519px" prefer={960} /></picture></figure>
