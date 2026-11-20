@@ -4,6 +4,7 @@ import { readSession } from '@/lib/auth/session';
 import { can, ROLE_LABELS, type Permission } from '@/lib/auth/rbac';
 import type { StaffRole } from '@/lib/db/schema';
 import { staffLogout } from './actions';
+import { AdminDrawer } from './drawer';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Monolith Sports admin', robots: { index: false, follow: false } };
@@ -41,6 +42,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const signedIn = !!user?.session.mfaVerified;
   const items = NAV.filter((n) => !n.perm || (user && can(user.role, n.perm)));
   const groups = [...new Set(items.map((i) => i.group))];
+  const isHere = (p: string) => (p === '/admin' ? path === '/admin' : path.startsWith(p));
+  const current = items.find((i) => isHere(i.path))?.label ?? 'Admin';
   return (
     <html lang="en" data-type="product" data-radius="sharp" data-buttons="block">
       <head>
@@ -58,14 +61,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <body className="admin">
         {signedIn ? (
           <div className="admin__shell">
-            <aside className="admin__side">
+            <AdminDrawer current={current}>
               <a className="nav__logo" href="/admin"><span className="mark" data-mark="dots" aria-hidden="true" />Monolith admin</a>
               <nav aria-label="Admin">
                 {groups.map((g) => (
                   <div key={g} className="admin__group">
                     <p className="t-label">{g}</p>
                     {items.filter((i) => i.group === g).map((i) => (
-                      <a key={i.path} href={i.path} aria-current={(i.path === '/admin' ? path === '/admin' : path.startsWith(i.path)) ? 'page' : undefined}>{i.label}</a>
+                      <a key={i.path} href={i.path} aria-current={isHere(i.path) ? 'page' : undefined}>{i.label}</a>
                     ))}
                   </div>
                 ))}
@@ -75,7 +78,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 <form action={staffLogout}><button className="btn-text" type="submit">Sign out</button></form>
                 <a className="t-small link" href="/en" target="_blank" rel="noopener">Open the website</a>
               </div>
-            </aside>
+            </AdminDrawer>
             <main className="admin__main" id="top">{children}</main>
           </div>
         ) : (

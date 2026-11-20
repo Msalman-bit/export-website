@@ -21,7 +21,42 @@ body.admin { background: var(--surface); }
 .panel-box { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-5); display: grid; gap: var(--s-4); align-content: start; min-width: 0; }
 .cols-2 { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--s-5); align-items: start; }
 .cols-even { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s-5); align-items: start; }
-@media (max-width: 1100px) { .admin__shell { grid-template-columns: 1fr; } .admin__side { position: static; height: auto; } .cols-2 { grid-template-columns: 1fr; } }
+/* up to 1100px the sidebar becomes a menu behind a "Menu" button (AdminDrawer): a slim dark bar with the page's name
+   stays at the top, the menu slides in from the left over the page (240ms in, 200ms out, the site's drawer curve)
+   with a dimmed page behind; under reduced motion it fades instead. From 1101px none of this shows */
+.admin__bar, .admin__scrim, .admin__close { display: none; }
+@media (max-width: 1100px) {
+  .admin__shell { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }   /* the bar keeps its height; the page takes the rest */
+  .cols-2 { grid-template-columns: 1fr; }
+  .admin__bar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: var(--s-3); min-height: 56px;
+    padding: 6px var(--s-4); background: var(--p-inv-bg); color: var(--p-inv-ink); }
+  .admin__burger { display: inline-flex; align-items: center; gap: var(--s-2); min-height: 44px; margin-left: calc(-1 * var(--s-2)); padding: 0 var(--s-3) 0 var(--s-2);
+    border: 0; border-radius: var(--r-sm); background: none; color: inherit; font: 500 15px/1 var(--font-text); cursor: pointer;
+    transition: background-color 150ms var(--ease), transform 90ms var(--ease); }
+  .admin__burger:active { transform: scale(.97); }
+  .admin__bar-page { min-width: 0; padding-left: var(--s-3); border-left: 1px solid rgb(255 255 255 / .18); overflow: hidden;
+    color: var(--p-inv-muted); font-size: 15px; white-space: nowrap; text-overflow: ellipsis; }
+  .admin__side { position: fixed; z-index: 50; top: 0; bottom: 0; left: 0; width: min(320px, 86vw); height: auto;
+    transform: translateX(-100%); visibility: hidden;
+    transition: transform 200ms var(--ease-drawer), visibility 0s linear 200ms, box-shadow 200ms var(--ease); }
+  .admin__side.is-open { transform: none; visibility: visible; box-shadow: 0 0 48px rgb(0 0 0 / .35);
+    transition: transform 240ms var(--ease-drawer), visibility 0s, box-shadow 240ms var(--ease); }
+  .admin__scrim { display: block; position: fixed; inset: 0; z-index: 40; background: rgb(0 0 0 / .45); opacity: 0; pointer-events: none;
+    transition: opacity 200ms var(--ease); }
+  .admin__scrim.is-open { opacity: 1; pointer-events: auto; }
+  .admin__close { position: absolute; top: var(--s-3); right: var(--s-3); display: grid; place-items: center; width: 44px; height: 44px;
+    padding: 0; border: 0; border-radius: var(--r-sm); background: none; color: var(--p-inv-ink); cursor: pointer; }
+  @media (hover: hover) and (pointer: fine) { .admin__burger:hover, .admin__close:hover { background: var(--p-inv-surface); } }
+  /* on the menu's links a finger needs room: 44px rows */
+  .admin__group a { display: flex; align-items: center; min-height: 44px; }
+}
+@media (max-width: 1100px) and (prefers-reduced-motion: reduce) {
+  .admin__side { transform: none; opacity: 0; transition: opacity 150ms var(--ease), visibility 0s linear 150ms; }
+  .admin__side.is-open { opacity: 1; transition: opacity 150ms var(--ease), visibility 0s; }
+  .admin__burger:active { transform: none; }
+}
+/* a phone: the page's own padding at the phone's 24px, not the desktop's 48px */
+@media (max-width: 639px) { .admin__main { padding: var(--s-5) var(--s-5) var(--s-8); } }
 .admin .data { background: var(--bg); font-size: 14px; }
 .admin .data td, .admin .data th { padding: 10px 12px; }
 .admin .data tr:hover td { background: color-mix(in oklab, var(--surface) 60%, var(--bg)); }
