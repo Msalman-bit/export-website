@@ -208,6 +208,8 @@
 .buy__row { display: flex; gap: var(--s-3); align-items: end; }
 .buy__row .field { flex: 0 1 140px; min-width: 0; }   /* shrinks on a 320px phone, where 140px beside the button ran 29px past the screen */
 .buy__row .btn { flex: 1 1 auto; }
+/* "Samples first" picked on the inquiry form: one line says so, with the way back to a bulk quote */
+.buy__mode { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--s-2); margin: 0; font-size: var(--t-small); }
 .status-line { font-size: var(--t-small); min-height: 1.5em; }
 .status-line__msg { display: inline-block; transition: opacity 200ms var(--m-ease), transform 200ms var(--m-ease); }
 @starting-style { .status-line__msg { opacity: 0; transform: translateY(6px); } }

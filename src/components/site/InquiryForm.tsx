@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { readBasket, writeBasket, clearBasket, type BasketItem } from '@/lib/basket';
+import { readBasket, writeBasket, clearBasket, readMode, writeMode, type BasketItem } from '@/lib/basket';
 import { COUNTRIES } from '@/lib/inquiry/countries';
 
 type Mode = 'quote' | 'sample' | 'contact' | 'distributor' | 'partnership';
@@ -13,8 +13,10 @@ const BUTTON: Record<Mode, string> = {
 /* The consolidated inquiry: the list of products (quantity and notes per line), the company and
    delivery details, branding, packaging and files, sent as one request. Errors show under each field;
    the first one takes the focus; nothing typed is lost when sending fails. */
-export function InquiryForm({ locale, mode: initialMode, currencies, user, turnstileKey }: {
+export function InquiryForm({ locale, mode: initialMode, pickSaved = false, currencies, user, turnstileKey }: {
   locale: string; mode: Mode; currencies: string[];
+  /* the address named no type (/inquiry): the form opens on the type this browser last picked */
+  pickSaved?: boolean;
   user?: { company: string; name: string; email: string; country: string } | null;
   turnstileKey?: string;
 }) {
@@ -27,6 +29,9 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
   const started = useRef(Date.now());
   const formRef = useRef<HTMLFormElement>(null);
   const withProducts = mode === 'quote' || mode === 'sample';
+  // a line asks for a sample (one piece now; its quantity is the order expected later, optional) when the whole
+  // request is "Samples first" or the product was added with "Request a sample"
+  const asSample = (i: BasketItem) => mode === 'sample' || !!i.sample;
 
   useEffect(() => {
     const sync = () => { setItems(readBasket()); setLoaded(true); };
@@ -34,6 +39,16 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
     window.addEventListener('ms-basket', sync);
     return () => window.removeEventListener('ms-basket', sync);
   }, []);
+
+  // the request type travels with the list: a link that names it (?type=sample) sets it; /inquiry alone reopens
+  // the type picked last, so "Samples first" survives a trip to the catalogue and back
+  useEffect(() => {
+    if (initialMode !== 'quote' && initialMode !== 'sample') return;
+    if (!pickSaved) { writeMode(initialMode); return; }
+    const saved = readMode();
+    if (saved) setMode(saved);
+  }, [initialMode, pickSaved]);
+  const pick = (m: 'quote' | 'sample') => { setMode(m); writeMode(m); };
 
   const update = (key: string, patch: Partial<BasketItem>) => {
     const next = items.map((i) => (i.key === key ? { ...i, ...patch } : i));
@@ -63,7 +78,7 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
     const msg = String(fd.get('message') || '').trim();
     if (withProducts && items.length === 0 && msg.length < 10) e.message = 'Add products to your list, or describe what you need in a sentence or two.';
     if (!withProducts && msg.length < 10) e.message = 'Write your message in a sentence or two.';
-    items.forEach((i, n) => { if (!Number.isInteger(i.quantity) || i.quantity < 1) e[`items.${n}.quantity`] = 'Write a quantity of 1 or more.'; });
+    items.forEach((i, n) => { if (!asSample(i) && (!Number.isInteger(i.quantity) || i.quantity < 1)) e[`items.${n}.quantity`] = 'Write a quantity of 1 or more.'; });
     const files = fd.getAll('files').filter((f) => f instanceof File && f.size > 0) as File[];
     if (files.length > 5) e.files = 'Attach at most 5 files.';
     if (files.some((f) => f.size > 10 * 1024 * 1024)) e.files = 'Each file must be 10 MB or smaller.';
@@ -118,7 +133,13 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
     fd.set('locale', locale);
     fd.set('sourcePage', location.pathname);
     fd.set('elapsed', String(Math.max(0, Date.now() - started.current))); // timed on this computer's clock only
-    fd.set('items', JSON.stringify(withProducts ? items.map((i) => ({ productId: i.productId, name: i.name, quantity: i.quantity, notes: i.notes, sample: mode === 'sample' || !!i.sample, customisation: i.customisation ?? null })) : []));
+    // a sample is one piece; the order the buyer expects later (if given) travels in the line's notes, so staff,
+    // the e-mails and the documents read "1 pcs · Sample first · Expected order: 500 pcs"
+    fd.set('items', JSON.stringify(withProducts ? items.map((i) => {
+      const sample = asSample(i);
+      const expected = sample && i.quantity > 0 ? `Expected order: ${i.quantity.toLocaleString('en-GB')} pcs` : '';
+      return { productId: i.productId, name: i.name, quantity: sample ? 1 : i.quantity, notes: [expected, i.notes].filter(Boolean).join(' · ').slice(0, 500), sample, customisation: i.customisation ?? null };
+    }) : []));
     // logos placed in the studio travel with their design as PNG attachments
     if (withProducts) {
       for (const i of items) {
@@ -138,7 +159,7 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
       const data = await res.json().catch(() => ({}));
       clearTimeout(wait);
       if (res.ok && data.reference) {
-        if (withProducts) { items.forEach((i) => { try { localStorage.removeItem(`ms_logo_${i.key}`); } catch { /* none */ } }); clearBasket(); }
+        if (withProducts) { items.forEach((i) => { try { localStorage.removeItem(`ms_logo_${i.key}`); } catch { /* none */ } }); clearBasket(); writeMode(null); }
         location.assign(`/${locale}/inquiry/sent?ref=${encodeURIComponent(data.reference)}&type=${encodeURIComponent(data.type || mode)}`);
         return;
       }
@@ -156,8 +177,8 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
     <form ref={formRef} className="block" onSubmit={submit} onBlur={leave} onInput={edit} noValidate>
       {initialMode === 'quote' || initialMode === 'sample' ? (
         <fieldset className="seg" aria-label="Request type">
-          <label><input type="radio" name="mode" value="quote" checked={mode === 'quote'} onChange={() => setMode('quote')} /><span>Quotation for a bulk order</span></label>
-          <label><input type="radio" name="mode" value="sample" checked={mode === 'sample'} onChange={() => setMode('sample')} /><span>Samples first</span></label>
+          <label><input type="radio" name="mode" value="quote" checked={mode === 'quote'} onChange={() => pick('quote')} /><span>Quotation for a bulk order</span></label>
+          <label><input type="radio" name="mode" value="sample" checked={mode === 'sample'} onChange={() => pick('sample')} /><span>Samples first</span></label>
         </fieldset>
       ) : null}
 
@@ -176,14 +197,14 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
                   {i.image ? <img src={i.image} alt="" width={88} height={88} /> : <span />}
                   <div>
                     <p className="basket__name">{i.href ? <a href={i.href}>{i.name}</a> : i.name}</p>
-                    <p className="basket__meta">{[i.sku, i.sample ? 'Sample first' : '', i.customisation ? 'Studio design attached' : ''].filter(Boolean).join(' · ')}</p>
+                    <p className="basket__meta">{[i.sku, asSample(i) ? 'Sample first' : '', i.customisation ? 'Studio design attached' : ''].filter(Boolean).join(' · ')}</p>
                     <div className="field">
                       <label htmlFor={`items-${n}-notes`}>Notes for this product</label>
                       <input id={`items-${n}-notes`} type="text" value={i.notes} maxLength={500} onChange={(e) => update(i.key, { notes: e.target.value })} />
                     </div>
                   </div>
                   <div className="field basket__qty">
-                    <label htmlFor={`items-${n}-quantity`}>Quantity</label>
+                    <label htmlFor={`items-${n}-quantity`}>{asSample(i) ? <>Expected order quantity <span className="hint">(optional)</span></> : 'Quantity'}</label>
                     <input id={`items-${n}-quantity`} type="text" inputMode="numeric" value={String(i.quantity || '')}
                       onChange={(e) => update(i.key, { quantity: Number(e.target.value.replace(/[^\d]/g, '')) || 0 })} {...err(`items.${n}.quantity`)} />
                     {errLine(`items.${n}.quantity`)}

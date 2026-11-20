@@ -48,3 +48,26 @@ export function addToBasket(item: Omit<BasketItem, 'key'>) {
 export function clearBasket() {
   writeBasket([]);
 }
+
+/* The request type a visitor picked on the inquiry form ("Quotation for a bulk order" or "Samples first"), kept
+   in this browser beside the list until the request is sent, so the form and the product pages agree. Every
+   change fires "ms-mode". */
+export type InquiryMode = 'quote' | 'sample';
+const MODE_KEY = 'ms_inquiry_mode';
+
+export function readMode(): InquiryMode | null {
+  try {
+    const v = localStorage.getItem(MODE_KEY);
+    return v === 'quote' || v === 'sample' ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeMode(mode: InquiryMode | null) {
+  try {
+    if (mode) localStorage.setItem(MODE_KEY, mode);
+    else localStorage.removeItem(MODE_KEY);
+  } catch { /* private mode: the choice lasts the page */ }
+  window.dispatchEvent(new CustomEvent('ms-mode', { detail: mode }));
+}

@@ -35,7 +35,7 @@ export default async function InquiryPage({ params, searchParams }: Props) {
             <h1>Request a quote</h1>
             <p>One request for every product on your list. Tell us the quantities, your branding and where the goods go; the quotation comes back in {settings.currencies.enabled.join(', ').replace(/, ([^,]*)$/, ' or $1')}.</p>
           </header>
-          <InquiryForm locale={locale} mode={type === 'sample' ? 'sample' : 'quote'} currencies={settings.currencies.enabled} user={prefill} turnstileKey={turnstile || undefined} />
+          <InquiryForm locale={locale} mode={type === 'sample' ? 'sample' : 'quote'} pickSaved={type !== 'sample' && type !== 'quote'} currencies={settings.currencies.enabled} user={prefill} turnstileKey={turnstile || undefined} />
         </div>
         <aside className="block">
           <div className="form-section">
