@@ -150,6 +150,8 @@ test('a family and a product type added in the admin: hidden, filled, published,
   const list = await get(`/admin/products?q=${stamp}`);
   assert.match(list.html, new RegExp(`href="/admin/products/${productId}\\?q=${stamp}"`), 'a searched list links to the product with its search');
   assert.match(list.html, new RegExp(`name="q" value="${stamp}"`), 'the search box shows the search');
+  const none = await get(`/admin/products?q=zz-none-${stamp}`);
+  assert.match(plain(none.html), new RegExp(`No product name or SKU contains “zz-none-${stamp}”`), 'a search that finds nothing says so');
   prod = await get(`/admin/products/${productId}?q=${stamp}`);
   assert.match(prod.html, new RegExp(`href="/admin/products\\?q=${stamp}"`), 'the product page links back to the search');
   r = await submit(`/admin/products/${productId}`, prod.html, ['Delete this product'], {});

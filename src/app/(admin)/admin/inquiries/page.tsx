@@ -5,6 +5,7 @@ import { requireStaff } from '@/lib/auth/session';
 import { STATUS_LABEL } from '@/lib/status';
 import { countryName } from '@/lib/inquiry/countries';
 import { Flash, Status, day, type SP } from '../ui';
+import { LiveSearch } from '../live-search';
 
 export default async function Inquiries({ searchParams }: { searchParams: SP }) {
   await requireStaff('inquiries.read');
@@ -23,14 +24,14 @@ export default async function Inquiries({ searchParams }: { searchParams: SP }) 
     <>
       <div className="admin-head"><h1>Inquiries</h1><a className="btn btn--secondary" href="/api/admin/export?table=inquiries">Export as CSV</a></div>
       <Flash sp={sp} />
-      <form className="filters-row panel-box" method="get">
+      <LiveSearch>
         <div className="field"><label htmlFor="q">Search</label><input id="q" name="q" defaultValue={sp.q} placeholder="" /></div>
         <div className="field"><label htmlFor="status">Status</label>
           <select id="status" name="status" defaultValue={sp.status ?? ''}><option value="">All statuses</option>{s.INQUIRY_STATUSES.map((st) => <option key={st} value={st}>{STATUS_LABEL[st]} ({cn[st] ?? 0})</option>)}</select></div>
         <div className="field"><label htmlFor="type">Type</label>
           <select id="type" name="type" defaultValue={sp.type ?? ''}><option value="">All types</option>{['quote', 'sample', 'distributor', 'partnership', 'contact'].map((t) => <option key={t}>{t}</option>)}</select></div>
         <button className="btn btn--primary" type="submit">Filter</button>
-      </form>
+      </LiveSearch>
       <div className="table-wrap"><table className="data"><thead><tr><th>Reference</th><th>Type</th><th>Company</th><th>Contact</th><th>Destination</th><th>Lines</th><th>Received</th><th>Status</th></tr></thead><tbody>
         {rows.map(({ i, items }) => (
           <tr key={i.id}><td><a className="link" href={`/admin/inquiries/${i.id}`}>{i.reference}</a></td><td>{i.type}</td><td>{i.companyName}</td><td>{i.contactName}<br /><span className="t-small muted">{i.email}</span></td><td>{countryName(i.country)}</td><td>{items}</td><td>{day(i.createdAt)}</td><td><Status value={i.status} /></td></tr>

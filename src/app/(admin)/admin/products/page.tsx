@@ -4,6 +4,7 @@ import * as s from '@/lib/db/schema';
 import { requireStaff } from '@/lib/auth/session';
 import { pic } from '@/lib/media';
 import { Flash, day, type SP } from '../ui';
+import { LiveSearch } from '../live-search';
 
 export default async function Products({ searchParams }: { searchParams: SP }) {
   await requireStaff('catalogue.write');
@@ -16,7 +17,7 @@ export default async function Products({ searchParams }: { searchParams: SP }) {
     <>
       <div className="admin-head"><h1>Products</h1><div className="btn-row"><a className="btn btn--primary" href="/admin/products/new">Add a product</a><a className="btn btn--secondary" href="/api/admin/export?table=products">Export as CSV</a></div></div>
       <Flash sp={sp} />
-      <form className="filters-row panel-box" method="get"><div className="field"><label htmlFor="q">Name or SKU</label><input id="q" name="q" defaultValue={q} key={q ?? ''} /></div><button className="btn btn--primary" type="submit">Search</button></form>
+      <LiveSearch><div className="field"><label htmlFor="q">Name or SKU</label><input id="q" name="q" defaultValue={q} /></div><button className="btn btn--primary" type="submit">Search</button></LiveSearch>
       <div className="table-wrap"><table className="data"><thead><tr><th>Picture</th><th>Product</th><th>SKU</th><th>Type</th><th>Status</th><th>Filled in</th><th>Updated</th></tr></thead><tbody>
         {rows.map(({ p, cat }) => {
           const im = pic(p.images[0]?.url, 400);
@@ -30,6 +31,7 @@ export default async function Products({ searchParams }: { searchParams: SP }) {
             </tr>
           );
         })}
+        {!rows.length ? <tr><td colSpan={7}>{q ? `No product name or SKU contains “${q}”.` : 'No products yet.'}</td></tr> : null}
       </tbody></table></div>
     </>
   );

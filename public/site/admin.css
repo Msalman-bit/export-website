@@ -74,3 +74,8 @@ body.admin { background: var(--surface); }
 .btn:active { transform: scale(.985); }
 .btn--primary:active { background: color-mix(in oklab, var(--action) 80%, var(--bg)); }
 @media (prefers-reduced-motion: reduce) { .btn:active { transform: none; } }
+
+/* a live search (live-search.tsx): while the new results load the list dims a little, only after 150ms, so a quick
+   answer never flickers; it comes back at once */
+.table-wrap { transition: opacity 120ms ease; }
+.filters-row[aria-busy="true"] + .table-wrap { opacity: .55; transition-delay: 150ms; }
