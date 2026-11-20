@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 export type PickedProduct = { id: string; name: string; sku: string; type: string; image: string | null; href: string };
 
@@ -14,6 +14,7 @@ export function ProductPicker({ locale, onPick }: { locale: string; onPick: (p: 
   const [active, setActive] = useState(-1);
   const [state, setState] = useState<'idle' | 'none' | 'error'>('idle');
   const [said, setSaid] = useState('');
+  const box = useRef<HTMLInputElement>(null);
   const id = useId();
   const listId = `${id}-list`;
   const term = q.trim();
@@ -53,11 +54,21 @@ export function ProductPicker({ locale, onPick }: { locale: string; onPick: (p: 
     <div className="field picker">
       <label htmlFor={`${id}-q`}>Add a product <span className="hint">(name or product code)</span></label>
       <div className="picker__box">
-        <input id={`${id}-q`} type="search" role="combobox" autoComplete="off" spellCheck={false} enterKeyHint="search" maxLength={60}
+        {/* the menu's own magnifier, so the box reads as a search, not one more field to fill in */}
+        <svg className="picker__icon" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M11.6 11.6 16 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+        <input ref={box} id={`${id}-q`} type="search" role="combobox" autoComplete="off" spellCheck={false} enterKeyHint="search" maxLength={60}
+          placeholder="Match football or MS-FB"
           aria-expanded={shown} aria-controls={listId} aria-autocomplete="list"
           aria-activedescendant={shown && active >= 0 ? `${id}-o${active}` : undefined}
           value={q} onChange={(e) => { setQ(e.target.value); setOpen(true); }} onKeyDown={onKey}
           onFocus={() => { if (hits.length) setOpen(true); }} onBlur={() => setOpen(false)} />
+        {/* the site's own clear button in place of the browser's blue one; a press keeps the cursor in the box */}
+        {q ? (
+          <button type="button" className="picker__clear" aria-label="Clear the search" onMouseDown={(e) => e.preventDefault()}
+            onClick={() => { setQ(''); setHits([]); setOpen(false); setState('idle'); box.current?.focus(); }}>
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+          </button>
+        ) : null}
         {shown ? (
           <ul className="picker__list" id={listId} role="listbox" aria-label="Matching products">
             {hits.map((h, n) => (

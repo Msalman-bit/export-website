@@ -200,10 +200,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
           <h2 id="list-h">Products</h2>
           <ProductPicker locale={locale} onPick={addPicked} />
           {!loaded ? null : items.length === 0 ? (
-            <div className="empty">
-              <p>Your inquiry list is empty. Find a product above, add one from the catalogue, or describe what you need in the message below.</p>
-              <a className="btn btn--secondary" href={`/${locale}/products`}>See the catalogue</a>
-            </div>
+            <p className="basket__none">Nothing on your list yet. You can also <a className="link" href={`/${locale}/products`}>browse the catalogue</a> or describe what you need in your message below.</p>
           ) : (
             <ul className="basket">
               {items.map((i, n) => (

@@ -17,7 +17,12 @@ export async function GET(req: Request) {
   const locale = /^[a-z]{2}$/.test(lang) ? lang : 'en';
   if (q.length < 2) return NextResponse.json({ results: [] });
   if (!rateLimit(`ps:${keyFrom(req.headers)}`, SEARCH).ok) return NextResponse.json({ results: [] }, { status: 429 });
-  const [found, families] = await Promise.all([searchProducts(q, 6), getFamilies()]);
+  const [all, families] = await Promise.all([searchProducts(q, 24), getFamilies()]);
+  // a buyer typing "match" means the match balls, not a tracksuit whose description says "matching": when some
+  // products carry every word in their name or code, only those are offered; otherwise the wider matches are
+  const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const named = all.filter((p) => words.every((w) => `${p.name} ${p.sku}`.toLowerCase().includes(w)));
+  const found = (named.length ? named : all).slice(0, 6);
   // the family ("Football", "Cricket"), not the product's own type, which often repeats its name ("Goalkeeper gloves")
   const family = new Map(families.map((f) => [f.slug, f.name.replace(/\s+equipment$/i, '')]));
   return NextResponse.json({
