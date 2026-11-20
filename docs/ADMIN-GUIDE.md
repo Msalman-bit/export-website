@@ -73,6 +73,12 @@ everyone (the Catalogues page).
 - **Products:** every commercial field is editable. Leave a field empty rather than guess: the site then
   says "Confirmed in your quotation". Lists take one item per line; "More specifications" takes
   `Label: value` per line. Upload photographs on the product page; remove concept pictures once real ones exist.
+  - **Taking a product off the site:** set Status to **Draft (hidden)** and save. It can be published again at any time.
+  - **Deleting a product** (administrators only) is permanent: its page stops working and links to it lead nowhere.
+    At the foot of the product page, **Delete the product > Delete…** asks for the product's SKU and the code your
+    authenticator app shows now. A code confirms one action only; five wrong codes lock deletions for 15 minutes.
+    Past inquiries and quotations keep the name and SKU; uploaded photographs stay in the Media library. Content
+    editors can add, edit and hide products, but not delete them.
 - **Media library:** files with a fixed address (`/media/…`), for example a brand film.
 
 ## Content

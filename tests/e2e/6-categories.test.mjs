@@ -41,10 +41,19 @@ async function submit(path, html, needles, fields) {
   return { status: r.status, location: decodeURIComponent(location) };
 }
 const b32 = (s) => { const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; let bits = 0, val = 0; const out = []; for (const ch of s.replace(/\s/g, '')) { val = (val << 5) | A.indexOf(ch); bits += 5; if (bits >= 8) { out.push((val >>> (bits - 8)) & 255); bits -= 8; } } return Buffer.from(out); };
-const totp = (secret) => { const msg = Buffer.alloc(8); msg.writeBigUInt64BE(BigInt(Math.floor(Date.now() / 30000))); const h = crypto.createHmac('sha1', b32(secret)).update(msg).digest(); const o = h[h.length - 1] & 15; return String((((h[o] & 127) << 24) | (h[o + 1] << 16) | (h[o + 2] << 8) | h[o + 3]) % 1e6).padStart(6, '0'); };
+const totp = (secret, at = Date.now()) => { const msg = Buffer.alloc(8); msg.writeBigUInt64BE(BigInt(Math.floor(at / 30000))); const h = crypto.createHmac('sha1', b32(secret)).update(msg).digest(); const o = h[h.length - 1] & 15; return String((((h[o] & 127) << 24) | (h[o + 1] << 16) | (h[o + 2] << 8) | h[o + 3]) % 1e6).padStart(6, '0'); };
 const MFA_FILE = '.taste-skill/admin-mfa-test.txt';
 // a 1 x 1 PNG: the upload check reads the file's first bytes, not only its name
 const png = () => new File([Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64')], 'tile.png', { type: 'image/png' });
+
+/** A step-up code nothing can have spent yet: an earlier test file (5) spends codes at most one 30-second window past
+    its last use, so wait for the next window to begin and use the code of the one after it (one window of drift is
+    accepted). At most a 30-second wait. */
+async function freshCode() {
+  const w0 = Math.floor(Date.now() / 30000);
+  while (Math.floor(Date.now() / 30000) === w0) await new Promise((r) => setTimeout(r, 250));
+  return totp(fs.readFileSync(MFA_FILE, 'utf8').trim(), (w0 + 2) * 30000);
+}
 
 async function signIn() {
   const page = await get('/admin/login');
@@ -154,8 +163,14 @@ test('a family and a product type added in the admin: hidden, filled, published,
   assert.match(plain(none.html), new RegExp(`No product name or SKU contains “zz-none-${stamp}”`), 'a search that finds nothing says so');
   prod = await get(`/admin/products/${productId}?q=${stamp}`);
   assert.match(prod.html, new RegExp(`href="/admin/products\\?q=${stamp}"`), 'the product page links back to the search');
-  r = await submit(`/admin/products/${productId}`, prod.html, ['Delete this product'], {});
-  assert.equal(r.location, `/admin/products?q=${stamp}&ok=Product deleted.`, 'deleting returns to the searched list');
+  // deleting a product takes the SKU typed to confirm, then a fresh authenticator code (administrators only)
+  const sku = `MS-E2E-${stamp}`.toUpperCase();
+  assert.match(plain(prod.html), new RegExp(`Delete Stunt kite ${stamp} \\(${sku}\\)\\? This can’t be undone\\.`), 'the warning');
+  r = await submit(`/admin/products/${productId}`, prod.html, [`Delete ${sku}`], { confirm: 'NOT-THE-SKU', code: '000000' });
+  assert.match(r.location, /error=Type the SKU, .*Nothing was deleted\./, 'refused without the SKU, before the code is read');
+  assert.equal((await get(`/admin/products/${productId}`)).status, 200, 'the product is still there after a refusal');
+  r = await submit(`/admin/products/${productId}`, prod.html, [`Delete ${sku}`], { confirm: sku.toLowerCase(), code: await freshCode() });
+  assert.equal(r.location, `/admin/products?q=${stamp}&ok=Product Stunt kite ${stamp} (${sku}) deleted.`, 'deleted with the SKU and a code, back to the searched list');
   page = await get(C);
   assert.match(section(famId), /Delete this empty product type/, 'an empty type can be deleted');
   assert.match(await tryDelete(typeId), new RegExp(`at=cat-${famId}&ok=${typeName} deleted`));

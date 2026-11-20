@@ -144,6 +144,12 @@ describe('role-based access', () => {
     expect(can('sales', 'inquiries.delete')).toBe(false);
     expect(can('production', 'inquiries.delete')).toBe(false);
     expect(can('content', 'inquiries.delete')).toBe(false);
+    // deleting a product too (also with a fresh code); a content editor edits and hides products but cannot delete
+    expect(can('admin', 'catalogue.delete')).toBe(true);
+    expect(can('content', 'catalogue.delete')).toBe(false);
+    expect(can('content', 'catalogue.write')).toBe(true);
+    expect(can('sales', 'catalogue.delete')).toBe(false);
+    expect(can('production', 'catalogue.delete')).toBe(false);
     // so is resetting the analytics; sales and content staff only read them
     expect(can('admin', 'analytics.reset')).toBe(true);
     expect(can('sales', 'analytics.reset')).toBe(false);

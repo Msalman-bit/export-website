@@ -234,8 +234,8 @@ export async function deleteQuotation(fd: FormData) {
 }
 
 /* Step 2 of a destructive action: the six-digit code the staff member's authenticator app shows now, although the
-   session already passed two-factor at sign-in. A code confirms one action only (deleting an inquiry, resetting the
-   analytics: one spent list), and five wrong codes in 15 minutes lock these actions for that person. A refusal is
+   session already passed two-factor at sign-in. A code confirms one action only (deleting an inquiry or a product,
+   resetting the analytics: one spent list), and five wrong codes in 15 minutes lock these actions for that person. A refusal is
    audited, and nothing happens. */
 async function requireStepUp(u: Awaited<ReturnType<typeof requireStaff>>, fd: FormData, path: string, refused: { action: string; entity: string; id: string; detail: Record<string, unknown> }, nothing: string) {
   const limitKey = `stepup:${u.id}`;
@@ -445,14 +445,25 @@ export async function saveProduct(fd: FormData) {
   back(`/admin/products/${id}`, 'Product saved.');
 }
 
+/* Deleting a product (administrators only, catalogue.delete): it leaves the site at once and its page stops working,
+   so it takes two steps, as for deleting an inquiry: the product's SKU typed to confirm, then a fresh authenticator
+   code. Past inquiries and quotations keep its name and SKU. Hiding it (Status: Draft) is the everyday, reversible way
+   to take a product off the site; adding and editing need no code. */
 export async function deleteProduct(fd: FormData) {
-  const { actor, db } = await staff('catalogue.write');
+  const { u, actor, db } = await staff('catalogue.delete');
   const id = str(fd, 'id');
-  await db.delete(s.products).where(eq(s.products.id, id));
-  await audit(actor, 'product.delete', 'product', id);
   // back to the list as it was searched when the product was opened (the product page passes its ?q= along)
   const q = str(fd, 'q', 60);
-  back(q ? `/admin/products?q=${encodeURIComponent(q)}` : '/admin/products', 'Product deleted.');
+  const list = q ? `/admin/products?q=${encodeURIComponent(q)}` : '/admin/products';
+  const [p] = uuid(id) ? await db.select().from(s.products).where(eq(s.products.id, id)).limit(1) : [];
+  if (!p) back(list, 'Product not found.', 'error');
+  const path = `/admin/products/${id}${q ? `?q=${encodeURIComponent(q)}` : ''}`;
+  if (str(fd, 'confirm', 60).toUpperCase() !== p!.sku.toUpperCase()) back(path, `Type the SKU, ${p!.sku}, to confirm the deletion. Nothing was deleted.`, 'error');
+  // step 2: the authenticator code
+  await requireStepUp(u, fd, path, { action: 'product.delete_refused', entity: 'product', id, detail: { sku: p!.sku, name: p!.name } }, 'Nothing was deleted.');
+  await db.delete(s.products).where(eq(s.products.id, id));
+  await audit(actor, 'product.delete', 'product', id, { sku: p!.sku, name: p!.name, status: p!.status, verified: 'authenticator code' });
+  back(list, `Product ${p!.name} (${p!.sku}) deleted.`);
 }
 
 export async function addProductImage(fd: FormData) {

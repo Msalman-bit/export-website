@@ -3,6 +3,7 @@ import { asc, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db/client';
 import * as s from '@/lib/db/schema';
 import { requireStaff } from '@/lib/auth/session';
+import { can } from '@/lib/auth/rbac';
 import { pic } from '@/lib/media';
 import { Flash, type SP } from '../../ui';
 import { saveProduct, deleteProduct, addProductImage, removeProductImage } from '../../actions';
@@ -10,12 +11,15 @@ import { saveProduct, deleteProduct, addProductImage, removeProductImage } from 
 /* /admin/products/new and /admin/products/:id: every commercial and technical field of a product.
    Empty fields are shown on the site as "Confirmed in your quotation", never invented. */
 export default async function ProductEdit({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: SP }) {
-  await requireStaff('catalogue.write');
+  const u = await requireStaff('catalogue.write');
+  const canDelete = can(u.role, 'catalogue.delete'); // administrators only
   const { id } = await params;
   const sp = await searchParams;
   // the list search the product was opened from (?q=): its back link and a delete return to that filtered list
   const q = sp.q?.slice(0, 60) ?? '';
   const listHref = q ? `/admin/products?q=${encodeURIComponent(q)}` : '/admin/products';
+  // a refused deletion (wrong SKU or code) comes back with the danger section open, the message above it
+  const refused = /Nothing was deleted|Too many wrong codes/.test(sp.error ?? '');
   const db = await getDb();
   const isNew = id === 'new';
   if (!isNew && !/^[0-9a-f-]{36}$/i.test(id)) notFound();
@@ -79,9 +83,36 @@ export default async function ProductEdit({ params, searchParams }: { params: Pr
                 <div className="field"><label htmlFor="alt">What it shows (alt text)</label><input id="alt" name="alt" /></div>
                 <button className="btn btn--secondary" type="submit">Upload</button></form>
             </section>
-            <section className="panel-box"><h2>Delete</h2>
-              <p className="t-small">Deleting removes the product from the catalogue. Past inquiries keep its name and SKU.</p>
-              <form action={deleteProduct}><input type="hidden" name="id" value={p!.id} />{q ? <input type="hidden" name="q" value={q} /> : null}<button className="btn btn--secondary" type="submit">Delete this product</button></form>
+            <section className="panel-box"><h2>Delete the product</h2>
+              {canDelete ? (
+                // two steps, as for an inquiry: the SKU typed to confirm, then a fresh authenticator code
+                <details className="danger-zone" open={refused || undefined}>
+                  <summary className="btn btn--quiet-danger">Delete…</summary>
+                  <div className="danger-zone__body" role="group" aria-label={`Delete ${p!.name}`}>
+                    <p><strong>Delete {p!.name} ({p!.sku})? This can’t be undone.</strong></p>
+                    <p className="t-small">
+                      It leaves the catalogue and the site at once, and its page stops working: links to it, including from
+                      search engines, lead nowhere. Past inquiries and quotations keep its name and SKU, and photographs
+                      uploaded for it stay in the Media library. To take it off the site for now, set Status to Draft
+                      (hidden) and save instead: that can be undone.
+                    </p>
+                    <form action={deleteProduct} className="block">
+                      <input type="hidden" name="id" value={p!.id} />{q ? <input type="hidden" name="q" value={q} /> : null}
+                      <div className="field">
+                        <label htmlFor="delete-sku">Type the SKU, {p!.sku}, to confirm</label>
+                        <input id="delete-sku" name="confirm" type="text" autoComplete="off" spellCheck={false} required />
+                      </div>
+                      <div className="field">
+                        <label htmlFor="delete-code">Code from your authenticator app</label>
+                        <input id="delete-code" name="code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9 ]{6,7}" maxLength={7} required />
+                      </div>
+                      <div className="btn-row"><button className="btn btn--danger" type="submit">Delete {p!.sku}</button></div>
+                    </form>
+                  </div>
+                </details>
+              ) : (
+                <p className="t-small">Only an administrator can delete a product. To take it off the site, set Status to Draft (hidden) and save: that can be undone.</p>
+              )}
             </section>
           </div>
         ) : null}

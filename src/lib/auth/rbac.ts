@@ -5,7 +5,7 @@ import type { StaffRole } from '../db/schema';
 export const PERMISSIONS = [
   'inquiries.read', 'inquiries.write', 'inquiries.delete', 'quotations.write', 'quotations.delete', 'customers.read', 'customers.write',
   'orders.read', 'orders.write', 'production.write', 'shipping.write',
-  'catalogue.write', 'media.write', 'content.write', 'seo.write', 'translations.write',
+  'catalogue.write', 'catalogue.delete', 'media.write', 'content.write', 'seo.write', 'translations.write',
   'certificates.write', 'testimonials.write', 'markets.write', 'facts.write',
   'users.manage', 'settings.write', 'export.data', 'analytics.read', 'analytics.reset', 'audit.read', 'outbox.read',
 ] as const;
