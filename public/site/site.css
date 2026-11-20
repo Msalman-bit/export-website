@@ -228,8 +228,23 @@
 .notice--ok { border-left-color: var(--ink); }
 .notice--error { border-left-color: #b3261e; }
 .err { color: #b3261e; font-size: var(--t-small); font-weight: 500; }
+/* an error under a field opens: its height grows from 0 and the field's 8px gap eases in with it, so the next
+   field slides down instead of jumping (height: the documented exception for disclosures; where interpolate-size
+   is not supported the line simply fades in) */
+.field > .err { interpolate-size: allow-keywords; overflow: clip;
+  transition: height 200ms var(--m-ease), margin-block-start 200ms var(--m-ease), opacity 200ms var(--m-ease); }
+@starting-style { .field > .err { height: 0; margin-block-start: calc(-1 * var(--s-2)); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .field > .err { transition: opacity 200ms var(--m-ease); }
+  @starting-style { .field > .err { height: auto; margin-block-start: 0; opacity: 0; } }
+}
 .basket { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
 .basket > li { display: grid; grid-template-columns: 88px minmax(0, 1fr) 120px auto; gap: var(--s-4); align-items: start; padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+/* a removed row fades and closes up before it leaves (InquiryForm.tsx holds it 200ms); the rows below slide up */
+.basket > li { interpolate-size: allow-keywords;
+  transition: height 200ms var(--m-ease), padding-block 200ms var(--m-ease), opacity 150ms var(--m-ease), border-color 150ms var(--m-ease); }
+.basket > li.is-leaving { height: 0; padding-block: 0; opacity: 0; overflow: clip; border-bottom-color: transparent; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .basket > li { transition: opacity 150ms var(--m-ease); } }
 .basket img { width: 88px; height: 88px; object-fit: cover; border-radius: var(--r-sm); background: var(--surface); }
 .basket .field { gap: var(--s-1); }
 @media (max-width: 639px) { .basket > li { grid-template-columns: 64px minmax(0, 1fr); } .basket img { width: 64px; height: 64px; } .basket > li > .basket__qty, .basket > li > .basket__rm { grid-column: 2; } }
@@ -767,8 +782,10 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
   }
   @starting-style {
     .nav.is-open .nav__links { opacity: 0; transform: translateY(-8px); }
-    .nav.is-open .nav__actions { opacity: 0; transform: translateY(8px); }
   }
+  /* the actions are already shown in the bar when the sheet is closed, so @starting-style never runs for them:
+     a one-time entrance from the bottom edge instead */
+  .nav.is-open .nav__actions { animation: m-sheet-rise var(--m-panel, 200ms) var(--m-ease, ease-out); }
   .nav.is-closing .nav__links { opacity: 0; transform: translateY(-8px); }
   .nav.is-closing .nav__actions { opacity: 0; transform: translateY(8px); }
   .nav.is-closing :is(.nav__links, .nav__actions) { transition-duration: var(--m-close, 120ms); pointer-events: none; }
@@ -777,7 +794,10 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
 @media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
   @starting-style { .nav.is-open :is(.nav__links, .nav__actions) { transform: none; } }
   .nav.is-closing :is(.nav__links, .nav__actions) { transform: none; }
+  .nav.is-open .nav__actions { animation-name: m-sheet-fade; }
 }
+@keyframes m-sheet-rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes m-sheet-fade { from { opacity: 0; } }
 
 /* reduced transparency: the hero's glass step backing turns solid */
 @media (prefers-reduced-transparency: reduce) {
@@ -800,3 +820,29 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
 /* the gallery hint speaks to the hand in use: a pointer clicks and moves, a finger taps and drags */
 .gallery__hint-touch { display: none; }
 @media (hover: none) { .gallery__hint-fine { display: none; } .gallery__hint-touch { display: inline; } }
+
+/* the phone menu button: a press like every other control, and its icon (a new <svg> from system.js on every
+   toggle) turns in instead of swapping in one frame; at page load the icon is left alone (.is-open is absent) */
+@media (max-width: 1023px) {
+  .nav__toggle { transition: transform var(--m-press, 90ms) var(--m-ease, ease-out); }
+  .nav__toggle:active { transform: scale(.95); }
+  .nav__toggle svg { transition: opacity 200ms var(--m-ease, ease-out), transform 200ms var(--m-ease, ease-out); }
+  @starting-style { .nav.is-open .nav__toggle svg { opacity: 0; transform: rotate(-45deg) scale(.9); } }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .nav__toggle:active { transform: none; }
+  @starting-style { .nav.is-open .nav__toggle svg { opacity: 0; transform: none; } }
+}
+
+/* the phone menu's sub-lists open by height, the chevron turning with them; closed, a list still ends at
+   display: none (its links leave the tab order); where interpolate-size is unsupported it opens at once */
+@media (max-width: 1023px) {
+  .nav.is-open .nav__menu { interpolate-size: allow-keywords; overflow: clip; height: 0; padding-block-end: 0;
+    transition: height 250ms var(--m-ease, ease-out), padding-block-end 250ms var(--m-ease, ease-out), display 250ms allow-discrete; }
+  .nav.is-open .nav__item.is-expanded .nav__menu { height: auto; padding-block-end: var(--s-4); }
+  @starting-style { .nav.is-open .nav__item.is-expanded .nav__menu { height: 0; padding-block-end: 0; } }
+  .nav__expand svg { transition-duration: 250ms; }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .nav.is-open .nav__menu { transition: none; }
+}

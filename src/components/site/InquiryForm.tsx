@@ -39,7 +39,17 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
     const next = items.map((i) => (i.key === key ? { ...i, ...patch } : i));
     setItems(next); writeBasket(next);
   };
-  const remove = (key: string) => { const next = items.filter((i) => i.key !== key); setItems(next); writeBasket(next); };
+  // a removed product fades and its row closes up first (CSS .is-leaving, 200ms); then it leaves the list and the
+  // stored basket (which fires ms-basket and re-reads the list)
+  const [leaving, setLeaving] = useState<string[]>([]);
+  const remove = (key: string) => {
+    if (leaving.includes(key)) return;
+    setLeaving((l) => [...l, key]);
+    setTimeout(() => {
+      setItems((cur) => { const next = cur.filter((i) => i.key !== key); writeBasket(next); return next; });
+      setLeaving((l) => l.filter((k) => k !== key));
+    }, 200);
+  };
 
   const err = (name: string) => (errors[name] ? { 'aria-invalid': 'true' as const, 'aria-describedby': `${name}-err` } : {});
   const errLine = (name: string) => (errors[name] ? <p className="err" id={`${name}-err`}>{errors[name]}</p> : null);
@@ -162,7 +172,7 @@ export function InquiryForm({ locale, mode: initialMode, currencies, user, turns
           ) : (
             <ul className="basket">
               {items.map((i, n) => (
-                <li key={i.key}>
+                <li key={i.key} className={leaving.includes(i.key) ? 'is-leaving' : undefined}>
                   {i.image ? <img src={i.image} alt="" width={88} height={88} /> : <span />}
                   <div>
                     <p className="basket__name">{i.href ? <a href={i.href}>{i.name}</a> : i.name}</p>
