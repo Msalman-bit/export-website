@@ -450,7 +450,9 @@ export async function deleteProduct(fd: FormData) {
   const id = str(fd, 'id');
   await db.delete(s.products).where(eq(s.products.id, id));
   await audit(actor, 'product.delete', 'product', id);
-  back('/admin/products', 'Product deleted.');
+  // back to the list as it was searched when the product was opened (the product page passes its ?q= along)
+  const q = str(fd, 'q', 60);
+  back(q ? `/admin/products?q=${encodeURIComponent(q)}` : '/admin/products', 'Product deleted.');
 }
 
 export async function addProductImage(fd: FormData) {

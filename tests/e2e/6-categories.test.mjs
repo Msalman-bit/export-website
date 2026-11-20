@@ -145,8 +145,15 @@ test('a family and a product type added in the admin: hidden, filled, published,
   assert.equal((await get(`/media/${famPic}`, { anon: true })).status, 404, 'the replaced picture is gone');
 
   // clean up: the product, then the empty type, then the empty family
-  prod = await get(`/admin/products/${productId}`);
+  // the product list keeps its search: a searched list links to the product with ?q=, the product page links back to
+  // it, and deleting the product from there returns to the same search, which the search box shows
+  const list = await get(`/admin/products?q=${stamp}`);
+  assert.match(list.html, new RegExp(`href="/admin/products/${productId}\\?q=${stamp}"`), 'a searched list links to the product with its search');
+  assert.match(list.html, new RegExp(`name="q" value="${stamp}"`), 'the search box shows the search');
+  prod = await get(`/admin/products/${productId}?q=${stamp}`);
+  assert.match(prod.html, new RegExp(`href="/admin/products\\?q=${stamp}"`), 'the product page links back to the search');
   r = await submit(`/admin/products/${productId}`, prod.html, ['Delete this product'], {});
+  assert.equal(r.location, `/admin/products?q=${stamp}&ok=Product deleted.`, 'deleting returns to the searched list');
   page = await get(C);
   assert.match(section(famId), /Delete this empty product type/, 'an empty type can be deleted');
   assert.match(await tryDelete(typeId), new RegExp(`at=cat-${famId}&ok=${typeName} deleted`));

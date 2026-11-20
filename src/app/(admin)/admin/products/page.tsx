@@ -16,7 +16,7 @@ export default async function Products({ searchParams }: { searchParams: SP }) {
     <>
       <div className="admin-head"><h1>Products</h1><div className="btn-row"><a className="btn btn--primary" href="/admin/products/new">Add a product</a><a className="btn btn--secondary" href="/api/admin/export?table=products">Export as CSV</a></div></div>
       <Flash sp={sp} />
-      <form className="filters-row panel-box" method="get"><div className="field"><label htmlFor="q">Name or SKU</label><input id="q" name="q" defaultValue={q} /></div><button className="btn btn--primary" type="submit">Search</button></form>
+      <form className="filters-row panel-box" method="get"><div className="field"><label htmlFor="q">Name or SKU</label><input id="q" name="q" defaultValue={q} key={q ?? ''} /></div><button className="btn btn--primary" type="submit">Search</button></form>
       <div className="table-wrap"><table className="data"><thead><tr><th>Picture</th><th>Product</th><th>SKU</th><th>Type</th><th>Status</th><th>Filled in</th><th>Updated</th></tr></thead><tbody>
         {rows.map(({ p, cat }) => {
           const im = pic(p.images[0]?.url, 400);
@@ -24,7 +24,7 @@ export default async function Products({ searchParams }: { searchParams: SP }) {
           return (
             <tr key={p.id}>
               <td>{im ? <img src={im.src} alt="" width={48} height={48} style={{ objectFit: 'cover', borderRadius: 4 }} /> : null}</td>
-              <td><a className="link" href={`/admin/products/${p.id}`}>{p.name}</a>{p.images.some((i) => i.source === 'generated') ? <><br /><span className="t-small muted">concept picture: replace with a photograph</span></> : null}</td>
+              <td><a className="link" href={`/admin/products/${p.id}${q ? `?q=${encodeURIComponent(q)}` : ''}`}>{p.name}</a>{p.images.some((i) => i.source === 'generated') ? <><br /><span className="t-small muted">concept picture: replace with a photograph</span></> : null}</td>
               <td>{p.sku}</td><td>{cat}</td><td><span className={`pill-status${p.status === 'draft' ? ' badge-draft' : ''}`}>{p.status}</span></td>
               <td>{filled} of 6 commercial fields</td><td>{day(p.updatedAt)}</td>
             </tr>

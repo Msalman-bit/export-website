@@ -13,6 +13,9 @@ export default async function ProductEdit({ params, searchParams }: { params: Pr
   await requireStaff('catalogue.write');
   const { id } = await params;
   const sp = await searchParams;
+  // the list search the product was opened from (?q=): its back link and a delete return to that filtered list
+  const q = sp.q?.slice(0, 60) ?? '';
+  const listHref = q ? `/admin/products?q=${encodeURIComponent(q)}` : '/admin/products';
   const db = await getDb();
   const isNew = id === 'new';
   if (!isNew && !/^[0-9a-f-]{36}$/i.test(id)) notFound();
@@ -27,7 +30,7 @@ export default async function ProductEdit({ params, searchParams }: { params: Pr
   const l = (x: string[] | undefined) => (x ?? []).join('\n');
   return (
     <>
-      <div className="admin-head"><div><p className="t-small muted"><a className="link" href="/admin/products">Products</a></p><h1>{isNew ? 'New product' : p!.name}</h1></div>
+      <div className="admin-head"><div><p className="t-small muted"><a className="link" href={listHref}>Products</a></p><h1>{isNew ? 'New product' : p!.name}</h1></div>
         {!isNew ? <a className="btn btn--secondary" href={`/api/products/${p!.id}/datasheet`}>Download the datasheet</a> : null}</div>
       <Flash sp={sp} />
       <div className="cols-2">
@@ -78,7 +81,7 @@ export default async function ProductEdit({ params, searchParams }: { params: Pr
             </section>
             <section className="panel-box"><h2>Delete</h2>
               <p className="t-small">Deleting removes the product from the catalogue. Past inquiries keep its name and SKU.</p>
-              <form action={deleteProduct}><input type="hidden" name="id" value={p!.id} /><button className="btn btn--secondary" type="submit">Delete this product</button></form>
+              <form action={deleteProduct}><input type="hidden" name="id" value={p!.id} />{q ? <input type="hidden" name="q" value={q} /> : null}<button className="btn btn--secondary" type="submit">Delete this product</button></form>
             </section>
           </div>
         ) : null}
