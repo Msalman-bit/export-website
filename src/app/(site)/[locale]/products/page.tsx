@@ -8,12 +8,18 @@ import { siteUrl } from '@/lib/seo';
 
 type Props = { params: Promise<{ locale: string }> };
 
+// the count and the names come from the families on show, so a family hidden or emptied in the admin leaves the text too
+const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+const count = (n: number) => WORDS[n] ?? String(n);
+const listOf = (names: string[]) => (names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0] ?? '');
+
 export async function generateMetadata({ params }: Props) {
   const locale = await localeFrom(params);
+  const families = await getFamilies();
   return pageMeta({
     locale, path: '/products',
     title: 'Sports equipment catalogue: footballs, gloves, teamwear | Monolith Sports',
-    description: 'Eight product families made in Pakistan for clubs, distributors and private-label brands: football, rugby, cricket, combat sports, fitness, racket sports, sportswear and accessories.',
+    description: `${count(families.length)} product families made in Pakistan for clubs, distributors and private-label brands: ${listOf(families.map((f) => shortName(f).toLowerCase()))}.`,
   });
 }
 
@@ -28,7 +34,7 @@ export default async function Products({ params }: Props) {
     <PageShell locale={locale} crumbs={[{ name: t['nav.products'], path: '/products' }]}>
       <header className="page-head">
         <h1>Product catalogue</h1>
-        <p>Eight product families, each made to your specification and branding. Open a family to filter its products, or add products to one inquiry as you go.</p>
+        <p>{count(families.length)} product {families.length === 1 ? 'family' : 'families'}, each made to your specification and branding. Open a family to filter its products, or add products to one inquiry as you go.</p>
       </header>
       <div className="fam-grid">
         {families.map((f) => (
@@ -36,7 +42,7 @@ export default async function Products({ params }: Props) {
             <div className="tile__media"><Img url={f.image?.url} alt={f.image?.alt ?? f.name} sizes="(max-width: 639px) 50vw, (max-width: 1023px) 50vw, 302px" prefer={640} /></div>
             <div className="tile__head"><h2 className="t-card">{shortName(f)}</h2></div>
             <p>{f.summary}</p>
-            <p className="sku">{f.subs.length} product types</p>
+            <p className="sku">{f.subs.length} product {f.subs.length === 1 ? 'type' : 'types'}</p>
           </a>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import { asc, sql } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
 import { getDb } from '@/lib/db/client';
 import * as s from '@/lib/db/schema';
 import { requireStaff } from '@/lib/auth/session';
@@ -16,6 +16,10 @@ export default async function Categories({ searchParams }: { searchParams: SP })
   const cats = await db.select().from(s.categories).orderBy(asc(s.categories.sortOrder));
   const counts = await db.select({ id: s.products.categoryId, n: sql<number>`count(*)::int` }).from(s.products).groupBy(s.products.categoryId);
   const productsIn = new Map(counts.map((c) => [c.id, c.n]));
+  // the site shows a family or type only once it holds a published product (lib/data getFamilies): say so here
+  const live = await db.select({ id: s.products.categoryId, n: sql<number>`count(*)::int` }).from(s.products)
+    .where(eq(s.products.status, 'published')).groupBy(s.products.categoryId);
+  const liveIn = new Map(live.map((c) => [c.id, c.n]));
   const families = cats.filter((c) => !c.parentId);
   // a form's message is shown in the section it was sent from (?at=), so it is on screen where the page opens
   const at = sp.at ?? '';
@@ -32,6 +36,7 @@ export default async function Categories({ searchParams }: { searchParams: SP })
           <section key={f.id} className="panel-box cat-family" id={`cat-${f.id}`}>
             {flashIn(`cat-${f.id}`)}
             {f.published ? null : <Hidden what="family" />}
+            {f.published && !types.some((t) => t.published && liveIn.get(t.id)) ? <NoProducts what="family" /> : null}
             <CatForm c={f} />
             <div className="cat-pic">
               {picture ? <img src={picture.src} alt={f.image?.alt ?? f.name} /> : <span className="cat-pic__none t-small">No picture</span>}
@@ -51,6 +56,7 @@ export default async function Categories({ searchParams }: { searchParams: SP })
                 {types.map((c) => (
                   <div key={c.id} className="cat-type">
                     {c.published ? null : <Hidden what="type" />}
+                    {c.published && f.published && !liveIn.get(c.id) ? <NoProducts what="type" /> : null}
                     <CatForm c={c} small />
                     {productsIn.get(c.id) ? null : <DeleteEmpty c={c} what="product type" />}
                   </div>
@@ -84,6 +90,11 @@ export default async function Categories({ searchParams }: { searchParams: SP })
       </section>
     </>
   );
+}
+
+/** Published, but the site leaves it out: no published product in it yet (it appears as soon as one is). */
+function NoProducts({ what }: { what: 'family' | 'type' }) {
+  return <p className="t-small"><span className="pill-status badge-draft">Not on the site</span> No published products in this {what} yet, so the site leaves it out. It appears by itself as soon as one is published.</p>;
 }
 
 function Hidden({ what }: { what: 'family' | 'type' }) {

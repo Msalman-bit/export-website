@@ -26,11 +26,20 @@ export async function getSettings(): Promise<Settings> {
 
 export type Family = typeof s.categories.$inferSelect & { subs: (typeof s.categories.$inferSelect)[] };
 
+/** The families the public sees: published, and only with their product types that hold at least one published
+    product. A family left with no such type is left out everywhere (menus, catalogue, home page, sitemap, its own
+    page), so an emptied family never shows as an empty shelf, even while its Published box is still ticked. */
 export async function getFamilies(): Promise<Family[]> {
   const db = await getDb();
-  const cats = await db.select().from(s.categories).where(eq(s.categories.published, true)).orderBy(asc(s.categories.sortOrder));
+  const [cats, stocked] = await Promise.all([
+    db.select().from(s.categories).where(eq(s.categories.published, true)).orderBy(asc(s.categories.sortOrder)),
+    db.selectDistinct({ id: s.products.categoryId }).from(s.products).where(eq(s.products.status, 'published')),
+  ]);
+  const hasProducts = new Set(stocked.map((r) => r.id));
   const parents = cats.filter((c) => !c.parentId);
-  return parents.map((p) => ({ ...p, subs: cats.filter((c) => c.parentId === p.id) }));
+  return parents
+    .map((p) => ({ ...p, subs: cats.filter((c) => c.parentId === p.id && hasProducts.has(c.id)) }))
+    .filter((f) => f.subs.length > 0);
 }
 
 export async function getFamily(slug: string): Promise<Family | null> {
