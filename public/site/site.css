@@ -527,6 +527,10 @@ main #process[data-moment].is-live > .mo-pc__grid { align-content: start; paddin
 .hero--film .hero__over :is(h1, .hero__lead, .btn--secondary, .hero-chapter__step, .hero-chapter__line, .hero-chapter__text) {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 2px 12px rgba(0, 0, 0, 0.85), 0 6px 32px rgba(0, 0, 0, 0.8), 0 0 64px rgba(0, 0, 0, 0.6);
 }
+/* the big chapter line: every word rises through its own clipping window (.hcw), and the wide shadow above was cut off
+   at each window's edges into hard-edged boxes over the ball; its shadow stays tight enough to fit inside the window,
+   and the soft glow behind the whole block (below) keeps it readable over a white panel */
+.hero--film .hero__over .hero-chapter__line { text-shadow: 0 0 2px rgba(0, 0, 0, 0.85), 0 1px 4px rgba(0, 0, 0, 0.6); }
 /* a soft dark glow behind the whole block of words: no edge, no box, it only deepens the shade the
    type stands on */
 .hero--film .hero__over > :first-child { position: relative; isolation: isolate; }
