@@ -532,11 +532,12 @@ main #process[data-moment].is-live > .mo-pc__grid { align-content: start; paddin
    and the soft glow behind the whole block (below) keeps it readable over a white panel */
 .hero--film .hero__over .hero-chapter__line { text-shadow: 0 0 2px rgba(0, 0, 0, 0.85), 0 1px 4px rgba(0, 0, 0, 0.6); }
 /* a soft dark glow behind the whole block of words: no edge, no box, it only deepens the shade the
-   type stands on */
+   type stands on. The ellipse is its box's own (closest-side), so it has faded to nothing before any edge: sized past
+   the box, it was cut at the box's top into a straight line across the ball, darker below (seen on an iPhone) */
 .hero--film .hero__over > :first-child { position: relative; isolation: isolate; }
 .hero--film .hero__over > :first-child::before {
-  content: ""; position: absolute; inset: -56px -72px; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse 60% 58% at 42% 52%, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.42) 45%, rgba(0, 0, 0, 0) 100%);
+  content: ""; position: absolute; inset: -104px -120px; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.42) 45%, rgba(0, 0, 0, 0) 100%);
 }
 /* the steps keep a light glass backing, so a panel passing behind never swallows a label */
 html.hero-seq .hero-steps { padding: var(--s-3) var(--s-4); border-radius: var(--r-sm, 4px); background: rgba(12, 12, 14, 0.5);
