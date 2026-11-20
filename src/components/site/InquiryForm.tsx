@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { readBasket, writeBasket, clearBasket, readMode, writeMode, type BasketItem } from '@/lib/basket';
+import { readBasket, writeBasket, clearBasket, readMode, writeMode, addToBasket, type BasketItem } from '@/lib/basket';
+import { ProductPicker, type PickedProduct } from '@/components/site/ProductPicker';
 import { COUNTRIES } from '@/lib/inquiry/countries';
 
 type Mode = 'quote' | 'sample' | 'contact' | 'distributor' | 'partnership';
@@ -49,6 +50,18 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
     if (saved) setMode(saved);
   }, [initialMode, pickSaved]);
   const pick = (m: 'quote' | 'sample') => { setMode(m); writeMode(m); };
+
+  // a product found with "Add a product" joins the list here; its quantity starts empty (the buyer's own number, not
+  // a guess) and the cursor goes to it. A product already on the list is not added twice: the cursor goes to its line
+  const addPicked = (p: PickedProduct) => {
+    if (!readBasket().some((i) => i.key === p.id)) {
+      addToBasket({ productId: p.id, name: p.name, sku: p.sku, image: p.image ?? undefined, href: p.href, quantity: 0, notes: '' });
+    }
+    setTimeout(() => {
+      const n = readBasket().findIndex((i) => i.key === p.id);
+      if (n >= 0) document.getElementById(`items-${n}-quantity`)?.focus();
+    }, 60);
+  };
 
   const update = (key: string, patch: Partial<BasketItem>) => {
     const next = items.map((i) => (i.key === key ? { ...i, ...patch } : i));
@@ -185,9 +198,10 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
       {withProducts ? (
         <section className="form-section" aria-labelledby="list-h">
           <h2 id="list-h">Products</h2>
+          <ProductPicker locale={locale} onPick={addPicked} />
           {!loaded ? null : items.length === 0 ? (
             <div className="empty">
-              <p>Your inquiry list is empty. Add products from the catalogue, or describe what you need in the message below.</p>
+              <p>Your inquiry list is empty. Find a product above, add one from the catalogue, or describe what you need in the message below.</p>
               <a className="btn btn--secondary" href={`/${locale}/products`}>See the catalogue</a>
             </div>
           ) : (
