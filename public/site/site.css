@@ -10,7 +10,9 @@
 .nav__tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .nav-search { display: grid; gap: var(--s-3); }
 .nav-search__row { display: flex; gap: var(--s-3); }
-.nav-search__row input { flex: 1 1 auto; min-width: 0; height: 48px; padding: 0 var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--r-sm); font: inherit; font-size: 16px; background: var(--bg); color: var(--ink); }
+/* width 0: the field still fills the row beside the button, but no longer brings its own 214px (the browser's
+   default field width), which with the button made the search page 394px wide and slid it sideways on a 390px phone */
+.nav-search__row input { flex: 1 1 auto; width: 0; min-width: 0; height: 48px; padding: 0 var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--r-sm); font: inherit; font-size: 16px; background: var(--bg); color: var(--ink); }
 @media (min-width: 1024px) and (max-width: 1439px) {
   .nav__bar { gap: var(--s-5); }
   .nav-signin { display: none; }
@@ -367,6 +369,16 @@
 .studio__steps button[aria-current="step"] { color: var(--ink); border-bottom-color: var(--ink); }
 @media (hover: hover) and (pointer: fine) { .studio__steps button:hover { color: var(--ink); } }
 .studio__step-n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid currentColor; font-size: 12px; }
+/* a computer from 1024 to about 1135px wide: the panel beside the ball is narrow (340px at 1024), so each of the four
+   tabs got 85 to 94px while "1 Product" needs 95 and the tabs ran into each other. When the row is narrower than four whole
+   tabs, the number sits closer to its word, a little smaller, and the words are a size smaller */
+.studio__steps { container: studio-steps / inline-size; }
+@media (width > 1023px) {
+  @container studio-steps (max-width: 379px) {
+    .studio__steps button { gap: var(--s-1); padding-inline: 0; font-size: 15px; }
+    .studio__step-n { width: 20px; height: 20px; font-size: 11px; }
+  }
+}
 .studio__step { display: grid; gap: var(--s-5); align-content: start; }
 /* a Details choice with only one option the product names: said plainly, no buttons */
 .studio__fixed { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: 0; }
@@ -1150,3 +1162,13 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
 @media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
   .nav.is-open .nav__menu { transition: none; }
 }
+/* a computer's drop-down menus hang under the fixed header, so in a short window (a laptop at 125%, about 512px
+   tall) their foot ran off the screen with no way to reach it: the language menu's last language could not be
+   clicked. A menu now ends at the window's foot and scrolls inside itself; in a normal window nothing changes. In a
+   short window the menus' space above and below their links (48 and 64px) is trimmed first, so a menu scrolls only
+   when its links themselves do not fit, not for its empty foot */
+@media (min-width: 1024px) {
+  .nav__menu { max-height: calc(100vh - var(--nav)); max-height: calc(100svh - var(--nav)); overflow-y: auto; overscroll-behavior: contain; }
+}
+@media (min-width: 1024px) and (max-height: 700px) { .nav__menu { padding-block: var(--s-5) var(--s-6); } }
+@media (min-width: 1024px) and (max-height: 600px) { .nav__menu { padding-block: var(--s-4) var(--s-5); } }
