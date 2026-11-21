@@ -28,7 +28,7 @@ export default async function StudioPage({ params, searchParams }: Props) {
     sizes: p.sizes, construction: p.construction, packaging: p.packagingOptions,
   }));
   return (
-    <PageShell locale={locale} crumbs={[{ name: 'Customisation studio', path: '/studio' }]}>
+    <PageShell locale={locale} crumbs={[{ name: 'Customisation studio', path: '/studio' }]} mainClass="page page--tool">
       <header className="page-head">
         <h1>Customisation studio</h1>
         <p>Paint a ball panel by panel, place your logo and choose materials, construction and packaging. When the design is right, add it to your inquiry: its picture and your logo travel with it.</p>

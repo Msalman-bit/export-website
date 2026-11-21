@@ -126,6 +126,15 @@
 .page-head { display: grid; gap: var(--s-4); max-width: 820px; }
 .page-head h1 { font-size: clamp(38px, 3vw + 20px, 64px); }
 .page-head p { font-size: var(--t-lead); line-height: 1.5; max-width: 62ch; }
+/* a tool page on a phone (the studio): a short heading and tight gaps, so the tool itself (the ball) is on the first
+   screen, not below the intro */
+@media (max-width: 639px) {
+  .page--tool { padding-top: calc(var(--nav) + var(--s-4)); }
+  .page--tool > .wrap { gap: var(--s-4); }
+  .page--tool .page-head { gap: var(--s-2); }
+  .page--tool .page-head h1 { font-size: 30px; }
+  .page--tool .page-head p { font-size: var(--t-small); line-height: 1.45; }
+}
 .crumbs { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: 0; padding: 0; list-style: none; font-size: var(--t-small); color: var(--muted); }
 .crumbs li + li::before { content: "/"; margin-right: var(--s-2); color: var(--line-strong); }
 .crumbs a { color: var(--muted); }
