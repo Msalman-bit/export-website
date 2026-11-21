@@ -153,16 +153,20 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
       const expected = sample && i.quantity > 0 ? `Expected order: ${i.quantity.toLocaleString('en-GB')} pcs` : '';
       return { productId: i.productId, name: i.name, quantity: sample ? 1 : i.quantity, notes: [expected, i.notes].filter(Boolean).join(' · ').slice(0, 500), sample, customisation: i.customisation ?? null };
     }) : []));
-    // logos placed in the studio travel with their design as PNG attachments
+    // a studio design travels with its picture (JPEG) and its logo (PNG) as attachments, within the five files
     if (withProducts) {
+      const room = () => fd.getAll('files').filter((x) => x instanceof File && x.size > 0).length < 5;
       for (const i of items) {
-        try {
-          const data = localStorage.getItem(`ms_logo_${i.key}`);
-          if (data && fd.getAll('files').filter((x) => x instanceof File && x.size > 0).length < 5) {
-            const blob = await (await fetch(data)).blob();
-            fd.append('files', new File([blob], `logo-${(i.sku || 'design').toLowerCase()}.png`, { type: 'image/png' }));
-          }
-        } catch { /* the logo can still be attached by hand */ }
+        const sku = (i.sku || 'design').toLowerCase();
+        for (const [k, name, type] of [[`ms_preview_${i.key}`, `design-${sku}.jpg`, 'image/jpeg'], [`ms_logo_${i.key}`, `logo-${sku}.png`, 'image/png']] as const) {
+          try {
+            const data = localStorage.getItem(k);
+            if (data && room()) {
+              const blob = await (await fetch(data)).blob();
+              fd.append('files', new File([blob], name, { type }));
+            }
+          } catch { /* it can still be attached by hand */ }
+        }
       }
     }
     setBusy(true);
@@ -172,7 +176,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
       const data = await res.json().catch(() => ({}));
       clearTimeout(wait);
       if (res.ok && data.reference) {
-        if (withProducts) { items.forEach((i) => { try { localStorage.removeItem(`ms_logo_${i.key}`); } catch { /* none */ } }); clearBasket(); writeMode(null); }
+        if (withProducts) { items.forEach((i) => { try { localStorage.removeItem(`ms_logo_${i.key}`); localStorage.removeItem(`ms_preview_${i.key}`); } catch { /* none */ } }); clearBasket(); writeMode(null); }
         location.assign(`/${locale}/inquiry/sent?ref=${encodeURIComponent(data.reference)}&type=${encodeURIComponent(data.type || mode)}`);
         return;
       }

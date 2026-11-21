@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: Props) {
   const locale = await localeFrom(params);
   return pageMeta({
     locale, path: '/studio', title: 'Customisation studio: design your football, gloves or kit | Monolith Sports',
-    description: 'Choose colours, upload your logo, pick materials and packaging, then send the design with your inquiry. Previews are visual concepts.',
+    description: 'Paint a football panel by panel, upload your logo, pick materials and packaging, then send the design with your inquiry. Previews are visual concepts.',
     image: pic('gen:studio-hero', 1200)?.src,
   });
 }
@@ -30,7 +30,7 @@ export default async function StudioPage({ params, searchParams }: Props) {
     <PageShell locale={locale} crumbs={[{ name: 'Customisation studio', path: '/studio' }]}>
       <header className="page-head">
         <h1>Customisation studio</h1>
-        <p>Try colours, place your logo and choose materials, construction and packaging. When the design is right, add it to your inquiry: the logo travels with it.</p>
+        <p>Paint a ball panel by panel, place your logo and choose materials, construction and packaging. When the design is right, add it to your inquiry: its picture and your logo travel with it.</p>
       </header>
       <Studio locale={locale} products={products} initialId={product} signedIn={!!user?.emailVerifiedAt} />
     </PageShell>

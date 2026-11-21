@@ -318,24 +318,101 @@
 .btn-text { padding: 0; border: 0; background: none; font: inherit; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 44px; }
 .ref { font-family: var(--font-display); font-size: clamp(32px, 2vw + 20px, 48px); letter-spacing: var(--display-tracking); font-variant-numeric: tabular-nums; }
 
-/* studio */
-.studio { display: grid; grid-template-columns: minmax(0, 7fr) minmax(320px, 5fr); gap: var(--s-7); align-items: start; }
-@media (max-width: 1023px) { .studio { grid-template-columns: 1fr; } }
-.studio__stage { position: sticky; top: calc(var(--nav) + var(--s-4)); display: grid; gap: var(--s-3); }
-@media (max-width: 1023px) { .studio__stage { position: static; } }
-.studio__canvas { position: relative; aspect-ratio: 1; border-radius: var(--r-lg); overflow: hidden; background: radial-gradient(circle at 50% 40%, #1d1f22, #080808 70%); }
+/* ---------- the studio: the product big on a dark stage that never leaves the screen (beside the steps on a computer,
+   pinned under the header on a tablet or a phone while the steps scroll beneath it), four steps, and the main action
+   in a bar at the foot of the steps ---------- */
+.studio { display: grid; grid-template-columns: minmax(0, 7fr) minmax(340px, 5fr); gap: var(--s-7); align-items: start; }
+.studio__stage { position: sticky; top: calc(var(--nav) + var(--s-4)); z-index: 3; }
+.studio__canvas { position: relative; aspect-ratio: 1; max-height: calc(100svh - var(--nav) - var(--s-7)); margin-inline: auto; border-radius: var(--r-lg); overflow: hidden;
+  background: radial-gradient(circle at 50% 38%, #24262a, #0b0b0c 68%); touch-action: none; }
 .studio__canvas canvas, .studio__canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.studio__note { font-size: var(--t-small); color: var(--muted); }
-.studio__panel { display: grid; gap: var(--s-6); }
-.studio__panel fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: var(--s-3); }
+.studio__canvas[data-paint] canvas { cursor: pointer; }
+/* the 3D / Flat switch sits on the stage's lower left, on its own dark glass */
+.studio__view { position: absolute; left: var(--s-3); bottom: var(--s-3); z-index: 2; gap: 4px; padding: 4px; border-radius: var(--r-md);
+  background: rgb(12 12 14 / .6); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.studio__view label { min-height: 36px; padding: 0 var(--s-3); border-color: transparent; color: #fff; font-size: var(--t-small); }
+.studio__view label:has(input:checked) { border-color: rgb(255 255 255 / .9); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .9); }
+.studio__panel { display: grid; gap: var(--s-5); align-content: start; min-width: 0; }
+.studio__panel fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: var(--s-3); min-inline-size: 0; }
 .studio__panel legend { font-weight: 500; margin-bottom: var(--s-2); }
+.studio__pick { margin-left: var(--s-2); font-weight: 400; color: var(--muted); }
+.studio__lead { margin: 0; color: color-mix(in oklab, var(--muted) 75%, var(--ink)); }
+/* the steps: four tabs on one line, the current one underlined in ink */
+.studio__steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; border-bottom: 1px solid var(--line); }
+.studio__steps li { display: grid; }
+.studio__steps button { display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2); min-height: 48px; padding: 0 var(--s-1);
+  border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; color: var(--muted); font: 500 var(--t-body)/1 var(--font-text); cursor: pointer;
+  transition: color var(--m-in) var(--m-ease), border-color var(--m-in) var(--m-ease); }
+.studio__steps button[aria-current="step"] { color: var(--ink); border-bottom-color: var(--ink); }
+@media (hover: hover) and (pointer: fine) { .studio__steps button:hover { color: var(--ink); } }
+.studio__step-n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid currentColor; font-size: 12px; }
+.studio__step { display: grid; gap: var(--s-5); align-content: start; }
+.studio__next { justify-self: start; }
+/* step 1: the products as picture tiles */
+.studio__products { display: grid; grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); gap: var(--s-2); }
+.studio__product { display: grid; gap: var(--s-2); align-content: start; padding: var(--s-2); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--bg);
+  color: var(--ink); font: 500 var(--t-small)/1.3 var(--font-text); text-align: left; cursor: pointer;
+  transition: border-color var(--m-out) var(--m-ease), box-shadow var(--m-out) var(--m-ease), transform var(--m-press) var(--m-ease); }
+.studio__product img, .studio__product-ph { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: calc(var(--r-md) - 2px); background: var(--surface); }
+.studio__product[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+@media (hover: hover) and (pointer: fine) { .studio__product:hover:not([aria-pressed="true"]) { border-color: color-mix(in oklab, var(--ink) 40%, transparent); } }
+.studio__product:active { transform: scale(.98); }
+/* step 2: the palette, the paint tools and the colours on the ball */
 .swatches { display: flex; flex-wrap: wrap; gap: var(--s-2); }
-.swatch { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-strong); cursor: pointer; padding: 0; background: var(--sw); position: relative; }
-.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink); }
+.swatch { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-strong); cursor: pointer; padding: 0; background: var(--sw); position: relative; }
+.swatch[aria-pressed="true"], .swatch--custom.is-on { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink); }
+.swatch--custom { display: grid; place-items: center; border-style: dashed; color: var(--ink); font: 400 22px/1 var(--font-text); overflow: hidden; }
+.swatch--custom input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.swatch--custom:focus-within { outline: 2px solid var(--action); outline-offset: 3px; }
+.studio__tools { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.chip-btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: var(--bg);
+  color: var(--ink); font: 500 var(--t-small)/1 var(--font-text); cursor: pointer;
+  transition: border-color var(--m-out) var(--m-ease), background-color var(--m-out) var(--m-ease), transform var(--m-press) var(--m-ease); }
+@media (hover: hover) and (pointer: fine) { .chip-btn:hover { border-color: color-mix(in oklab, var(--ink) 40%, transparent); background: color-mix(in oklab, var(--ink) 4%, var(--bg)); } }
+.chip-btn:active { transform: scale(.97); }
+.studio__tools .btn-text[disabled] { color: var(--muted); cursor: default; text-decoration-color: transparent; }
+.studio__used { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin: 0; font-size: var(--t-small); }
+.studio__used > span { display: inline-flex; align-items: center; gap: var(--s-2); }
+.studio__dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--line-strong); }
+/* step 3: the logo */
+.studio__label { font-weight: 500; }
+.studio__drop { display: flex; align-items: center; gap: var(--s-4); min-height: 96px; padding: var(--s-4) var(--s-5); border: 1px dashed var(--line-strong); border-radius: var(--r-md);
+  background: var(--bg); font: 400 var(--t-body)/1.4 var(--font-text); cursor: pointer; transition: border-color var(--m-out) var(--m-ease), background-color var(--m-out) var(--m-ease); }
+@media (hover: hover) and (pointer: fine) { .studio__drop:hover { border-color: var(--ink); background: color-mix(in oklab, var(--ink) 3%, var(--bg)); } }
+.studio__drop:focus-within { outline: 2px solid var(--action); outline-offset: 2px; }
+.studio__logo { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-4); padding: var(--s-3); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--bg); }
+.studio__logo img { width: 64px; height: 64px; object-fit: contain; border-radius: var(--r-sm); background: var(--surface); }
+.studio__logo-name { flex: 1 1 8rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.studio__replace { display: inline-flex; align-items: center; cursor: pointer; }
+/* the bar: what is designed, the main action, then the quieter two */
+.studio__bar { position: sticky; bottom: 0; z-index: 2; display: grid; gap: var(--s-2); padding-block: var(--s-3) calc(var(--s-3) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line); background: var(--bg); }
+.studio__summary { margin: 0; overflow: hidden; font-size: var(--t-small); color: color-mix(in oklab, var(--muted) 75%, var(--ink)); white-space: nowrap; text-overflow: ellipsis; }
+.studio__bar .btn--primary { width: 100%; }
+.studio__more { display: flex; flex-wrap: wrap; gap: 0 var(--s-5); }
+.studio__more .btn-text { font-size: var(--t-small); }
+.studio__bar .status-line:empty { display: none; }
+.studio__note { margin: 0; font-size: var(--t-small); color: var(--muted); }
+/* a tablet or a phone: the stage pinned under the header (about 42% of the screen), the steps scrolling beneath it, the
+   bar at the foot of the screen while the steps are in view */
+@media (max-width: 1023px) {
+  .studio { grid-template-columns: 1fr; gap: 0; }
+  .studio__stage { top: var(--nav); margin-inline: calc(-1 * var(--gut)); padding: var(--s-2) var(--gut) var(--s-3); background: var(--bg); }
+  .studio__canvas { aspect-ratio: auto; height: min(42svh, 560px); max-height: none; }
+  .studio__panel { padding-top: var(--s-2); }
+  .studio__steps { position: sticky; top: calc(var(--nav) + min(42svh, 560px) + var(--s-2) + var(--s-3)); z-index: 2; background: var(--bg); }
+  .studio__steps button { font-size: 15px; }
+  .studio__bar { margin-inline: calc(-1 * var(--gut)); padding-inline: var(--gut); box-shadow: 0 -8px 24px rgb(0 0 0 / .06); }
+  .studio__summary { text-align: center; }
+}
+@media (max-width: 380px) { .studio__step-n { display: none; } }
 .seg { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 /* a file field is as wide as its "Choose files / No file chosen" by default (337px): on a 320px phone it pushed the
    quote form past the screen; it takes its column's width instead */
 .field input[type="file"] { width: 100%; max-width: 100%; min-width: 0; }
+/* a visually hidden field inside a .field stays 1px: the kit's .field input sizing outranks .sr-only otherwise, and the
+   hidden logo picker in the studio pushed the phone page 300px wider */
+.field :is(input, select, textarea).sr-only { width: 1px; height: 1px; min-width: 0; padding: 0; border: 0; }
 .seg label { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--r-sm); cursor: pointer; font-size: var(--t-body); }
 .seg input { position: absolute; opacity: 0; pointer-events: none; }
 .seg input:checked + span { font-weight: 500; }
