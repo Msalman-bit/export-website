@@ -96,7 +96,6 @@ export function Footer({ locale, t, families, pages, path, close, salesEmail }: 
               {legal('privacy', t['footer.privacy'])}{legal('cookies', t['footer.cookies'])}{legal('terms', t['footer.terms'])}{legal('accessibility', t['footer.accessibility'])}
             </span>
             <div className="socials" />
-            <a className="credits" href={L('/credits')}>Product images are generated concepts; see credits</a>
           </div>
         </div>
       </div>
