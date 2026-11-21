@@ -452,9 +452,12 @@
   .paint-colours .swatches::-webkit-scrollbar { display: none; }
   .paint-colours .swatch { flex: none; }
 }
-/* a phone: each tool's icon above its name, so three names fit beside Undo */
+/* a phone: each tool's icon above its name, so three names fit beside Undo. The bar is not pinned here: with the ball
+   and the step tabs pinned above, a pinned bar left about 160px for the tools on an iPhone, and when Safari's toolbar
+   grew or shrank it could hang mid-screen over them; it follows each step's content instead */
 @media (max-width: 639px) {
   .paint-tools button { flex-direction: column; gap: 2px; min-height: 56px; padding: var(--s-1); font-size: 13px; }
+  .studio__bar { position: static; margin-top: var(--s-4); box-shadow: none; }
 }
 @media (max-width: 380px) { .studio__step-n { display: none; } }
 .seg { display: flex; flex-wrap: wrap; gap: var(--s-2); }
