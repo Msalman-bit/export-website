@@ -193,8 +193,27 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
       marks(st, k, drag.rnd, (x, y, z, r, a) => stampCube(ctxs, st.colour, x, y, z, r, a));
       dirty = true;
     };
+    // the fingers (or the mouse button) on the ball. A phone can lose a finger's lift (after a long press opens its own
+    // menu, or when a call or a switch of app interrupts the touch): the page would go on counting that finger, so
+    // the next single finger would zoom (two fingers) and the ball would never turn again. So a first finger, with no
+    // other down, starts afresh: the lost fingers are forgotten here and in the turning control, and a brush stroke
+    // left open is finished.
+    const fingers = new Set<number>();
+    const forgetLost = () => {
+      fingers.clear();
+      const oc = controls as unknown as { _pointers?: number[]; _pointerPositions?: Record<number, unknown> };
+      if (oc._pointers?.length) { oc._pointers.length = 0; oc._pointerPositions = {}; }
+      if (drag) {
+        const st = drag.stroke;
+        drag = null;
+        if (st && st.pts.length && state.current) { state.current.live = st; strokeRef.current?.(st); }
+      }
+      down = null; held = false;
+    };
     const onDown = (e: PointerEvent) => {
+      if (e.isPrimary) forgetLost();
       controls.enabled = mode() === 'turn'; // before the turning control sees this touch (this listener runs first)
+      fingers.add(e.pointerId);
       held = true;
       down = { x: e.clientX, y: e.clientY, t: performance.now() };
       if (mode() === 'turn' || drag) return;
@@ -211,8 +230,9 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
       if (st && st.pts.length && state.current) { state.current.live = st; strokeRef.current?.(st); }
       return true;
     };
+    const lift = (e: PointerEvent) => { fingers.delete(e.pointerId); held = fingers.size > 0; if (!held) letGo(); };
     const onUp = (e: PointerEvent) => {
-      held = false; letGo();
+      lift(e);
       if (finish(e)) return;
       const d = down; down = null;
       if (!d || !paintRef.current || mode() !== 'turn') return;
@@ -220,7 +240,11 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
       const i = at(e);
       if (i >= 0) paintRef.current(i, 0);
     };
-    const onCancel = (e: PointerEvent) => { held = false; letGo(); finish(e); down = null; };
+    const onCancel = (e: PointerEvent) => { lift(e); finish(e); down = null; };
+    // leaving the page mid-touch (a call, another app) lifts every finger
+    const onHide = () => { if (document.hidden) { forgetLost(); letGo(); } };
+    // no long-press menu on the ball (it is what most often swallows a finger's lift)
+    const noMenu = (e: Event) => e.preventDefault();
     const onMove = (e: PointerEvent) => {
       if (e.pointerType === 'mouse') { hovering = true; movedAt = performance.now(); }
       if (drag && e.pointerId === drag.id) { paintAt(e); return; }
@@ -236,6 +260,8 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
     renderer.domElement.addEventListener('pointercancel', onCancel);
     renderer.domElement.addEventListener('pointermove', onMove);
     renderer.domElement.addEventListener('pointerleave', onLeave);
+    renderer.domElement.addEventListener('contextmenu', noMenu);
+    document.addEventListener('visibilitychange', onHide);
 
     let raf = 0, last = performance.now(), visible = true;
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; });
@@ -247,8 +273,6 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
     // turns by itself: it stays where the hand leaves it.
     const TURN = 0.25;
     let turn = still ? 0 : TURN;
-    controls.addEventListener('start', () => { held = true; });
-    controls.addEventListener('end', () => { held = false; letGo(); });
     const target: THREE.Color[] = mats.map(() => new THREE.Color(0xffffff));
     const pop: number[] = mats.map(() => -1e9); // when each panel was last painted (performance.now())
     const tick = (t: number) => {
@@ -289,6 +313,8 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
       renderer.domElement.removeEventListener('pointercancel', onCancel);
       renderer.domElement.removeEventListener('pointermove', onMove);
       renderer.domElement.removeEventListener('pointerleave', onLeave);
+      renderer.domElement.removeEventListener('contextmenu', noMenu);
+      document.removeEventListener('visibilitychange', onHide);
       scene.traverse((o) => { if (o instanceof THREE.Mesh) { o.geometry.dispose(); (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { (m as THREE.MeshStandardMaterial).map?.dispose(); m.dispose(); }); } });
       grain.dispose(); paintTex.dispose(); scene.environment?.dispose(); pmrem.dispose(); room.dispose?.();
       renderer.dispose(); renderer.domElement.remove();

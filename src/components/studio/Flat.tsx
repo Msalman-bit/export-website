@@ -169,7 +169,10 @@ function NetBall({ net, spots, fallback, look, onPaint, onStroke, tool, brush }:
   };
   const handlers = brushing ? {
     onPointerDown: (e: React.PointerEvent) => {
-      if (drag.current) return;
+      if (drag.current) {
+        if (!e.isPrimary) return; // a second finger while one paints
+        end(); drag.current = null; // a first finger: the last drag lost its lift (a phone can), so it ends here
+      }
       e.preventDefault();
       try { (e.currentTarget as Element).setPointerCapture(e.pointerId); } catch { /* the drag still paints on the pattern */ }
       drag.current = { id: e.pointerId, n: 0, last: -1, stroke: null, panel: -1 };
