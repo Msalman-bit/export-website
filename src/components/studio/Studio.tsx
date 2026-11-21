@@ -3,9 +3,9 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import dynamic from 'next/dynamic';
 import { Flat } from './Flat';
 import type { BallLook } from './Ball3D';
-import { footballPanels, startColours } from './football';
+import { footballPanels, logoSpots, startColours } from './football';
 import { RUGBY_START } from './rugby';
-import { describeStrokes, type Brush, type BrushKind, type BrushSize, type Stroke, type Tool } from './paint';
+import { describeStrokes, type Brush, type Decal, type BrushKind, type BrushSize, type Stroke, type Tool } from './paint';
 import { addToBasket } from '@/lib/basket';
 
 const Ball3D = dynamic(() => import('./Ball3D').then((m) => m.Ball3D), { ssr: false });
@@ -89,6 +89,12 @@ const FLAT_HINT = (n: number): Record<Tool, string> => ({
 const SIZES: [BrushSize, string][] = [['s', 'Small brush'], ['m', 'Medium brush'], ['l', 'Large brush']];
 const PANELS = footballPanels(); // 12 pentagons, then 20 hexagons
 const START = startColours(PANELS);
+// where the logo's quick positions sit on each ball: the middle of its front, side and back panels
+const SPOT_DIRS: Record<'football' | 'rugby', { front: number[]; side: number[]; back: number[] }> = (() => {
+  const sp = logoSpots(PANELS);
+  const c = (i: number) => PANELS[i].center.clone().normalize().toArray();
+  return { football: { front: c(sp.front), side: c(sp.side), back: c(sp.back) }, rugby: { front: [0, 0, 1], side: [0, 1, 0], back: [0, 0, -1] } };
+})();
 /* each ball's panels: their kinds and names, its starting colours and its whole-ball shortcuts. The 32-panel ball is
    the football's, the futsal ball's and the handball's; the rugby ball has four panels running tip to tip. */
 const BALL: Record<Shape, { kinds: string[]; start: string[]; words: Record<string, [string, string, string, string]>; whole: [string, (i: number) => boolean][] }> = {
@@ -122,7 +128,9 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
   const isBall = model === 'football' || model === 'rugby';
   const shape: Shape = model === 'rugby' ? 'rugby' : 'football';
   const spec = BALL[shape];
-  const [step, setStep] = useState(0);
+  // the studio opens on Colours: the first thing a customer sees is the product and the tools to design it (the
+  // Product tab, first, changes what is designed)
+  const [step, setStep] = useState(1);
   // a ball: one colour per panel, free paint, and the steps back, kept for each kind of ball (a design on the
   // football waits while the rugby ball is painted)
   type Kept = { paint: string[]; strokes: Stroke[] };
@@ -136,6 +144,8 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
   const [tool, setTool] = useState<Tool>('panel');
   const [brushSize, setBrushSize] = useState<BrushSize>('m');
   const [brushKind, setBrushKind] = useState<BrushKind>('brush');
+  // free paint held inside the panel each stroke starts on (like masking tape)
+  const [inside, setInside] = useState(false);
   // a glove or a shirt: three colours
   const [primary, setPrimary] = useState('#f4f4f2');
   const [secondary, setSecondary] = useState('#141414');
@@ -143,6 +153,11 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
   const [logo, setLogo] = useState<string | null>(null);
   const [logoName, setLogoName] = useState('');
   const [place, setPlace] = useState<BallLook['logoPlace']>('front');
+  // a ball's printed logo: its size (half its width on the ball, in units of the ball's radius), its turn in
+  // degrees, and where the customer tapped to place it (null: the quick position)
+  const [logoSize, setLogoSize] = useState(0.22);
+  const [logoTurn, setLogoTurn] = useState(0);
+  const [logoAt, setLogoAt] = useState<number[] | null>(null);
   const [material, setMaterial] = useState(opts.materials[0] ?? '');
   const [size, setSize] = useState(opts.sizes[0] ?? '');
   const [construction, setConstruction] = useState(opts.constructions[0] ?? '');
@@ -176,11 +191,20 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
   // each product has its own choices
   useEffect(() => {
     const o = optionsFor(product);
-    setMaterial(o.materials[0] ?? ''); setSize(o.sizes[0] ?? ''); setConstruction(o.constructions[0] ?? ''); setPackaging(o.packaging[0] ?? ''); setPlace('front');
+    setMaterial(o.materials[0] ?? ''); setSize(o.sizes[0] ?? ''); setConstruction(o.constructions[0] ?? ''); setPackaging(o.packaging[0] ?? ''); setPlace('front'); setLogoAt(null);
   }, [product?.id]);
 
-  const look: BallLook = useMemo(() => ({ primary, secondary, accent, logo, logoPlace: place, panels: isBall ? paint : undefined, strokes: isBall ? strokes : undefined }),
-    [primary, secondary, accent, logo, place, paint, strokes, isBall]);
+  const decals: Decal[] = useMemo(() => {
+    if (!isBall || !logo) return [];
+    const sp = SPOT_DIRS[shape];
+    const at = logoAt ? [logoAt] : place === 'front' ? [sp.front] : place === 'side' ? [sp.side] : [sp.front, sp.back];
+    return at.map((d) => ({ d: d as [number, number, number], s: logoSize, rot: logoTurn }));
+  }, [isBall, logo, shape, logoAt, place, logoSize, logoTurn]);
+  // how wide the logo prints, as a share of the ball's width (its longer side)
+  const logoPct = Math.round(100 * Math.sin(Math.atan(logoSize)));
+  const onPick = useCallback((d: [number, number, number]) => setLogoAt(d), []);
+  const look: BallLook = useMemo(() => ({ primary, secondary, accent, logo, logoPlace: place, panels: isBall ? paint : undefined, strokes: isBall ? strokes : undefined, decals }),
+    [primary, secondary, accent, logo, place, paint, strokes, isBall, decals]);
   const show3d = isBall && gl === 'yes' && view === '3d';
   const onFail = useCallback(() => setGl('no'), []);
   const onReady = useCallback((fn: () => string) => { snap.current = fn; }, []);
@@ -219,7 +243,7 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
     if (!h) return;
     setDesigns((d) => ({ ...d, [shape]: h })); setHistory((all) => all.slice(0, -1));
   };
-  const brushStyle: Brush = useMemo(() => ({ colour: brush, size: brushSize, kind: brushKind }), [brush, brushSize, brushKind]);
+  const brushStyle: Brush = useMemo(() => ({ colour: brush, size: brushSize, kind: brushKind, inside }), [brush, brushSize, brushKind, inside]);
   const freeText = describeStrokes(strokes, colourName);
   const paintable = isBall && step === 1;
   // the colours on the ball, each with how many panels of each kind carry it
@@ -256,11 +280,14 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
   const config = () => ({
     model, product: product?.name, sku: product?.sku,
     ...(isBall ? { colours: usedText, ...(freeText ? { freePaint: `${freeText} (printed artwork, to be confirmed in the quotation)` } : {}) } : { primary: `${colourName(primary)} (${primary})`, secondary: `${colourName(secondary)} (${secondary})`, accent: `${colourName(accent)} (${accent})` }),
-    logo: logo ? logoName || 'logo.png' : 'none', logoPlacement: opts.place.find(([v]) => v === place)?.[1],
+    logo: logo ? logoName || 'logo.png' : 'none',
+    logoPlacement: isBall && logoAt ? 'placed by the customer on the ball (see the pictures)' : opts.place.find(([v]) => v === place)?.[1],
+    ...(isBall && logo ? { logoSize: `about ${logoPct}% of the ball's width` } : {}),
+    ...(isBall && logo && logoTurn ? { logoTurn: `turned ${Math.abs(logoTurn)}° ${logoTurn > 0 ? 'clockwise' : 'anticlockwise'}` } : {}),
     ...(material ? { [opts.materialLabel.toLowerCase()]: material } : {}), ...(size ? { size } : {}), ...(construction ? { construction } : {}),
     packaging, quantity: Number(quantity) || 0, instructions: notes,
   });
-  const summary = [product?.name, isBall ? `${used.length} ${used.length === 1 ? 'colour' : 'colours'}${strokes.length ? ' + free paint' : ''}` : colourName(primary), logo ? `logo on ${opts.place.find(([v]) => v === place)?.[1].toLowerCase()}` : 'no logo yet'].filter(Boolean).join(' · ');
+  const summary = [product?.name, isBall ? `${used.length} ${used.length === 1 ? 'colour' : 'colours'}${strokes.length ? ' + free paint' : ''}` : colourName(primary), logo ? (isBall && logoAt ? 'logo placed by hand' : `logo on ${opts.place.find(([v]) => v === place)?.[1].toLowerCase()}`) : 'no logo yet'].filter(Boolean).join(' · ');
 
   const svgPicture = async (svg: SVGSVGElement | null): Promise<string> => {
     if (!svg) return '';
@@ -408,9 +435,9 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
         <div className="studio__canvas" data-paint={paintable ? '' : undefined}>
           {show3d
             ? <Ball3D look={look} onFail={onFail} onReady={onReady} onPaint={paintable ? paintPanel : undefined} onStroke={addStroke} tool={tool} brush={brushStyle}
-                view={turn?.shape === shape ? turn.q : undefined} onView={onView} shape={shape} />
+                view={turn?.shape === shape ? turn.q : undefined} onView={onView} shape={shape} onPick={isBall && step === 2 && logo ? onPick : undefined} />
             : <Flat ref={flatRef} model={model} variant={/boxing/i.test(product?.name ?? '') ? 'boxing' : undefined} look={look} onPaint={paintable ? paintPanel : undefined}
-                onStroke={addStroke} tool={tool} brush={brushStyle}
+                onStroke={addStroke} tool={tool} brush={brushStyle} onPick={isBall && step === 2 && logo ? onPick : undefined}
                 label={isBall ? `${product.name}: ${usedText}${freeText ? `; free paint, ${freeText}` : ''}` : `${product.name} in ${colourName(primary)}, ${colourName(secondary)} and ${colourName(accent)}`} />}
           {isBall && gl === 'yes' ? (
             <div className="seg studio__view" role="group" aria-label="View">
@@ -454,7 +481,8 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
           {step === 1 ? (
             isBall ? (
               <>
-                {/* the tools, with Undo beside them: one row of big buttons, in reach of a thumb */}
+                {/* the paint panel, in the order a hand uses it: the tool, the colour, then the tool's own settings;
+                    everything a stroke needs sits under the ball without scrolling */}
                 <div className="paint-tools" role="group" aria-label="Tool">
                   {TOOLS.map(([v, l, icon]) => (
                     <button key={v} type="button" aria-pressed={tool === v} onClick={() => setTool(v)}>
@@ -465,14 +493,13 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
                     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4.5 11.5 9 16M5 11.5h9.5a5 5 0 0 1 0 10H12" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
                 </div>
-                <p className="paint-hint">{(show3d ? TOOL_HINT : FLAT_HINT(spec.kinds.length))[tool]}</p>
                 <div className="paint-colours">
                   <p className="paint-colours__name">Colour <span className="studio__pick">{colourName(brush)}</span></p>
                   {swatchRow(brush, setBrush, 'Paint colour')}
                 </div>
                 {tool === 'free' ? (
-                  <>
-                    <div className="paint-brush">
+                  <div className="paint-free">
+                    <div className="paint-free__row">
                       <div className="paint-sizes" role="group" aria-label="Brush size">
                         {SIZES.map(([v, l]) => (
                           <button key={v} type="button" className={`paint-size paint-size--${v}`} aria-pressed={brushSize === v} aria-label={l} title={l} onClick={() => setBrushSize(v)}>
@@ -480,13 +507,16 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
                           </button>
                         ))}
                       </div>
-                      <div className="paint-kinds" role="group" aria-label="Brush or spray">
-                        <button type="button" className="chip-btn" aria-pressed={brushKind === 'brush'} onClick={() => setBrushKind('brush')}>Brush</button>
-                        <button type="button" className="chip-btn" aria-pressed={brushKind === 'spray'} onClick={() => setBrushKind('spray')}>Spray</button>
+                      <div className="seg-mini" role="group" aria-label="Brush or spray">
+                        <button type="button" aria-pressed={brushKind === 'brush'} onClick={() => setBrushKind('brush')}>Brush</button>
+                        <button type="button" aria-pressed={brushKind === 'spray'} onClick={() => setBrushKind('spray')}>Spray</button>
                       </div>
                     </div>
-                    <p className="paint-print">Free paint is printed onto the panels as artwork. Send it with your inquiry: the quotation confirms whether your design can be printed.</p>
-                  </>
+                    <label className="paint-switch">
+                      <span className="paint-switch__text">Inside one panel<small>Each stroke stays in the panel it starts on</small></span>
+                      <input type="checkbox" role="switch" checked={inside} onChange={(e) => setInside(e.target.checked)} />
+                    </label>
+                  </div>
                 ) : (
                   <div className="studio__tools" role="group" aria-label="Paint whole parts">
                     {spec.whole.map(([label, on]) => (
@@ -494,6 +524,8 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
                     ))}
                   </div>
                 )}
+                <p className="paint-hint">{(show3d ? TOOL_HINT : FLAT_HINT(spec.kinds.length))[tool]}</p>
+                {tool === 'free' ? <p className="paint-print">Free paint is printed onto the panels as artwork. Send it with your inquiry: the quotation confirms whether your design can be printed.</p> : null}
                 <div className="studio__tools">
                   {strokes.length ? <button type="button" className="btn-text" onClick={() => apply(paint, [])}>Clear free paint</button> : null}
                   <button type="button" className="btn-text" onClick={() => apply(spec.start, [])}>Start again</button>
@@ -536,7 +568,24 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
                   </label>
                 )}
               </div>
-              <fieldset><legend>Logo position</legend>{seg('place', opts.place.map(([, l]) => l), opts.place.find(([v]) => v === place)?.[1] ?? '', (l) => setPlace(opts.place.find(([, x]) => x === l)![0]))}</fieldset>
+              {/* a ball: the logo is printed onto it, so it can be any size, turned, and placed anywhere */}
+              {isBall && logo ? (
+                <>
+                  <div className="logo-size">
+                    <label htmlFor={`${uid}-lsize`}>Logo size <span className="studio__pick">about {logoPct}% of the ball&rsquo;s width</span></label>
+                    <input id={`${uid}-lsize`} type="range" min="0.1" max="0.55" step="0.01" value={logoSize} onChange={(e) => setLogoSize(Number(e.target.value))} />
+                  </div>
+                  <div className="studio__tools" role="group" aria-label="Turn the logo">
+                    <button type="button" className="chip-btn" onClick={() => setLogoTurn((t) => ((t - 15 + 540) % 360) - 180)}>Turn left</button>
+                    <button type="button" className="chip-btn" onClick={() => setLogoTurn((t) => ((t + 15 + 540) % 360) - 180)}>Turn right</button>
+                    {logoTurn ? <button type="button" className="btn-text" onClick={() => setLogoTurn(0)}>Straighten</button> : null}
+                  </div>
+                </>
+              ) : null}
+              <fieldset><legend>Logo position</legend>
+                {seg('place', opts.place.map(([, l]) => l), isBall && logoAt ? '' : opts.place.find(([v]) => v === place)?.[1] ?? '', (l) => { setPlace(opts.place.find(([, x]) => x === l)![0]); setLogoAt(null); })}
+                {isBall && logo ? <p className="paint-hint">{logoAt ? 'Placed where you tapped. ' : ''}Tap the ball to place the logo anywhere on it.</p> : null}
+              </fieldset>
               {err && step === 2 ? <p className="err" id={`${uid}-err`} role="alert">{err}</p> : null}
               {next}
             </>

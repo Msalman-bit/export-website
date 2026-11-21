@@ -1,11 +1,11 @@
 'use client';
-import { forwardRef, useId, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useId, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { footballPanels, logoSpots } from './football';
+import { footballPanels } from './football';
 import { footballNet, type FlatNet } from './net';
-import { RUGBY_SPOTS, rugbyNet } from './rugby';
+import { rugbyNet } from './rugby';
 import type { BallLook } from './Ball3D';
-import { addPoint, marks, newStroke, rng, type Brush, type Stroke, type Tool } from './paint';
+import { addPoint, decalFrame, decalHalf, marks, newStroke, rng, type Brush, type Stroke, type Tool } from './paint';
 
 /* The 2D views: the football laid flat, all 32 panels as they are cut (the Flat view, and the fallback when WebGL
    is missing), a goalkeeper glove, a boxing glove and a shirt. The gloves and the shirt are lit the same way (a key
@@ -15,9 +15,11 @@ import { addPoint, marks, newStroke, rng, type Brush, type Stroke, type Tool } f
 type Props = {
   model: 'football' | 'rugby' | 'glove' | 'jersey'; variant?: 'boxing'; look: BallLook; label: string;
   onPaint?: (panel: number, n: number) => void; onStroke?: (stroke: Stroke) => void; tool?: Tool; brush?: Brush;
+  /** the Logo step: a tap on a ball's pattern gives the direction there, to print the logo on that spot */
+  onPick?: (d: [number, number, number]) => void;
 };
 
-export const Flat = forwardRef<SVGSVGElement, Props>(function Flat({ model, variant, look, label, onPaint, onStroke, tool = 'turn', brush }, ref) {
+export const Flat = forwardRef<SVGSVGElement, Props>(function Flat({ model, variant, look, label, onPaint, onStroke, tool = 'turn', brush, onPick }, ref) {
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const brushing = (model === 'football' || model === 'rugby') && !!onPaint && tool !== 'turn';
   return (
@@ -52,8 +54,8 @@ export const Flat = forwardRef<SVGSVGElement, Props>(function Flat({ model, vari
       </defs>
       <rect width="600" height="600" fill={`url(#${id}-room)`} />
       {model === 'football' || model === 'rugby' ? null : <ellipse cx="300" cy={model === 'jersey' ? 538 : 552} rx="180" ry="16" fill="#000" opacity=".6" filter={`url(#${id}-floor)`} />}
-      {model === 'football' ? <NetBall net={footballNet()} spots={SPOTS} fallback={footballFill} look={look} onPaint={onPaint} onStroke={onStroke} tool={tool} brush={brush} />
-        : model === 'rugby' ? <NetBall net={rugbyNet()} spots={RUGBY_SPOTS} fallback={(i, l) => (i % 2 ? l.primary : l.accent)} look={look} onPaint={onPaint} onStroke={onStroke} tool={tool} brush={brush} />
+      {model === 'football' ? <NetBall net={footballNet()} fallback={footballFill} look={look} onPaint={onPaint} onStroke={onStroke} tool={tool} brush={brush} onPick={onPick} />
+        : model === 'rugby' ? <NetBall net={rugbyNet()} fallback={(i, l) => (i % 2 ? l.primary : l.accent)} look={look} onPaint={onPaint} onStroke={onStroke} tool={tool} brush={brush} onPick={onPick} />
         : model === 'glove' ? (variant === 'boxing' ? <BoxingGlove look={look} id={id} /> : <KeeperGlove look={look} id={id} />)
         : <Jersey look={look} id={id} />}
     </svg>
@@ -72,7 +74,6 @@ const STITCH = { fill: 'none', stroke: '#8a8a8a', strokeOpacity: 0.7, strokeWidt
    on the pattern too: a tap paints a panel; the panel brush paints every panel a drag crosses; free paint draws on
    whichever panel is under the finger (a stroke that leaves the pattern ends there, and the next panel starts a new
    one), mapped back onto the ball, so the 3D view shows it in the same place. */
-const SPOTS = logoSpots(footballPanels());
 const KINDS = footballPanels().map((p) => p.kind);
 const footballFill = (i: number, l: BallLook) => (KINDS[i] === 'pent' ? l.secondary : i % 7 === 3 ? l.accent : l.primary);
 const V = new THREE.Vector3();
@@ -87,6 +88,7 @@ function paintByPanel(net: FlatNet, strokes: Stroke[]): Map<number, React.ReactN
   strokes.forEach((st, k) => {
     const solid = new Map<number, string[]>(), mist = new Map<number, string[]>();
     marks(st, 0, rng(st.seed), (x, y, z, r, a) => net.place(V.set(x, y, z), r, (i, px, py, pr) => {
+      if (st.panel !== undefined && i !== st.panel) return; // a stroke held inside one panel paints nowhere else
       const m = a < 0.5 ? mist : solid;
       if (!m.has(i)) m.set(i, []);
       m.get(i)!.push(circle(px, py, pr));
@@ -104,9 +106,10 @@ function paintByPanel(net: FlatNet, strokes: Stroke[]): Map<number, React.ReactN
   return by;
 }
 
-function NetBall({ net, spots, fallback, look, onPaint, onStroke, tool, brush }: {
-  net: FlatNet; spots: { front: number; side: number; back: number }; fallback: (i: number, look: BallLook) => string;
+function NetBall({ net, fallback, look, onPaint, onStroke, tool, brush, onPick }: {
+  net: FlatNet; fallback: (i: number, look: BallLook) => string;
   look: BallLook; onPaint?: (panel: number, n: number) => void; onStroke?: (stroke: Stroke) => void; tool: Tool; brush?: Brush;
+  onPick?: (d: [number, number, number]) => void;
 }) {
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   const shapes = useMemo(() => net.polys.map((p) => `M${p.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L')}Z`), [net]);
@@ -121,8 +124,35 @@ function NetBall({ net, spots, fallback, look, onPaint, onStroke, tool, brush }:
   }), [net]);
   const fill = (i: number) => look.panels?.[i] ?? fallback(i, look);
   const painted = useMemo(() => paintByPanel(net, look.strokes ?? []), [net, look.strokes]);
-  const logoOn = look.logo ? (look.logoPlace === 'front' ? [spots.front] : look.logoPlace === 'side' ? [spots.side] : [spots.front, spots.back]) : [];
-  const logoPx = net.logo;
+  // the printed logo: on every panel it covers, its piece, set by where three of its points land on that panel
+  // (its middle, its right edge and its top edge) and cut at the panel's edge, as on the 3D ball
+  const [logoWH, setLogoWH] = useState<{ w: number; h: number } | null>(null);
+  useEffect(() => {
+    if (!look.logo) { setLogoWH(null); return; }
+    const im = new Image();
+    im.onload = () => setLogoWH({ w: im.naturalWidth || 1, h: im.naturalHeight || 1 });
+    im.src = look.logo;
+  }, [look.logo]);
+  const logoPieces = useMemo(() => {
+    if (!look.logo || !logoWH) return [];
+    const out: { i: number; m: string }[] = [];
+    for (const dc of look.decals ?? []) {
+      const { d, R, U } = decalFrame(dc);
+      const [hx, hy] = decalHalf(dc, logoWH);
+      const reach = Math.atan(Math.hypot(hx, hy)) + 0.5;
+      net.dirs.forEach((dir, i) => {
+        if (dir.angleTo(d) > reach) return;
+        const p0 = net.toPanel(i, d);
+        const pR = net.toPanel(i, d.clone().addScaledVector(R, hx).normalize());
+        const pU = net.toPanel(i, d.clone().addScaledVector(U, hy).normalize());
+        if (!p0 || !pR || !pU) return;
+        const rx = pR[0] - p0[0], ry = pR[1] - p0[1], ux = pU[0] - p0[0], uy = pU[1] - p0[1];
+        const n = (v: number) => v.toFixed(3);
+        out.push({ i, m: `matrix(${n(2 * rx)} ${n(2 * ry)} ${n(-2 * ux)} ${n(-2 * uy)} ${n(p0[0] - rx + ux)} ${n(p0[1] - ry + uy)})` });
+      });
+    }
+    return out;
+  }, [look.logo, look.decals, logoWH, net]);
 
   // the hand: one finger at a time; the stroke being drawn shows as it grows
   const drag = useRef<{ id: number; n: number; last: number; stroke: Stroke | null; panel: number } | null>(null);
@@ -157,7 +187,10 @@ function NetBall({ net, spots, fallback, look, onPaint, onStroke, tool, brush }:
       if (last.angleTo(d) > 0.25) end();
     }
     g.panel = i;
-    if (!g.stroke) g.stroke = newStroke(brush ?? { colour: '#1b2a4a', size: 'm', kind: 'brush' });
+    if (!g.stroke) {
+      const b = brush ?? { colour: '#1b2a4a', size: 'm', kind: 'brush' };
+      g.stroke = { ...newStroke(b), panel: b.inside ? i : undefined }; // inside one panel: held to the panel it starts on
+    }
     if (addPoint(g.stroke, d) >= 0) setLive({ st: g.stroke, n: g.stroke.pts.length });
   };
   const release = (e: React.PointerEvent, last: boolean) => {
@@ -185,7 +218,14 @@ function NetBall({ net, spots, fallback, look, onPaint, onStroke, tool, brush }:
   const livePaint = live ? paintByPanel(net, [live.st]) : null;
 
   return (
-    <g data-net={id} {...handlers} style={brushing ? { cursor: tool === 'free' ? 'crosshair' : 'pointer' } : undefined}>
+    <g data-net={id} {...handlers} onClick={onPick && !brushing ? (e) => {
+      const el = document.elementFromPoint(e.clientX, e.clientY)?.closest(`[data-net="${id}"] [data-panel]`);
+      const m = (e.currentTarget as SVGGraphicsElement).ownerSVGElement?.getScreenCTM();
+      if (!el || !m) return;
+      const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
+      const v = net.fromNet(Number(el.getAttribute('data-panel')), pt.x, pt.y);
+      onPick([v.x, v.y, v.z]);
+    } : undefined} style={brushing ? { cursor: tool === 'free' ? 'crosshair' : 'pointer' } : onPick ? { cursor: 'crosshair' } : undefined}>
       <defs>
         {shapes.map((d, i) => <clipPath key={i} id={`${id}-p${i}`}><path d={d} /></clipPath>)}
         {/* each panel padded: a little lighter in the middle, darker toward its seams */}
@@ -204,10 +244,9 @@ function NetBall({ net, spots, fallback, look, onPaint, onStroke, tool, brush }:
         ))}
       </g>
       <g style={{ pointerEvents: 'none' }}>
-        {logoOn.map((i) => {
-          const [cx, cy] = net.centres[i];
-          return <image key={i} href={look.logo!} x={cx - logoPx / 2} y={cy - logoPx / 2} width={logoPx} height={logoPx} preserveAspectRatio="xMidYMid meet" transform={`rotate(${net.up[i].toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)})`} />;
-        })}
+        {logoPieces.map((pc, k) => (
+          <g key={k} clipPath={`url(#${id}-p${pc.i})`}><image href={look.logo!} x="0" y="0" width="1" height="1" preserveAspectRatio="none" transform={pc.m} /></g>
+        ))}
         {shapes.map((_, i) => {
           const marks = [...(painted.get(i) ?? []), ...(livePaint?.get(i) ?? [])];
           return marks.length ? <g key={i} clipPath={`url(#${id}-p${i})`}>{marks}</g> : null;

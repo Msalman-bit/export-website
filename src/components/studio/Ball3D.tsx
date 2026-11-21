@@ -1,11 +1,11 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { footballPanels, logoSpots, panelGeometry } from './football';
 import { RUGBY, RUGBY_SPOTS, pimpleGrip, rugbyCoreGeometry, rugbyPanelGeometry } from './rugby';
-import { FACE, addPoint, marks, newStroke, paintCube, rng, stampCube, type Brush, type Stroke, type Tool } from './paint';
+import { FACE, addPoint, faceClips, marks, newStroke, paintCube, readLogoPixels, rng, stampCube, type Brush, type FaceClip, type Decal, type LogoPixels, type Stroke, type Tool } from './paint';
 
 export type BallLook = {
   primary: string; secondary: string; accent: string; logo: string | null; logoPlace: 'front' | 'side' | 'both';
@@ -13,6 +13,8 @@ export type BallLook = {
   panels?: string[];
   /** free paint on the football: strokes across the panels (printed artwork) */
   strokes?: Stroke[];
+  /** where the logo is printed on a ball (its centre, size and turn); a glove or a shirt places it by logoPlace */
+  decals?: Decal[];
 };
 
 /* The 3D football, made to read as a real ball: 32 cushioned panels (their middles lifted, their edges rolled into
@@ -29,11 +31,15 @@ export type BallLook = {
    drawing and the 3D ball always show the same side when the two are switched. `shape` is the ball: the 32-panel
    football (also the futsal ball and the handball) or the four-panel rugby ball, which lies along its length with a
    pimpled grip. */
-export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn', brush, view, onView, shape = 'football' }: {
+export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn', brush, view, onView, shape = 'football', onPick }: {
   look: BallLook; onFail: () => void; onReady: (snap: () => string) => void;
   onPaint?: (panel: number, n: number) => void; onStroke?: (stroke: Stroke) => void; tool?: Tool; brush?: Brush;
   view?: number[]; onView?: (q: number[], shape: 'football' | 'rugby') => void; shape?: 'football' | 'rugby';
+  /** the Logo step: a tap on the ball gives the direction there, to print the logo on that spot */
+  onPick?: (d: [number, number, number]) => void;
 }) {
+  const pickRef = useRef(onPick);
+  pickRef.current = onPick;
   const viewRef = useRef(view);
   viewRef.current = view;
   const onViewRef = useRef(onView);
@@ -50,7 +56,7 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
   const state = useRef<{
     mats: THREE.MeshPhysicalMaterial[]; meshes: THREE.Mesh[]; target: THREE.Color[]; pop: number[];
     front: number; side: number; back: number; render: () => void; still: boolean;
-    redraw: (strokes: Stroke[]) => void; live: Stroke | null;
+    redraw: (strokes: Stroke[], decals: Decal[], logo: LogoPixels | null) => void; live: Stroke | null;
   } | null>(null);
 
   useEffect(() => {
@@ -136,6 +142,26 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry(rugby ? 2.8 : 2.6, rugby ? 1.8 : 2.6), new THREE.MeshBasicMaterial({ map: softShadow(), transparent: true, depthWrite: false }));
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = rugby ? -(RUGBY.W + 0.06) : -1.06; scene.add(shadow);
 
+    // each panel's bounding planes through the ball's centre (inside: n · v >= 0), for strokes held inside one panel:
+    // a football panel between its corners, a rugby panel between its two seams
+    const planes: number[][][] = rugby
+      ? [0, 1, 2, 3].map((k) => {
+        const a1 = k * Math.PI / 2 - Math.PI / 4, a2 = k * Math.PI / 2 + Math.PI / 4;
+        return [[0, -Math.sin(a1), Math.cos(a1)], [0, Math.sin(a2), -Math.cos(a2)]];
+      })
+      : panels.map((p) => p.corners.map((c, j) => {
+        const n = c.clone().cross(p.corners[(j + 1) % p.corners.length]);
+        if (n.dot(p.center) < 0) n.negate();
+        return [n.x, n.y, n.z];
+      }));
+    const clips = new Map<number, FaceClip>();
+    const clipFor = (i: number) => { if (!clips.has(i)) clips.set(i, faceClips(planes[i])); return clips.get(i)!; };
+    // the panel a direction is in: the one whose bounding planes it is most inside (on a seam, the nearer of the two)
+    const panelOf = (d: THREE.Vector3) => {
+      let best = 0, bestMin = -Infinity;
+      planes.forEach((ps, i) => { const m = Math.min(...ps.map((n) => n[0] * d.x + n[1] * d.y + n[2] * d.z)); if (m > bestMin) { bestMin = m; best = i; } });
+      return best;
+    };
     // the logo's panels, fixed on the ball
     const { front, side, back } = rugby ? RUGBY_SPOTS : logoSpots(panels);
 
@@ -186,11 +212,18 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
       const hit = hitAt(e, [...meshes, core]);
       if (!hit) return;
       const d = ball.worldToLocal(hit.point.clone()).normalize();
-      if (!drag.stroke) { drag.stroke = newStroke(brushRef.current); drag.rnd = rng(drag.stroke.seed); }
+      if (!drag.stroke) {
+        // "inside one panel": the stroke is held to the panel it starts on (started on a seam: the nearer panel)
+        let panel: number | undefined;
+        if (brushRef.current.inside) { panel = at(e); if (panel < 0) panel = panelOf(d); }
+        drag.stroke = { ...newStroke(brushRef.current), panel };
+        drag.rnd = rng(drag.stroke.seed);
+      }
       const st = drag.stroke;
       const k = addPoint(st, d);
       if (k < 0) return;
-      marks(st, k, drag.rnd, (x, y, z, r, a) => stampCube(ctxs, st.colour, x, y, z, r, a));
+      const clip = st.panel !== undefined ? clipFor(st.panel) : undefined;
+      marks(st, k, drag.rnd, (x, y, z, r, a) => stampCube(ctxs, st.colour, x, y, z, r, a, clip));
       dirty = true;
     };
     // the fingers (or the mouse button) on the ball. A phone can lose a finger's lift (after a long press opens its own
@@ -235,8 +268,14 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
       lift(e);
       if (finish(e)) return;
       const d = down; down = null;
-      if (!d || !paintRef.current || mode() !== 'turn') return;
+      if (!d || mode() !== 'turn') return;
       if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 6 || performance.now() - d.t > 500) return;
+      if (pickRef.current) {
+        const hit = hitAt(e, [...meshes, core]);
+        if (hit) { const v = ball.worldToLocal(hit.point.clone()).normalize(); pickRef.current([v.x, v.y, v.z]); }
+        return;
+      }
+      if (!paintRef.current) return;
       const i = at(e);
       if (i >= 0) paintRef.current(i, 0);
     };
@@ -299,7 +338,7 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
       render();
     };
     raf = requestAnimationFrame(tick);
-    const redraw = (strokes: Stroke[]) => { paintCube(ctxs, strokes); dirty = true; };
+    const redraw = (strokes: Stroke[], decals: Decal[], logo: LogoPixels | null) => { paintCube(ctxs, strokes, decals, logo, clipFor); dirty = true; };
     state.current = { mats, meshes, target, pop, front, side, back, render, still, redraw, live: null };
     // the picture for a download or an inquiry: always a sharp 1200px square from the current view, whatever shape the
     // frame on screen has (a phone's frame is wider than tall, and copying it into a square stretched the ball)
@@ -332,69 +371,52 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
     };
   }, [onFail, onReady, shape]);
 
-  // colours and logo: each panel eases to its colour (instantly the first time and under reduced motion)
+  // colours: each panel eases to its colour (instantly the first time and under reduced motion)
   const first = useRef(true);
   const prev = useRef<string[]>([]);
   useEffect(() => {
     const st = state.current;
     if (!st) return;
     const colours = st.mats.map((_, i) => look.panels?.[i] ?? (shape === 'rugby' ? (i % 2 ? look.primary : look.accent) : i < 12 ? look.secondary : i % 7 === 3 ? look.accent : look.primary));
-    const logoPanels = look.logo ? (look.logoPlace === 'front' ? [st.front] : look.logoPlace === 'side' ? [st.side] : [st.front, st.back]) : [];
-    let tex: THREE.Texture | null = null;
-    if (look.logo) {
-      tex = new THREE.TextureLoader().load(look.logo, () => st.render());
-      tex.colorSpace = THREE.SRGBColorSpace;
-    }
     const now = performance.now();
     st.mats.forEach((m, i) => {
       const colour = colours[i];
       st.target[i].set(colour);
       if (first.current || st.still) m.color.set(colour);
       else if (prev.current[i] && prev.current[i] !== colour) st.pop[i] = now;
-      const isLogo = logoPanels.includes(i);
-      if (m.map) { m.map.dispose(); m.map = null; }
-      if (isLogo && tex) { m.map = makeLogoTexture(tex, colour); m.color.set('#ffffff'); st.target[i].set('#ffffff'); }
-      m.needsUpdate = true;
+
     });
     prev.current = colours;
     first.current = false;
   }, [look, shape]);
 
-  // free paint: a stroke just drawn is already on the cube; anything else (Undo, Start again, Clear, the first
-  // showing) redraws every stroke
-  const drawn = useRef<Stroke[]>([]);
+  // the logo's pixels, read once per logo file
+  const [logoPx, setLogoPx] = useState<LogoPixels | null>(null);
+  useEffect(() => {
+    let live = true;
+    if (!look.logo) { setLogoPx(null); return; }
+    readLogoPixels(look.logo).then((p) => { if (live) setLogoPx(p); });
+    return () => { live = false; };
+  }, [look.logo]);
+
+  // the print and the free paint: a stroke just drawn is already on the cube; anything else (Undo, Start again,
+  // Clear, the logo moved, sized or turned, the first showing) draws the cube again
+  const drawn = useRef<{ strokes: Stroke[]; decals: string; logo: LogoPixels | null }>({ strokes: [], decals: '[]', logo: null });
   useEffect(() => {
     const st = state.current;
     if (!st) return;
     const list = look.strokes ?? [];
-    const prevList = drawn.current;
-    const justDrawn = list.length === prevList.length + 1 && prevList.every((x, i) => x === list[i]) && list[list.length - 1] === st.live;
-    if (!justDrawn && (list.length || prevList.length || st.live)) st.redraw(list);
+    const decals = logoPx ? (look.decals ?? []) : [];
+    const key = JSON.stringify(decals);
+    const was = drawn.current;
+    const sameLogo = key === was.decals && logoPx === was.logo;
+    const justDrawn = sameLogo && list.length === was.strokes.length + 1 && was.strokes.every((x, i) => x === list[i]) && list[list.length - 1] === st.live;
+    if (!justDrawn && (list.length || was.strokes.length || st.live || decals.length || !sameLogo)) st.redraw(list, decals, logoPx);
     st.live = null;
-    drawn.current = list;
-  }, [look.strokes, shape]);
+    drawn.current = { strokes: list, decals: key, logo: logoPx };
+  }, [look.strokes, look.decals, logoPx, shape]);
 
   return <div ref={host} style={{ position: 'absolute', inset: 0 }} />;
-}
-
-/** The logo centred on the panel's colour, with a margin, so it reads as a print on that panel. */
-function makeLogoTexture(src: THREE.Texture, ground: string): THREE.Texture {
-  const c = document.createElement('canvas');
-  c.width = c.height = 512;
-  const g = c.getContext('2d')!;
-  g.fillStyle = ground; g.fillRect(0, 0, 512, 512);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  const draw = () => {
-    const img = src.image as HTMLImageElement | undefined;
-    if (!img || !img.width) return;
-    const s = Math.min(300 / img.width, 300 / img.height);
-    g.drawImage(img, 256 - (img.width * s) / 2, 256 - (img.height * s) / 2, img.width * s, img.height * s);
-    tex.needsUpdate = true;
-  };
-  draw();
-  if (!(src.image as HTMLImageElement | undefined)?.width) setTimeout(draw, 200);
-  return tex;
 }
 
 /** A fine synthetic-leather grain for the panels' bump map: soft noise with small pores, drawn once (256px, tiled). */

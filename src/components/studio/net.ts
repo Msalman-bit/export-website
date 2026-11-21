@@ -26,6 +26,10 @@ export type FlatNet = {
   place: (d: THREE.Vector3, r: number, out: (i: number, x: number, y: number, pr: number) => void) => void;
   /** the direction from the ball's centre under a point of panel i's piece */
   fromNet: (i: number, x: number, y: number) => THREE.Vector3;
+  /** where a direction lands on panel i's piece (also past its edge, where the drawing cuts it), or null */
+  toPanel: (i: number, d: THREE.Vector3) => [number, number] | null;
+  /** each panel's middle, as a direction from the ball's centre */
+  dirs: THREE.Vector3[];
 };
 
 let NET: FlatNet | null = null;
@@ -103,6 +107,6 @@ export function footballNet(): FlatNet {
       if (p) out(i, p[0], p[1], r * scale);
     }
   };
-  NET = { polys, centres, up, logo: 0.244 * scale, place, fromNet };
+  NET = { polys, centres, up, logo: 0.244 * scale, place, fromNet, toPanel: toNet, dirs: panels.map((p) => p.center.clone().normalize()) };
   return NET;
 }

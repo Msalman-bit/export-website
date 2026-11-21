@@ -143,6 +143,13 @@ export function rugbyNet(): FlatNet {
     const phi = centreOf(k) + (py - mid(k)) / scale / r;
     return new THREE.Vector3(x, r * Math.cos(phi), r * Math.sin(phi)).normalize();
   };
-  NET = { polys, centres, up: [0, 0, 0, 0], logo: (300 / 512) * UV_LEN * scale, place, fromNet };
+  const toPanel = (k: number, d: THREE.Vector3): [number, number] | null => {
+    const [x, phi] = surfaceAt(d);
+    const dphi = wrap(phi - centreOf(k));
+    if (Math.abs(dphi) > QUARTER * 1.5) return null;
+    return [ox + sOf(x) * scale, mid(k) + Math.max(rugbyRadius(x), 0.02) * dphi * scale];
+  };
+  const dirs = [0, 1, 2, 3].map((k) => new THREE.Vector3(0, Math.cos(centreOf(k)), Math.sin(centreOf(k))));
+  NET = { polys, centres, up: [0, 0, 0, 0], logo: (300 / 512) * UV_LEN * scale, place, fromNet, toPanel, dirs };
   return NET;
 }
