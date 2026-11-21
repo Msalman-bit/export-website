@@ -990,16 +990,21 @@ html.hero-seq main > section.hero--scroll .hero__media { min-height: 0; }
 /* ---------- a short wide window (a laptop at 125%, a browser pane): from 1280px the kit holds every section to
    exactly its screens, so content taller than the window spilled under the next section's heading. As the kit
    already does from 640 to 1279px, a section now keeps at least its screens and grows past them when its content
-   needs it; on a full-height window nothing changes. The hero and the scroll moments keep their own heights. ---------- */
-@media (min-width: 1280px) {
+   needs it; on a full-height window nothing changes. The hero and the scroll moments keep their own heights.
+   "width > 1279px", not "min-width: 1280px": with display scaling a window can be 1279.33px wide (1919px at 150%),
+   which neither the kit's "max-width: 1279px" nor 1280 caught, so every section went back to one fixed screen. ---------- */
+@media (width > 1279px) {
   main > :is(section, .section):not(.hero, .section--hero, [data-moment]), footer.closing {
     height: auto; min-height: calc(var(--h, 1) * 100vh); min-height: calc(var(--h, 1) * 100svh);
   }
   :where(main > :is(section, .section):not(.hero, .section--hero, [data-moment]), footer.closing) { display: flex; flex-direction: column; }
   main > :is(section, .section):not(.hero, .section--hero, [data-moment]) > :is(.wrap, .container), footer.closing > .wrap { flex: 1 0 auto; height: auto; min-height: 0; }
-  /* the range index fills what the screen leaves under its heading, and never less than its own rows */
-  main > section#range > .wrap > .range-index.fill { flex: 1 0 auto; }
 }
+/* the range index fills what the screen leaves under its heading, and never less than its own rows. From 1024px
+   up, not only from 1280: between 1024 and 1279px (a 1528px laptop screen at 125% is 1222px) the kit's .fill could
+   shrink to nothing in a short window, and the picture and the family list then ran into "Sports equipment under
+   your brand" (and "width > 1023px" so a 1023.5px window, between this and the rule for 1023px and less, is held too) */
+@media (width > 1023px) { main > section#range > .wrap > .range-index.fill { flex: 1 0 auto; } }
 /* ---------- the footer on a phone: the close (heading, line, button) and the links each take their own content's
    height. The kit's g2m gives its two rows equal heights, and the links (every family, page and the legal line) run
    near two screens on a phone, so the close was stretched to match and left a screen and a half empty under its
