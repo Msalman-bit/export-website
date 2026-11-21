@@ -16,7 +16,10 @@ export const LIMITS = {
   newsletter: { limit: 5, windowMs: 60 * 60_000 },
   upload: { limit: 30, windowMs: 60 * 60_000 },
   event: { limit: 240, windowMs: 60 * 60_000 },
-  stepUp: { limit: 5, windowMs: 15 * 60_000 }, // wrong authenticator codes on a destructive action, per staff member
+  stepUp: { limit: 5, windowMs: 15 * 60_000 }, // wrong authenticator codes (or failed passkeys) on a destructive action, per staff member
+  // starting a passkey sign-in, per address: looser than `login` (which counts every passkey answered), because
+  // closing the browser's passkey window and trying again is common
+  passkeyStart: { limit: 20, windowMs: 15 * 60_000 },
 } satisfies Record<string, Limit>;
 
 /** True when `key` has used up its limit, without counting this call (for limits that count only failures). */

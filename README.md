@@ -6,7 +6,7 @@ and export brand selling to clubs, distributors, retailers and private-label bra
 Public site with a product catalogue, a customisation studio and a consolidated quotation system, plus a
 customer portal and an administration dashboard. One Next.js application, one PostgreSQL schema.
 
-## Quick start (local, nothing to install but Node 20.9+)
+## Quick start (local, nothing to install but Node 22+)
 
 ```bash
 npm install

@@ -4,7 +4,7 @@
   "private": true,
   "description": "Monolith Sports: B2B sports equipment catalogue, customisation studio, quotation system, customer portal and administration.",
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "dev": "next dev",
@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@electric-sql/pglite": "0.5.16",
+    "@simplewebauthn/browser": "14.0.0",
+    "@simplewebauthn/server": "14.1.0",
     "drizzle-orm": "0.45.4",
     "next": "16.4.6",
     "pdf-lib": "1.17.1",

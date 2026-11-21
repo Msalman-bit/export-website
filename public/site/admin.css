@@ -19,6 +19,8 @@ body.admin { background: var(--surface); }
 .admin__main h2 { font-size: 22px; font-family: var(--font-text); font-weight: 500; letter-spacing: -0.01em; }
 .admin-head { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: end; justify-content: space-between; }
 .panel-box { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-5); display: grid; gap: var(--s-4); align-content: start; min-width: 0; }
+/* a panel placed straight in the page (Your account, Analytics > Reset) is not one of the kit's full-screen sections */
+.admin__main > section.panel-box { height: auto; padding: var(--s-5); }
 .cols-2 { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--s-5); align-items: start; }
 .cols-even { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s-5); align-items: start; }
 /* up to 1100px the sidebar becomes a menu behind a "Menu" button (AdminDrawer): a slim dark bar with the page's name
@@ -114,3 +116,14 @@ body.admin { background: var(--surface); }
    answer never flickers; it comes back at once */
 .table-wrap { transition: opacity 120ms ease; }
 .filters-row[aria-busy="true"] + .table-wrap { opacity: .55; transition-delay: 150ms; }
+
+/* passkeys: "or" between the password form and "Sign in with a passkey"; the add form and the second click to remove
+   on Your account; "confirm with a passkey" under a deletion's code field */
+.auth-or { display: flex; align-items: center; gap: var(--s-3); color: var(--muted); font-size: 14px; }
+.auth-or::before, .auth-or::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+.passkey-add { display: grid; gap: var(--s-3); padding-top: var(--s-4); border-top: 1px solid var(--line); }
+.passkey-add h3 { font-size: 17px; font-family: var(--font-text); font-weight: 500; }
+.passkey-remove > summary { list-style: none; cursor: pointer; width: max-content; }
+.passkey-remove > summary::-webkit-details-marker { display: none; }
+.passkey-remove__body { display: grid; gap: var(--s-2); justify-items: start; margin-top: var(--s-2); max-width: 260px; }
+.passkey-confirm { display: grid; gap: var(--s-2); padding-top: var(--s-3); border-top: 1px solid color-mix(in oklab, #b3261e 20%, transparent); }

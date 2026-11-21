@@ -11,7 +11,7 @@ The app is a standard Next.js 16 Node server (`next build` + `next start`). Two 
   PostgreSQL (Neon, Supabase, Vercel Postgres). Uploaded files: Vercel's filesystem is not persistent, so
   set `UPLOAD_DIR` to a mounted volume on a VM, or swap `src/lib/security/upload.ts` `storeFile`/`readStored`
   for S3 or Supabase Storage (the two functions are the only place files are written and read).
-- **A small VM or container** (Hetzner, DigitalOcean, AWS Lightsail): Node 20.9+, `npm ci && npm run build &&
+- **A small VM or container** (Hetzner, DigitalOcean, AWS Lightsail): Node 22+, `npm ci && npm run build &&
   npm start` behind Caddy or Nginx for HTTPS, `UPLOAD_DIR` on a persistent disk. Run one process per
   instance; put Cloudflare in front for the CDN, WAF and rate-limit rules.
 
@@ -53,7 +53,7 @@ Point the domain, enable HTTPS (HSTS is sent in production), then in Search Cons
 
 `npm run build && npm run package` writes `deploy/monolith-sports/` (and `deploy/monolith-sports.zip`): the
 standalone server, only the dependencies it uses, the static files, `public/` and the migrations, about 106 MB.
-Copy it to any host with Node.js 20.9+, copy `.env.example` to `.env` there and fill it in, then run
+Copy it to any host with Node.js 22+, copy `.env.example` to `.env` there and fill it in, then run
 `node start.mjs` (or build the included `Dockerfile`). Its `START-HERE.md` lists the steps.
 
 The package never contains a secret or local data: it is built from an allow-list, every `.env*` file but the

@@ -1,4 +1,4 @@
-import { asc, eq } from 'drizzle-orm';
+import { asc, count, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db/client';
 import * as s from '@/lib/db/schema';
 import { requireStaff } from '@/lib/auth/session';
@@ -11,6 +11,7 @@ export default async function Users({ searchParams }: { searchParams: SP }) {
   const sp = await searchParams;
   const db = await getDb();
   const staff = await db.select().from(s.users).where(eq(s.users.kind, 'staff')).orderBy(asc(s.users.email));
+  const passkeys = new Map((await db.select({ userId: s.passkeys.userId, n: count() }).from(s.passkeys).groupBy(s.passkeys.userId)).map((r) => [r.userId, r.n]));
   return (
     <>
       <div className="admin-head"><h1>Staff and roles</h1></div>
@@ -21,7 +22,7 @@ export default async function Users({ searchParams }: { searchParams: SP }) {
             <td><form action={updateStaff} className="inline-form"><input type="hidden" name="id" value={u.id} /><input type="hidden" name="op" value="role" />
               <label className="sr-only" htmlFor={`r-${u.id}`}>Role of {u.email}</label>
               <select id={`r-${u.id}`} name="role" defaultValue={u.role}>{s.STAFF_ROLES.map((r) => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}</select><button className="btn-text" type="submit">Save</button></form></td>
-            <td>{u.mfaEnabledAt ? 'On' : 'Not set up'}</td><td>{day(u.lastLoginAt) || 'never'}</td>
+            <td>{u.mfaEnabledAt ? 'On' : 'Not set up'}{passkeys.get(u.id) ? <><br /><span className="t-small muted">{passkeys.get(u.id)} {passkeys.get(u.id) === 1 ? 'passkey' : 'passkeys'}</span></> : null}</td><td>{day(u.lastLoginAt) || 'never'}</td>
             <td>{u.id === me.id ? 'You' : (
               <div className="inline-form">
                 <form action={updateStaff}><input type="hidden" name="id" value={u.id} /><input type="hidden" name="op" value={u.disabledAt ? 'enable' : 'disable'} /><button className="btn-text" type="submit">{u.disabledAt ? 'Enable' : 'Disable'}</button></form>
@@ -30,6 +31,7 @@ export default async function Users({ searchParams }: { searchParams: SP }) {
             )}</td></tr>
         ))}
       </tbody></table></div>
+      <p className="t-small">Reset two-factor: for a lost or replaced phone. It also removes the person’s passkeys; they set up an authenticator app again at their next sign-in. Each person adds and removes their own passkeys under Your account.</p>
       <div className="cols-even">
         <form action={createStaff} className="panel-box"><h2>Add a staff member</h2>
           <div className="field"><label htmlFor="email">Email</label><input id="email" name="email" type="email" required /></div>

@@ -3,7 +3,9 @@ import { getDb } from '@/lib/db/client';
 import * as s from '@/lib/db/schema';
 import { requireStaff } from '@/lib/auth/session';
 import { can } from '@/lib/auth/rbac';
+import { hasPasskeyHere } from '@/lib/auth/passkey-request';
 import { Flash, type SP } from '../ui';
+import { PasskeyConfirm } from '../forms';
 import { resetAnalytics } from '../actions';
 
 /* First-party, cookieless counts (no IP, no identifier): views, basket, quotes, samples, downloads,
@@ -55,7 +57,7 @@ export default async function Analytics({ searchParams }: { searchParams: SP }) 
         </section>
       </div>
       <p className="t-small">For traffic sources and sessions, connect Google Analytics 4 in Settings; it loads only for visitors who accept analytics cookies.</p>
-      {reset ? <ResetAnalytics total={all} /> : null}
+      {reset ? <ResetAnalytics total={all} passkey={await hasPasskeyHere(u.id)} /> : null}
     </>
   );
 }
@@ -63,7 +65,7 @@ export default async function Analytics({ searchParams }: { searchParams: SP }) 
 /* Resetting the analytics (administrators only): "Reset…" opens the warning, and its button resets only with the
    six-digit code the administrator's authenticator app shows now (resetAnalytics in ../actions). Typically used
    once, before launch, to clear the counts left by testing. */
-function ResetAnalytics({ total }: { total: number }) {
+function ResetAnalytics({ total, passkey }: { total: number; passkey: boolean }) {
   return (
     <section className="panel-box" id="reset"><h2>Reset the analytics</h2>
       {!total ? <p className="t-small">Nothing to reset: every count is at zero.</p> : (
@@ -84,6 +86,7 @@ function ResetAnalytics({ total }: { total: number }) {
                 <input id="reset-code" name="code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9 ]{6,7}" maxLength={7} required />
               </div>
               <div className="btn-row"><button className="btn btn--danger" type="submit">Reset the analytics</button></div>
+              {passkey ? <PasskeyConfirm label="Reset with a passkey" /> : null}
             </form>
           </div>
         </details>

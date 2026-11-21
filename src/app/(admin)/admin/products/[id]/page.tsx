@@ -5,7 +5,9 @@ import * as s from '@/lib/db/schema';
 import { requireStaff } from '@/lib/auth/session';
 import { can } from '@/lib/auth/rbac';
 import { pic } from '@/lib/media';
+import { hasPasskeyHere } from '@/lib/auth/passkey-request';
 import { Flash, type SP } from '../../ui';
+import { PasskeyConfirm } from '../../forms';
 import { saveProduct, deleteProduct, addProductImage, removeProductImage } from '../../actions';
 
 /* /admin/products/new and /admin/products/:id: every commercial and technical field of a product.
@@ -13,13 +15,14 @@ import { saveProduct, deleteProduct, addProductImage, removeProductImage } from 
 export default async function ProductEdit({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: SP }) {
   const u = await requireStaff('catalogue.write');
   const canDelete = can(u.role, 'catalogue.delete'); // administrators only
+  const passkey = canDelete && (await hasPasskeyHere(u.id)); // a passkey may confirm instead of the code
   const { id } = await params;
   const sp = await searchParams;
   // the list search the product was opened from (?q=): its back link and a delete return to that filtered list
   const q = sp.q?.slice(0, 60) ?? '';
   const listHref = q ? `/admin/products?q=${encodeURIComponent(q)}` : '/admin/products';
   // a refused deletion (wrong SKU or code) comes back with the danger section open, the message above it
-  const refused = /Nothing was deleted|Too many wrong codes/.test(sp.error ?? '');
+  const refused = /Nothing was deleted|Too many wrong codes|Too many failed/.test(sp.error ?? '');
   const db = await getDb();
   const isNew = id === 'new';
   if (!isNew && !/^[0-9a-f-]{36}$/i.test(id)) notFound();
@@ -107,6 +110,7 @@ export default async function ProductEdit({ params, searchParams }: { params: Pr
                         <input id="delete-code" name="code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9 ]{6,7}" maxLength={7} required />
                       </div>
                       <div className="btn-row"><button className="btn btn--danger" type="submit">Delete {p!.sku}</button></div>
+                      {passkey ? <PasskeyConfirm label={`Delete ${p!.sku} with a passkey`} /> : null}
                     </form>
                   </div>
                 </details>

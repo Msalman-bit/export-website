@@ -4,6 +4,34 @@ Sign in at `/admin/login` with your email and password, then the six-digit code 
 app. The first time, the site shows a QR code to scan. Lost your phone? Another administrator uses
 **Staff and roles > Reset two-factor**.
 
+## Passkeys: signing in with your phone
+
+A passkey lets you sign in with your phone's or computer's own lock (Face ID, a fingerprint or the device PIN)
+instead of typing your password and the authenticator code. It counts as both, so one tap signs you in. Every staff
+member adds their own; you can add several (your phone, your laptop). The password and the authenticator code keep
+working as before, so you can always sign in without a passkey.
+
+- **Add one:** in the admin menu, **Your account and passkeys**. Give the passkey a name you will recognise
+  ("Salman's iPhone"), type the six-digit code your authenticator app shows now, and click **Add a passkey**. Your
+  browser then asks you to save it: on a phone, open this page on the phone itself; at a computer, save it on the
+  computer, or choose **Use a phone or tablet** and scan the code with your phone. The phone keeps the passkey (in
+  iCloud Keychain or Google Password Manager, for example).
+- **Sign in with it:** on the sign-in page, **Sign in with a passkey**, then unlock with Face ID, a fingerprint or
+  the PIN. At a computer that does not hold the passkey, choose **Use a phone or tablet** and scan the code with the
+  phone that does.
+- **See and remove:** **Your account** lists your passkeys with when each was added and last used. **Remove…**,
+  then **Remove**, stops one signing in at once (also delete it on the device, in its passwords settings, if you
+  like). Lost a phone? Remove its passkey from another device, or ask an administrator to use **Reset two-factor**,
+  which also removes all your passkeys.
+- **One address only:** a passkey works only on the web address it was made on. Passkeys made on the preview
+  (monolith-sports.onrender.com) or on this computer (localhost) do not work on the site's own domain later: add
+  them again there after the move. Passkeys cannot be used at a plain `http://` network address such as
+  `http://192.168.…:3000` (a phone on the office Wi-Fi), only at the site's `https://` address or on localhost.
+- **Confirming a deletion:** where a deletion asks for the authenticator code (an inquiry, a product, resetting the
+  analytics), anyone with a passkey on this address also sees **… with a passkey**: it confirms with Face ID, a
+  fingerprint or the PIN instead of the code. Each confirmation works once.
+- The audit log records every passkey added and removed, every sign-in with one, and every refused attempt.
+
 ## Daily work: inquiries
 
 1. **Dashboard** shows new inquiries. Every request arrives as "New inquiry", whatever its type: the **Type**
@@ -107,6 +135,10 @@ everyone (the Catalogues page).
 - **Export data:** CSV files for inquiries, lines, quotations, orders, customers, products, subscribers.
 - **Email outbox:** every email the site sent or, without a Resend key, would have sent.
 - **Staff and roles:** add people (a one-time password to hand over in person), change roles, disable,
-  reset two-factor. Roles: Administrator (all), Sales manager, Content editor, Production manager.
+  reset two-factor (for a lost or replaced phone: it also removes the person's passkeys). The Two-factor column shows
+  how many passkeys each person has. Roles: Administrator (all), Sales manager, Content editor, Production manager.
+  Each person manages their own passkeys under **Your account**.
 - **Settings:** company email, currencies, quotation defaults, languages, analytics.
-- **Audit log:** who did what and when (including every deleted quotation and inquiry, and refused deletion codes).
+- **Audit log:** who did what and when (including every deleted quotation and inquiry, and refused deletion codes;
+  passkeys added (`passkey.add`), removed (`passkey.remove`), used to sign in (`staff.login_passkey`) or refused).
+  A deletion's entry says how it was confirmed: `verified: authenticator code` or `verified: passkey (its name)`.

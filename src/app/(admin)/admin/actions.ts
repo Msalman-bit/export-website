@@ -12,6 +12,7 @@ import { hashPassword, verifyPassword, dummyHash, passwordProblem } from '@/lib/
 import { createSession, destroySession, destroyAllSessions, markMfaVerified, readSession, requireStaff } from '@/lib/auth/session';
 import { newTotpSecret, verifyTotp, otpauthUri } from '@/lib/auth/totp';
 import { checkStepUpCode } from '@/lib/auth/step-up';
+import { stepUpWithPasskey } from '@/lib/auth/passkey-request';
 import { encrypt, decrypt, randomToken } from '@/lib/security/crypto';
 import { rateLimit, limited, LIMITS } from '@/lib/security/rate-limit';
 import { keyFrom } from '@/lib/security/request';
@@ -234,14 +235,24 @@ export async function deleteQuotation(fd: FormData) {
 }
 
 /* Step 2 of a destructive action: the six-digit code the staff member's authenticator app shows now, although the
-   session already passed two-factor at sign-in. A code confirms one action only (deleting an inquiry or a product,
-   resetting the analytics: one spent list), and five wrong codes in 15 minutes lock these actions for that person. A refusal is
-   audited, and nothing happens. */
-async function requireStepUp(u: Awaited<ReturnType<typeof requireStaff>>, fd: FormData, path: string, refused: { action: string; entity: string; id: string; detail: Record<string, unknown> }, nothing: string) {
+   session already passed two-factor at sign-in, or instead one of their own passkeys, unlocked on the device with
+   Face ID, a fingerprint or its PIN (the form's "passkey" field, filled by PasskeyConfirm in ./forms). A code
+   confirms one action only (deleting an inquiry or a product, resetting the analytics: one spent list), a passkey
+   answer one challenge only, and five failures in 15 minutes lock these actions for that person. A refusal is
+   audited, and nothing happens. Returns how it was confirmed, for the action's own audit entry. */
+async function requireStepUp(u: Awaited<ReturnType<typeof requireStaff>>, fd: FormData, path: string, refused: { action: string; entity: string; id: string; detail: Record<string, unknown> }, nothing: string): Promise<string> {
   const limitKey = `stepup:${u.id}`;
   if (limited(limitKey, LIMITS.stepUp)) back(path, 'Too many wrong codes. Wait 15 minutes, then try again.', 'error');
+  const passkey = String(fd.get('passkey') ?? '');
+  if (passkey) {
+    const r = await stepUpWithPasskey(u.id, passkey);
+    if (r.ok) return `passkey (${r.name})`;
+    rateLimit(limitKey, LIMITS.stepUp);
+    await audit({ id: u.id, email: u.email }, refused.action, refused.entity, refused.id, { ...refused.detail, reason: `passkey: ${r.reason}` });
+    back(path, `The passkey could not be confirmed. Try again, or use the code from your authenticator app. ${nothing}`, 'error');
+  }
   const result = checkStepUpCode(u.id, u.mfaSecret ? decrypt(u.mfaSecret) : '', str(fd, 'code', 10));
-  if (result === 'ok') return;
+  if (result === 'ok') return 'authenticator code';
   rateLimit(limitKey, LIMITS.stepUp);
   await audit({ id: u.id, email: u.email }, refused.action, refused.entity, refused.id, { ...refused.detail, reason: result === 'spent' ? 'code already used' : 'wrong code' });
   back(path, result === 'spent'
@@ -261,9 +272,9 @@ export async function resetAnalytics(fd: FormData) {
   const counts = await db.select({ name: s.events.name, n: sql<number>`count(*)::int` }).from(s.events).groupBy(s.events.name);
   const total = counts.reduce((t, c) => t + c.n, 0);
   if (!total) back(path, 'Nothing to reset: every count is already at zero.');
-  await requireStepUp(u, fd, path, { action: 'analytics.reset_refused', entity: 'analytics', id: 'all', detail: { total } }, 'Nothing was reset.');
+  const verified = await requireStepUp(u, fd, path, { action: 'analytics.reset_refused', entity: 'analytics', id: 'all', detail: { total } }, 'Nothing was reset.');
   await db.delete(s.events);
-  await audit(actor, 'analytics.reset', 'analytics', 'all', { total, counts: Object.fromEntries(counts.map((c) => [c.name, c.n])), verified: 'authenticator code' });
+  await audit(actor, 'analytics.reset', 'analytics', 'all', { total, counts: Object.fromEntries(counts.map((c) => [c.name, c.n])), verified });
   back(path, `Analytics reset: ${total} ${total === 1 ? 'count' : 'counts'} removed. Counting starts again from now.`);
 }
 
@@ -290,8 +301,8 @@ export async function deleteInquiry(fd: FormData) {
   const live = quotes.find((q) => q.status === 'sent' || q.status === 'accepted');
   if (live) back(path, `Quotation ${live.number} is ${live.status}, so ${inq.reference} cannot be deleted${live.status === 'sent' ? ': mark the quotation declined first' : ''}.`, 'error');
 
-  // step 2: the authenticator code
-  await requireStepUp(u, fd, path, { action: 'inquiry.delete_refused', entity: 'inquiry', id, detail: { reference: inq.reference } }, 'Nothing was deleted.');
+  // step 2: the authenticator code or a passkey
+  const verified = await requireStepUp(u, fd, path, { action: 'inquiry.delete_refused', entity: 'inquiry', id, detail: { reference: inq.reference } }, 'Nothing was deleted.');
 
   const files = await db.select().from(s.attachments).where(and(eq(s.attachments.ownerType, 'inquiry'), eq(s.attachments.ownerId, id)));
   const lines = await db.select({ productId: s.inquiryItems.productId }).from(s.inquiryItems).where(eq(s.inquiryItems.inquiryId, id));
@@ -307,7 +318,7 @@ export async function deleteInquiry(fd: FormData) {
   }
   await audit(actor, 'inquiry.delete', 'inquiry', id, {
     reference: inq.reference, company: inq.companyName, email: inq.email, status: inq.status, items: lines.length, files: files.length,
-    quotations: quotes.map((q) => q.number), verified: 'authenticator code',
+    quotations: quotes.map((q) => q.number), verified,
   });
   back('/admin/inquiries', `Inquiry ${inq.reference} deleted.`);
 }
@@ -459,10 +470,10 @@ export async function deleteProduct(fd: FormData) {
   if (!p) back(list, 'Product not found.', 'error');
   const path = `/admin/products/${id}${q ? `?q=${encodeURIComponent(q)}` : ''}`;
   if (str(fd, 'confirm', 60).toUpperCase() !== p!.sku.toUpperCase()) back(path, `Type the SKU, ${p!.sku}, to confirm the deletion. Nothing was deleted.`, 'error');
-  // step 2: the authenticator code
-  await requireStepUp(u, fd, path, { action: 'product.delete_refused', entity: 'product', id, detail: { sku: p!.sku, name: p!.name } }, 'Nothing was deleted.');
+  // step 2: the authenticator code or a passkey
+  const verified = await requireStepUp(u, fd, path, { action: 'product.delete_refused', entity: 'product', id, detail: { sku: p!.sku, name: p!.name } }, 'Nothing was deleted.');
   await db.delete(s.products).where(eq(s.products.id, id));
-  await audit(actor, 'product.delete', 'product', id, { sku: p!.sku, name: p!.name, status: p!.status, verified: 'authenticator code' });
+  await audit(actor, 'product.delete', 'product', id, { sku: p!.sku, name: p!.name, status: p!.status, verified });
   back(list, `Product ${p!.name} (${p!.sku}) deleted.`);
 }
 
@@ -767,7 +778,14 @@ export async function updateStaff(fd: FormData) {
     await db.update(s.users).set({ role }).where(eq(s.users.id, id));
   } else if (op === 'disable') { await db.update(s.users).set({ disabledAt: new Date() }).where(eq(s.users.id, id)); await destroyAllSessions(id); }
   else if (op === 'enable') await db.update(s.users).set({ disabledAt: null, failedLogins: 0, lockedUntil: null }).where(eq(s.users.id, id));
-  else if (op === 'reset-mfa') { await db.update(s.users).set({ mfaSecret: null, mfaEnabledAt: null }).where(eq(s.users.id, id)); await destroyAllSessions(id); }
+  else if (op === 'reset-mfa') {
+    // a lost phone usually holds the passkeys too: they go with the authenticator, and the person sets both up again
+    await db.update(s.users).set({ mfaSecret: null, mfaEnabledAt: null }).where(eq(s.users.id, id));
+    const removed = await db.delete(s.passkeys).where(eq(s.passkeys.userId, id)).returning({ name: s.passkeys.name });
+    await destroyAllSessions(id);
+    await audit(actor, 'staff.reset-mfa', 'user', id, { passkeysRemoved: removed.map((p) => p.name) });
+    back('/admin/users', `Two-factor sign-in reset${removed.length ? ` and ${removed.length} ${removed.length === 1 ? 'passkey' : 'passkeys'} removed` : ''}. They set up an authenticator again at their next sign-in.`);
+  }
   await audit(actor, `staff.${op}`, 'user', id);
   back('/admin/users', 'Saved.');
 }

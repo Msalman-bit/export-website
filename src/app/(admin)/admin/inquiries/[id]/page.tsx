@@ -7,7 +7,9 @@ import { can } from '@/lib/auth/rbac';
 import { STATUS_LABEL, allowedNext } from '@/lib/status';
 import { countryName } from '@/lib/inquiry/countries';
 import { getSettings } from '@/lib/data';
+import { hasPasskeyHere } from '@/lib/auth/passkey-request';
 import { Flash, Status, fmt, money, type SP } from '../../ui';
+import { PasskeyConfirm } from '../../forms';
 import { setInquiryStatus, addInquiryNote, assignInquiry, linkCompany, saveQuotation, sendQuotationAction, setQuotationOutcome, deleteQuotation, deleteInquiry, createOrder, sendStaffMessage } from '../../actions';
 
 export default async function InquiryDetail({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: SP }) {
@@ -150,7 +152,7 @@ export default async function InquiryDetail({ params, searchParams }: { params: 
               <li key={h.id} className="is-done"><span><strong>{h.kind === 'status' ? `${STATUS_LABEL[h.fromStatus ?? ''] ?? h.fromStatus ?? ''} → ${STATUS_LABEL[h.toStatus ?? ''] ?? h.toStatus}` : h.kind}</strong>{h.visibleToCustomer ? ' · shown to customer' : ''}<br /><span className="t-small muted">{fmt(h.createdAt)}</span>{h.body ? <><br />{h.body}</> : null}</span></li>
             ))}</ol>
           </section>
-          {del ? <DeleteInquiry inq={inq} items={items.length} files={files.length} quotes={quotes.length} blocked={blocked} /> : null}
+          {del ? <DeleteInquiry inq={inq} items={items.length} files={files.length} quotes={quotes.length} blocked={blocked} passkey={await hasPasskeyHere(u.id)} /> : null}
         </div>
       </div>
     </>
@@ -184,7 +186,7 @@ function DeleteQuotation({ q }: { q: { id: string; number: string; status: strin
    only with the six-digit code the administrator's authenticator app shows now. The server checks the code, the
    inquiry's own reference as the confirmation, and that no order or live quotation depends on it (deleteInquiry in
    ../../actions). A native disclosure: it works without script and closes again with the same button. */
-function DeleteInquiry({ inq, items, files, quotes, blocked }: { inq: { id: string; reference: string }; items: number; files: number; quotes: number; blocked: string }) {
+function DeleteInquiry({ inq, items, files, quotes, blocked, passkey }: { inq: { id: string; reference: string }; items: number; files: number; quotes: number; blocked: string; passkey: boolean }) {
   const n = (count: number, one: string, many = `${one}s`) => `${count} ${count === 1 ? one : many}`;
   const parts = [n(items, 'product line'), files ? n(files, 'uploaded file') : '', 'its timeline', quotes ? n(quotes, 'draft or declined quotation') : ''].filter(Boolean);
   const list = parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}` : parts[0];
@@ -208,6 +210,7 @@ function DeleteInquiry({ inq, items, files, quotes, blocked }: { inq: { id: stri
                 <input id="delete-code" name="code" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9 ]{6,7}" maxLength={7} required />
               </div>
               <div className="btn-row"><button className="btn btn--danger" type="submit">Delete {inq.reference}</button></div>
+              {passkey ? <PasskeyConfirm label={`Delete ${inq.reference} with a passkey`} /> : null}
             </form>
           </div>
         </details>

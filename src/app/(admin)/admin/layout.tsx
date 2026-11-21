@@ -43,7 +43,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const items = NAV.filter((n) => !n.perm || (user && can(user.role, n.perm)));
   const groups = [...new Set(items.map((i) => i.group))];
   const isHere = (p: string) => (p === '/admin' ? path === '/admin' : path.startsWith(p));
-  const current = items.find((i) => isHere(i.path))?.label ?? 'Admin';
+  const current = items.find((i) => isHere(i.path))?.label ?? (path.startsWith('/admin/account') ? 'Your account' : 'Admin');
   return (
     <html lang="en" data-type="product" data-radius="sharp" data-buttons="block">
       <head>
@@ -75,6 +75,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               </nav>
               <div className="admin__me">
                 <p className="t-small">{user.name || user.email}<br /><span className="muted">{ROLE_LABELS[user.role as StaffRole]}</span></p>
+                <a className="t-small link" href="/admin/account" aria-current={path.startsWith('/admin/account') ? 'page' : undefined}>Your account and passkeys</a>
                 <form action={staffLogout}><button className="btn-text" type="submit">Sign out</button></form>
                 <a className="t-small link" href="/en" target="_blank" rel="noopener">Open the website</a>
               </div>

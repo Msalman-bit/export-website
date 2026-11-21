@@ -1,5 +1,5 @@
 import {
-  pgTable, text, uuid, timestamp, boolean, integer, jsonb, numeric, primaryKey, uniqueIndex, index, serial,
+  pgTable, text, uuid, timestamp, boolean, integer, bigint, jsonb, numeric, primaryKey, uniqueIndex, index, serial,
 } from 'drizzle-orm/pg-core';
 
 /* Monolith Sports database schema (PostgreSQL; PGlite locally).
@@ -65,6 +65,38 @@ export const sessions = pgTable('sessions', {
   createdAt: created(),
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
 }, (t) => [index('sessions_user').on(t.userId)]);
+
+/* A staff member's passkeys (WebAuthn credentials): only the public key is kept here; the private key never leaves
+   the person's phone, computer or password manager. A passkey works only on the domain it was made on (rp_id). */
+export const passkeys = pgTable('passkeys', {
+  id: text('id').primaryKey(), // the credential ID (base64url), as the browser reports it
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  publicKey: text('public_key').notNull(), // COSE public key, base64url
+  counter: bigint('counter', { mode: 'number' }).notNull().default(0),
+  transports: jsonb('transports').$type<string[]>().notNull().default([]),
+  rpId: text('rp_id').notNull(), // the domain it belongs to: localhost, monolith-sports.onrender.com, the own domain
+  deviceType: text('device_type').notNull().default(''), // 'multiDevice' (synced, e.g. iCloud Keychain) or 'singleDevice'
+  backedUp: boolean('backed_up').notNull().default(false),
+  aaguid: text('aaguid').notNull().default(''), // the kind of authenticator, without identifying the device
+  createdAt: created(),
+  lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+}, (t) => [index('passkeys_user').on(t.userId)]);
+
+/* One passkey ceremony in progress (adding a passkey, signing in, confirming a deletion). The browser holds a random
+   token in a short-lived cookie; this row holds only its SHA-256 and the challenge. A row is taken (deleted) by the
+   first answer, right or wrong, so a challenge works once, and only within its few minutes. */
+export const webauthnChallenges = pgTable('webauthn_challenges', {
+  id: text('id').primaryKey(), // SHA-256 of the cookie token
+  purpose: text('purpose').$type<'register' | 'signin' | 'stepup'>().notNull(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  challenge: text('challenge').notNull(),
+  rpId: text('rp_id').notNull(),
+  origin: text('origin').notNull(),
+  data: jsonb('data').$type<Record<string, string>>().notNull().default({}),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  createdAt: created(),
+}, (t) => [index('webauthn_challenges_expires').on(t.expiresAt)]);
 
 export const tokens = pgTable('tokens', {
   id: uuid('id').primaryKey().defaultRandom(),
