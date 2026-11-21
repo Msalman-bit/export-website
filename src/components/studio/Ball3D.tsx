@@ -301,7 +301,18 @@ export function Ball3D({ look, onFail, onReady, onPaint, onStroke, tool = 'turn'
     raf = requestAnimationFrame(tick);
     const redraw = (strokes: Stroke[]) => { paintCube(ctxs, strokes); dirty = true; };
     state.current = { mats, meshes, target, pop, front, side, back, render, still, redraw, live: null };
-    onReady(() => { render(); return renderer.domElement.toDataURL('image/png'); });
+    // the picture for a download or an inquiry: always a sharp 1200px square from the current view, whatever shape the
+    // frame on screen has (a phone's frame is wider than tall, and copying it into a square stretched the ball)
+    onReady(() => {
+      const pr = renderer.getPixelRatio(), dist = camera.position.length();
+      renderer.setPixelRatio(1); renderer.setSize(1200, 1200, false);
+      camera.aspect = 1; camera.updateProjectionMatrix();
+      camera.position.setLength(1.02 / (0.78 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))));
+      render();
+      const url = renderer.domElement.toDataURL('image/png');
+      renderer.setPixelRatio(pr); size(); camera.position.setLength(dist); render();
+      return url;
+    });
 
     return () => {
       // the view the ball was left at, for the Flat drawing

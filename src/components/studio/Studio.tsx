@@ -292,21 +292,37 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
   const download = async () => {
     const shot = await picture();
     const img = await new Promise<HTMLImageElement>((res) => { const i = new Image(); i.onload = () => res(i); i.src = shot; });
-    const c = document.createElement('canvas'); c.width = 1200; c.height = 1560;
+    // the design's details under the picture, each wrapped to the card's width (never cut off), then the note
+    const cf = config();
+    const facts = [
+      `Colours: ${isBall ? usedText : `${colourName(primary)}, ${colourName(secondary)}, ${colourName(accent)}`}`,
+      ...(freeText ? [`Free paint: ${freeText}`] : []),
+      logo ? `Logo: ${cf.logo} (${cf.logoPlacement})` : 'Logo: none',
+      ...([material, construction, size].some(Boolean) ? [[material, construction, size].filter(Boolean).join(' · ')] : []),
+      `Quantity: ${cf.quantity} · ${cf.packaging}`,
+    ];
+    const measure = document.createElement('canvas').getContext('2d')!;
+    measure.font = '28px Archivo, Arial, sans-serif';
+    const wrap = (text: string) => text.split(' ').reduce<string[]>((rows, word) => {
+      const last = rows[rows.length - 1];
+      if (last !== undefined && measure.measureText(`${last} ${word}`).width <= 1088) rows[rows.length - 1] = `${last} ${word}`;
+      else rows.push(word);
+      return rows;
+    }, []);
+    const lines = facts.flatMap(wrap);
+    const H = 1200 + 110 + lines.length * 42 + 70;
+    const c = document.createElement('canvas'); c.width = 1200; c.height = H;
     const g = c.getContext('2d')!;
-    g.fillStyle = '#080808'; g.fillRect(0, 0, 1200, 1560);
-    g.drawImage(img, 0, 0, 1200, 1200);
+    g.fillStyle = '#080808'; g.fillRect(0, 0, 1200, H);
+    // the picture keeps its own proportions, centred in the square (a ball is never stretched)
+    const k = Math.min(1200 / img.width, 1200 / img.height);
+    g.drawImage(img, (1200 - img.width * k) / 2, (1200 - img.height * k) / 2, img.width * k, img.height * k);
     g.fillStyle = '#c5f900'; g.fillRect(0, 1200, 1200, 6);
     g.fillStyle = '#ffffff'; g.font = '500 40px Archivo, Arial, sans-serif'; g.fillText(`Monolith Sports · ${product?.name ?? ''}`, 56, 1270);
     g.font = '28px Archivo, Arial, sans-serif'; g.fillStyle = '#d6d8db';
-    const cf = config();
-    const colourLine = `Colours: ${isBall ? usedText : `${colourName(primary)}, ${colourName(secondary)}, ${colourName(accent)}`}`;
-    const freeLine = freeText ? `Free paint: ${freeText}` : '';
-    const build = [material, construction, size].filter(Boolean).join(' · ');
-    const lines = [colourLine.length > 78 ? `${colourLine.slice(0, 77)}…` : colourLine, ...(freeLine ? [freeLine.length > 78 ? `${freeLine.slice(0, 77)}…` : freeLine] : []), `Logo: ${cf.logo} (${cf.logoPlacement})`, ...(build ? [build] : []), `Quantity: ${cf.quantity} · ${cf.packaging}`];
     lines.forEach((l, i) => g.fillText(l, 56, 1325 + i * 42));
     g.fillStyle = '#959595'; g.font = '24px Archivo, Arial, sans-serif';
-    g.fillText('Visual concept, not a production sample. The approved sample is the production reference.', 56, 1515);
+    g.fillText('Visual concept, not a production sample. The approved sample is the production reference.', 56, 1325 + lines.length * 42 + 22);
     const a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = `monolith-concept-${(product?.sku ?? 'design').toLowerCase()}.png`; a.click();
     navigator.sendBeacon?.('/api/events', JSON.stringify({ name: 'studio_preview_download', productId: product?.id, path: location.pathname }));
     say('The concept preview is downloading.');
