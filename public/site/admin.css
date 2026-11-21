@@ -14,6 +14,13 @@ body.admin { background: var(--surface); }
    field is tapped (iPhones do below 16px); the dense 40px fields stay inside the admin */
 .admin .admin__auth .field input { height: 48px; font-size: 16px; }
 @media (max-width: 639px) { .auth-split > .auth { align-self: start; padding-block: var(--s-4) var(--s-6); } }
+/* from 640px the sign-in's button pair spans the form: "Sign in with a passkey" on its left edge, Continue on its right.
+   Only the picture is mirrored: Continue stays first in the page, so Tab after the password still reaches it first,
+   and on a phone it stays the kit's stack (Continue, the link under it) */
+@media (min-width: 640px) {
+  .admin__auth .auth form > .btn-row:has(> .btn--secondary) { flex-direction: row-reverse; justify-content: space-between; }
+  .admin__auth .auth form > .btn-row > .btn--secondary { padding-inline: 0; }
+}
 .admin__shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
 .admin__side { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--p-inv-bg); color: var(--p-inv-ink); padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-5); }
 .admin__side .nav__logo { color: var(--p-inv-ink); font-size: 18px; }

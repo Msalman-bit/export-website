@@ -19,7 +19,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const allowed = (staff && staff.session.mfaVerified) || (customer?.emailVerifiedAt && customer.companyId && inq?.companyId === customer.companyId && q.status !== 'draft');
   if (!allowed || !inq) return new NextResponse('Not found', { status: 404 });
   const settings = await getSettings();
-  const pdf = await quotationPdf(q, inq, { footer: settings.quotation.footer });
+  const pdf = await quotationPdf(q, inq, { footer: settings.quotation.footer, contact: settings.company.salesEmail });
   return new NextResponse(new Uint8Array(pdf), {
     headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="${q.number}.pdf"`, 'Cache-Control': 'private, no-store' },
   });

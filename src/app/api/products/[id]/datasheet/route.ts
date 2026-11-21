@@ -4,6 +4,7 @@ import { getDb } from '@/lib/db/client';
 import * as s from '@/lib/db/schema';
 import { datasheetPdf } from '@/lib/pdf/documents';
 import { track } from '@/lib/audit';
+import { getSettings } from '@/lib/data';
 
 /* GET /api/products/:id/datasheet: the product's technical datasheet as a PDF (published products only). */
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -14,7 +15,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   if (!p) return new NextResponse('Not found', { status: 404 });
   const [sub] = await db.select().from(s.categories).where(eq(s.categories.id, p.categoryId)).limit(1);
   const [fam] = sub?.parentId ? await db.select().from(s.categories).where(eq(s.categories.id, sub.parentId)).limit(1) : [sub];
-  const pdf = await datasheetPdf(p, fam?.name ?? '', sub?.name ?? '');
+  const pdf = await datasheetPdf(p, fam?.name ?? '', sub?.name ?? '', { contact: (await getSettings()).company.salesEmail });
   await track('datasheet_download', { productId: p.id });
   return new NextResponse(new Uint8Array(pdf), {
     headers: {

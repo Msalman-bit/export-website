@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getFamilies, getProductsInFamily } from '@/lib/data';
+import { getFamilies, getProductsInFamily, getSettings } from '@/lib/data';
 import { cataloguePdf } from '@/lib/pdf/documents';
 import { track } from '@/lib/audit';
 
@@ -10,7 +10,7 @@ export async function GET(req: Request) {
   if (!fams.length) return new NextResponse('Not found', { status: 404 });
   const data = [];
   for (const f of fams) data.push({ name: f.name, summary: f.summary, products: await getProductsInFamily(f) });
-  const pdf = await cataloguePdf(data);
+  const pdf = await cataloguePdf(data, { contact: (await getSettings()).company.salesEmail });
   await track('catalogue_download', { path: family ? `/products/${family}` : '/catalogues' });
   return new NextResponse(new Uint8Array(pdf), {
     headers: {
