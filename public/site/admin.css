@@ -1,7 +1,19 @@
 /* Admin: the site's tokens, a fixed sidebar, dense tables. Same type, colours and radius as the site. */
 body.admin { background: var(--surface); }
-.admin__auth { min-height: 100vh; display: grid; place-items: center; padding: var(--s-6); }
-.admin__auth > .auth { background: var(--bg); padding: var(--s-7); border: 1px solid var(--line); border-radius: var(--r-lg); width: min(100%, 520px); }
+/* the signed-out screens (sign-in, two-factor): the name top left at --edge, the form in the middle of the screen on
+   the plain page (centred on the whole screen: its lower padding matches the name's row above it), near the top on a
+   phone. The section is the kit's hero (its one entrance), not a full-screen section of the site: its height and
+   padding are its own */
+.admin__auth { --edge: clamp(16px, 2.2vw, 32px); min-height: 100vh; min-height: 100svh; background: var(--bg); }
+.admin__auth > .auth-split { height: auto; min-height: 100vh; min-height: 100svh; padding: var(--edge); display: grid;
+  grid-template-rows: auto 1fr; gap: var(--s-6); }
+.auth-split__logo { color: var(--ink); font-size: 18px; justify-self: start; min-height: 44px; }
+.auth-split > .auth { align-self: center; justify-self: center; width: min(100%, 400px); padding-bottom: calc(44px + var(--s-6)); }
+.auth-split > .auth .page-head h1 { font-size: clamp(36px, 3.2vw, 48px); }
+/* the kit's form size here (system.md, Forms): 48px fields with 16px text, so a phone never enlarges the page when a
+   field is tapped (iPhones do below 16px); the dense 40px fields stay inside the admin */
+.admin .admin__auth .field input { height: 48px; font-size: 16px; }
+@media (max-width: 639px) { .auth-split > .auth { align-self: start; padding-block: var(--s-4) var(--s-6); } }
 .admin__shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
 .admin__side { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--p-inv-bg); color: var(--p-inv-ink); padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-5); }
 .admin__side .nav__logo { color: var(--p-inv-ink); font-size: 18px; }
@@ -117,18 +129,10 @@ body.admin { background: var(--surface); }
 .table-wrap { transition: opacity 120ms ease; }
 .filters-row[aria-busy="true"] + .table-wrap { opacity: .55; transition-delay: 150ms; }
 
-/* passkeys: "or" between the password form and "Sign in with a passkey"; the add form and the second click to remove
-   on Your account; "confirm with a passkey" under a deletion's code field */
-.auth-or { display: flex; align-items: center; gap: var(--s-3); color: var(--muted); font-size: 14px; }
-.auth-or::before, .auth-or::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
-/* on the sign-in pages an empty message line takes no room (nor the gap above it), so "or" sits as close to Continue
-   as to "Sign in with a passkey"; it stays in the page (out of the layout only), so a message that appears in it is
-   still read out */
+/* passkeys: on the sign-in pages an empty message line takes no room (nor the gap above it); it stays in the page
+   (out of the layout only), so a message that appears in it is still read out. Then the add form and the second
+   click to remove on Your account, and "confirm with a passkey" under a deletion's code field */
 .admin__auth .status-line:empty { position: absolute; min-height: 0; }
-/* "Sign in with a passkey" is drawn as a link inside a full-height button (the kit's block buttons), so its words sit
-   half the empty height below the top of its tap area: it moves up by that much, so the words are as far from "or"
-   as "or" is from Continue; the tap area keeps its full height */
-.auth-or + .block { margin-top: calc((var(--t-body) - var(--btn-h)) / 2); }
 .passkey-add { display: grid; gap: var(--s-3); padding-top: var(--s-4); border-top: 1px solid var(--line); }
 .passkey-add h3 { font-size: 17px; font-family: var(--font-text); font-weight: 500; }
 .passkey-remove > summary { list-style: none; cursor: pointer; width: max-content; }

@@ -4,14 +4,27 @@ import { browserSupportsWebAuthn, startAuthentication, startRegistration } from 
 import { staffLogin, mfaConfirm } from './actions';
 import { passkeyAddFinish, passkeyAddStart, passkeySignInFinish, passkeySignInStart, passkeyStepUpStart } from './passkey-actions';
 
+/** The staff sign-in: email and password (then the authenticator code), or a passkey. "Sign in with a passkey" is the
+    second button of Continue's row: beside it on a computer, a text link under it on a phone (the kit's button pair). */
 export function StaffLoginForm() {
   const [state, action, pending] = useActionState(staffLogin, {});
+  const passkey = usePasskeySignIn();
   return (
     <form action={action} className="block" noValidate>
       <div className="field"><label htmlFor="email">Email</label><input id="email" name="email" type="email" autoComplete="username" required /></div>
       <div className="field"><label htmlFor="password">Password</label><input id="password" name="password" type="password" autoComplete="current-password" required /></div>
-      <div className="btn-row"><button className="btn btn--primary" type="submit" disabled={pending}>Continue</button></div>
+      <div className="btn-row">
+        <button className="btn btn--primary" type="submit" disabled={pending}>Continue</button>
+        {passkey.supported !== false ? (
+          <button className="btn btn--secondary" type="button" onClick={passkey.signIn} disabled={passkey.busy || passkey.supported === null}>Sign in with a passkey</button>
+        ) : null}
+      </div>
       <p className={state.message ? 'err' : 'status-line'} role="status">{state.message ?? ''}</p>
+      {passkey.supported === false ? (
+        <p className="t-small muted">This browser or address cannot use passkeys: sign in with your password and code.</p>
+      ) : (
+        <p className={passkey.message ? 'err' : 'status-line'} role="status">{passkey.busy && !passkey.message ? 'Waiting for your passkey…' : passkey.message}</p>
+      )}
     </form>
   );
 }
@@ -47,13 +60,12 @@ function passkeyProblem(err: unknown): string {
   return 'The passkey did not work on this device. Try again, or use your password and authenticator code.';
 }
 
-/** "Sign in with a passkey" on the sign-in page. The browser offers the passkeys it holds for this site, or a QR code
+/** "Sign in with a passkey" (in StaffLoginForm). The browser offers the passkeys it holds for this site, or a QR code
     to use a phone; Face ID, a fingerprint or the device PIN unlocks it, and that is the whole sign-in. */
-export function PasskeySignIn() {
+function usePasskeySignIn() {
   const supported = usePasskeySupport();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
-  if (supported === false) return <p className="t-small muted">This browser or address cannot use passkeys: sign in with your password and code.</p>;
   async function signIn() {
     setBusy(true); setMessage('');
     let leaving = false;
@@ -70,12 +82,7 @@ export function PasskeySignIn() {
       if (!leaving) setBusy(false);
     }
   }
-  return (
-    <div className="block">
-      <div className="btn-row"><button className="btn btn--secondary" type="button" onClick={signIn} disabled={busy || supported === null}>Sign in with a passkey</button></div>
-      <p className={message ? 'err' : 'status-line'} role="status">{busy && !message ? 'Waiting for your passkey…' : message}</p>
-    </div>
-  );
+  return { supported, busy, message, signIn };
 }
 
 /** "Add a passkey" (Your account): a name, a fresh authenticator code, then the device makes the passkey. */

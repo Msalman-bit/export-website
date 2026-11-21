@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import Script from 'next/script';
 import { KIT_VERSION } from '@/lib/kit-version';
 import { readSession } from '@/lib/auth/session';
 import { can, ROLE_LABELS, type Permission } from '@/lib/auth/rbac';
@@ -34,6 +35,9 @@ const NAV: { path: string; label: string; perm?: Permission; group: string }[] =
   { path: '/admin/audit', label: 'Audit log', perm: 'audit.read', group: 'System' },
 ];
 
+// the kit's head line for the hero's one entrance (motion.md): set before the first paint, with its 700ms safety mark
+const ENTER = "document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)";
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await readSession('staff');
   const h = await headers();
@@ -45,7 +49,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const isHere = (p: string) => (p === '/admin' ? path === '/admin' : path.startsWith(p));
   const current = items.find((i) => isHere(i.path))?.label ?? (path.startsWith('/admin/account') ? 'Your account' : 'Admin');
   return (
-    <html lang="en" data-type="product" data-radius="sharp" data-buttons="block">
+    <html lang="en" data-type="product" data-radius="sharp" data-buttons="block" data-motion={signedIn ? undefined : ''} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,6 +59,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <style>{ROOT}</style>
         <link rel="stylesheet" href="/site/site.css" />
         <link rel="stylesheet" href="/site/admin.css" />
+        {/* the signed-out screens (sign-in, two-factor) carry the kit's motion layer: the entrance and the hover and press */}
+        {!signedIn ? <link rel="stylesheet" href="/assets/motion/motion.css" /> : null}
+        {!signedIn ? <script nonce={nonce} dangerouslySetInnerHTML={{ __html: ENTER }} /> : null}
         {/* iOS Safari shows :active (the press) only once a touchstart listener exists */}
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: "document.addEventListener('touchstart',function(){},{passive:true})" }} />
       </head>
@@ -83,7 +90,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <main className="admin__main" id="top">{children}</main>
           </div>
         ) : (
-          <main className="admin__auth" id="top">{children}</main>
+          <main className="admin__auth" id="top">
+            {/* the sign-in and two-factor screens: the name top left, the form in the middle of the screen */}
+            <section className="hero auth-split" data-enter>
+              <a className="nav__logo auth-split__logo" href="/en"><span className="mark" data-mark="dots" aria-hidden="true" />Monolith Sports</a>
+              {children}
+            </section>
+            <Script src="/assets/motion/motion.js" type="module" strategy="afterInteractive" nonce={nonce} />
+          </main>
         )}
       </body>
     </html>
