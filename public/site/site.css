@@ -347,6 +347,9 @@
 @media (hover: hover) and (pointer: fine) { .studio__steps button:hover { color: var(--ink); } }
 .studio__step-n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid currentColor; font-size: 12px; }
 .studio__step { display: grid; gap: var(--s-5); align-content: start; }
+/* a Details choice with only one option the product names: said plainly, no buttons */
+.studio__fixed { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: 0; }
+.studio__fixed span { font-weight: 500; }
 .studio__next { justify-self: start; }
 /* step 1: the products as picture tiles */
 .studio__products { display: grid; grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); gap: var(--s-2); }
@@ -374,6 +377,32 @@
 .studio__used { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin: 0; font-size: var(--t-small); }
 .studio__used > span { display: inline-flex; align-items: center; gap: var(--s-2); }
 .studio__dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--line-strong); }
+.studio__dot--free { background: repeating-linear-gradient(45deg, var(--ink) 0 2px, transparent 2px 4px); }
+/* the paint tools: Turn, Panels and Free paint as three big buttons with Undo beside them (one row, in reach of a
+   thumb), a one-line hint under them, then the colours; with Free paint, the brush sizes and Brush or Spray */
+.paint-tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) 48px; gap: var(--s-2); }
+.paint-tools button { display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2); min-height: 48px; padding: 0 var(--s-2);
+  border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: var(--bg); color: var(--ink); font: 500 var(--t-small)/1.2 var(--font-text); cursor: pointer;
+  transition: transform var(--m-press) var(--m-ease), background-color var(--m-out) var(--m-ease), color var(--m-out) var(--m-ease); }
+.paint-tools button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.paint-tools button:active:not([disabled]) { transform: scale(.97); }
+.paint-tools__undo[disabled] { color: var(--muted); opacity: .5; cursor: default; }
+@media (hover: hover) and (pointer: fine) { .paint-tools button:hover:not([aria-pressed="true"]):not([disabled]) { border-color: color-mix(in oklab, var(--ink) 40%, transparent); } }
+.paint-hint { margin: calc(-1 * var(--s-3)) 0 0; font-size: var(--t-small); color: color-mix(in oklab, var(--muted) 75%, var(--ink)); }
+.paint-colours { display: grid; gap: var(--s-2); min-width: 0; }
+.paint-colours__name { margin: 0; font-weight: 500; }
+.paint-brush { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3); }
+.paint-sizes, .paint-kinds { display: flex; gap: var(--s-2); }
+.paint-size { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--bg); cursor: pointer;
+  transition: box-shadow var(--m-out) var(--m-ease), transform var(--m-press) var(--m-ease); }
+.paint-size span { display: block; border-radius: 50%; box-shadow: 0 0 0 1px var(--line-strong); }
+.paint-size--s span { width: 7px; height: 7px; }
+.paint-size--m span { width: 15px; height: 15px; }
+.paint-size--l span { width: 27px; height: 27px; }
+.paint-size[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink); }
+.paint-size:active { transform: scale(.95); }
+.paint-kinds .chip-btn[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.paint-print { margin: 0; padding: var(--s-3) var(--s-4); border-left: 2px solid var(--action); border-radius: 0 var(--r-sm) var(--r-sm) 0; background: var(--surface); font-size: var(--t-small); }
 /* step 3: the logo */
 .studio__label { font-weight: 500; }
 .studio__drop { display: flex; align-items: center; gap: var(--s-4); min-height: 96px; padding: var(--s-4) var(--s-5); border: 1px dashed var(--line-strong); border-radius: var(--r-md);
@@ -404,6 +433,17 @@
   .studio__steps button { font-size: 15px; }
   .studio__bar { margin-inline: calc(-1 * var(--gut)); padding-inline: var(--gut); box-shadow: 0 -8px 24px rgb(0 0 0 / .06); }
   .studio__summary { text-align: center; }
+  /* painting by hand: a tighter step, and the colours in one row that swipes sideways (edge to edge, with room for
+     the ring of the colour in use), so the tools, the colours and the ball all fit on one screen */
+  .studio__step { gap: var(--s-4); }
+  .paint-colours .swatches { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    margin-inline: calc(-1 * var(--gut)); padding: 6px var(--gut); scroll-padding-inline: var(--gut); }
+  .paint-colours .swatches::-webkit-scrollbar { display: none; }
+  .paint-colours .swatch { flex: none; }
+}
+/* a phone: each tool's icon above its name, so three names fit beside Undo */
+@media (max-width: 639px) {
+  .paint-tools button { flex-direction: column; gap: 2px; min-height: 56px; padding: var(--s-1); font-size: 13px; }
 }
 @media (max-width: 380px) { .studio__step-n { display: none; } }
 .seg { display: flex; flex-wrap: wrap; gap: var(--s-2); }

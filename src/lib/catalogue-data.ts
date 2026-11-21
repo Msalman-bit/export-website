@@ -17,7 +17,7 @@ export type SeedProduct = {
   sizes?: string[];
   branding?: string[];
   packaging?: string[];
-  studio?: 'football' | 'glove' | 'jersey';
+  studio?: 'football' | 'rugby' | 'glove' | 'jersey';
   image: string; // generated concept id (media/manifest.json)
 };
 
@@ -100,11 +100,11 @@ export const CATALOGUE: SeedFamily[] = [
     summary: 'Match and training rugby balls and protective accessories.',
     body: 'Rugby balls in match and training builds with grip patterns and panel artwork to your design, and the protective accessories teams buy with them.',
     subs: [
-      { slug: 'match-rugby-balls', name: 'Match rugby balls', product: { name: 'Match rugby ball', code: 'RG-MAT', image: 'p-match-rugby-ball',
+      { slug: 'match-rugby-balls', name: 'Match rugby balls', product: { name: 'Match rugby ball', code: 'RG-MAT', image: 'p-match-rugby-ball', studio: 'rugby',
         summary: 'A four-panel ball with a pimpled grip surface for matches.',
         description: 'Choose the grip pattern, the panel colours and your print. The quotation confirms the construction and the bladder.',
         construction: 'Four panels, stitched', branding: BALL_BRANDING, packaging: BALL_PACKING } },
-      { slug: 'training-rugby-balls', name: 'Training rugby balls', product: { name: 'Training rugby ball', code: 'RG-TRN', image: 'p-training-rugby-ball',
+      { slug: 'training-rugby-balls', name: 'Training rugby balls', product: { name: 'Training rugby ball', code: 'RG-TRN', image: 'p-training-rugby-ball', studio: 'rugby',
         summary: 'Hard-wearing balls for club and school sessions, quoted in volume.',
         description: 'Training balls take a tougher outer for daily handling. They are often ordered with the club crest and in mixed sizes for youth sections.',
         construction: 'Four panels, stitched', branding: BALL_BRANDING, packaging: BALL_PACKING } },
@@ -119,15 +119,15 @@ export const CATALOGUE: SeedFamily[] = [
     summary: 'Match, training and junior handballs in sizes 0 to 3.',
     body: 'Handballs stitched to your panel design, colours and branding, in every size from the junior size 0 to the adult size 3, with a grip surface chosen for play with or without resin.',
     subs: [
-      { slug: 'match-handballs', name: 'Match handballs', product: { name: 'Match handball', code: 'HB-MAT', image: 'p-match-handball',
+      { slug: 'match-handballs', name: 'Match handballs', product: { name: 'Match handball', code: 'HB-MAT', image: 'p-match-handball', studio: 'football',
         summary: 'A handball for league and tournament play, built to the size and panel design you choose.',
         description: 'Choose the size, the outer and its grip, the panel layout and your artwork. We make a sample for approval before the bulk order, and the approved sample becomes the reference for inspection.',
         construction: 'Hand-stitched or machine-stitched panels', sizes: ['Size 1', 'Size 2', 'Size 3'], branding: BALL_BRANDING, packaging: BALL_PACKING } },
-      { slug: 'training-handballs', name: 'Training handballs', product: { name: 'Training handball', code: 'HB-TRN', image: 'p-training-handball',
+      { slug: 'training-handballs', name: 'Training handballs', product: { name: 'Training handball', code: 'HB-TRN', image: 'p-training-handball', studio: 'football',
         summary: 'A hard-wearing ball for daily sessions at clubs and schools, quoted by the hundred.',
         description: 'Training balls take the most handling, so the quotation sets the outer and the stitching to the court and to whether your players use resin.',
         construction: 'Machine-stitched or hand-stitched', sizes: ['Size 1', 'Size 2', 'Size 3'], branding: BALL_BRANDING, packaging: BALL_PACKING } },
-      { slug: 'junior-handballs', name: 'Junior handballs', product: { name: 'Junior handball', code: 'HB-JNR', image: 'p-junior-handball',
+      { slug: 'junior-handballs', name: 'Junior handballs', product: { name: 'Junior handball', code: 'HB-JNR', image: 'p-junior-handball', studio: 'football',
         summary: 'Small, soft-touch balls for children and school sport.',
         description: 'Junior balls are lighter and softer, so younger players can grip and throw them with one hand. Choose the size, the colours and your print.',
         construction: 'Soft-touch outer, machine-stitched', sizes: ['Size 0', 'Size 1'], branding: BALL_BRANDING, packaging: BALL_PACKING } },

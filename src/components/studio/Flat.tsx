@@ -1,20 +1,27 @@
 'use client';
-import { forwardRef, useId, useMemo } from 'react';
+import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { footballPanels } from './football';
+import { footballPanels, logoSpots } from './football';
+import { footballNet, type FlatNet } from './net';
+import { RUGBY_SPOTS, rugbyNet } from './rugby';
 import type { BallLook } from './Ball3D';
+import { addPoint, marks, newStroke, rng, type Brush, type Stroke, type Tool } from './paint';
 
-/* The 2D views: the football as a drawing of the same 32 panels (the fallback when WebGL is missing, and the
-   Flat view), a goalkeeper glove, a boxing glove and a shirt. Each is lit the same way (a key light from the top
-   left, rounded shading on every padded or curved part, seams and stitching), so the colours read as a real
-   product, not a flat icon. Pure SVG, so it also prints and downloads. */
+/* The 2D views: the football laid flat, all 32 panels as they are cut (the Flat view, and the fallback when WebGL
+   is missing), a goalkeeper glove, a boxing glove and a shirt. The gloves and the shirt are lit the same way (a key
+   light from the top left, rounded shading on every padded or curved part, seams and stitching), so the colours
+   read as a real product, not a flat icon. Pure SVG, so it also prints and downloads. */
 
-type Props = { model: 'football' | 'glove' | 'jersey'; variant?: 'boxing'; look: BallLook; label: string; onPaint?: (panel: number) => void };
+type Props = {
+  model: 'football' | 'rugby' | 'glove' | 'jersey'; variant?: 'boxing'; look: BallLook; label: string;
+  onPaint?: (panel: number, n: number) => void; onStroke?: (stroke: Stroke) => void; tool?: Tool; brush?: Brush;
+};
 
-export const Flat = forwardRef<SVGSVGElement, Props>(function Flat({ model, variant, look, label, onPaint }, ref) {
+export const Flat = forwardRef<SVGSVGElement, Props>(function Flat({ model, variant, look, label, onPaint, onStroke, tool = 'turn', brush }, ref) {
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  const brushing = (model === 'football' || model === 'rugby') && !!onPaint && tool !== 'turn';
   return (
-    <svg ref={ref} viewBox="0 0 600 600" role="img" aria-label={label} xmlns="http://www.w3.org/2000/svg">
+    <svg ref={ref} viewBox="0 0 600 600" role="img" aria-label={label} xmlns="http://www.w3.org/2000/svg" style={brushing ? { touchAction: 'none' } : undefined}>
       <defs>
         <radialGradient id={`${id}-room`} cx="0.5" cy="0.42" r="0.7">
           <stop offset="0" stopColor="#1d2025" />
@@ -44,8 +51,9 @@ export const Flat = forwardRef<SVGSVGElement, Props>(function Flat({ model, vari
         <filter id={`${id}-blur`} x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="6" /></filter>
       </defs>
       <rect width="600" height="600" fill={`url(#${id}-room)`} />
-      <ellipse cx="300" cy={model === 'football' ? 516 : model === 'jersey' ? 538 : 552} rx={model === 'football' ? 160 : 180} ry="16" fill="#000" opacity=".6" filter={`url(#${id}-floor)`} />
-      {model === 'football' ? <Ball look={look} onPaint={onPaint} />
+      {model === 'football' || model === 'rugby' ? null : <ellipse cx="300" cy={model === 'jersey' ? 538 : 552} rx="180" ry="16" fill="#000" opacity=".6" filter={`url(#${id}-floor)`} />}
+      {model === 'football' ? <NetBall net={footballNet()} spots={SPOTS} fallback={footballFill} look={look} onPaint={onPaint} onStroke={onStroke} tool={tool} brush={brush} />
+        : model === 'rugby' ? <NetBall net={rugbyNet()} spots={RUGBY_SPOTS} fallback={(i, l) => (i % 2 ? l.primary : l.accent)} look={look} onPaint={onPaint} onStroke={onStroke} tool={tool} brush={brush} />
         : model === 'glove' ? (variant === 'boxing' ? <BoxingGlove look={look} id={id} /> : <KeeperGlove look={look} id={id} />)
         : <Jersey look={look} id={id} />}
     </svg>
@@ -56,82 +64,159 @@ export const Flat = forwardRef<SVGSVGElement, Props>(function Flat({ model, vari
 const EDGE = { stroke: '#000', strokeOpacity: 0.55, strokeWidth: 2.5, strokeLinejoin: 'round' as const };
 const STITCH = { fill: 'none', stroke: '#8a8a8a', strokeOpacity: 0.7, strokeWidth: 1.6, strokeDasharray: '5 4', strokeLinecap: 'round' as const };
 
-/* The ball's visible half, drawn as a lit sphere: every panel edge follows the ball's curve (sampled along the
-   sphere, not a straight line), the part of a panel that turns away is folded onto the outline, and three layers
-   of light sit over the colours: a soft groove along every seam (the panels look padded), a key light from the
-   top left and a darker rim. With `onPaint`, a click or tap on a panel paints it (the same panel numbers as the
-   3D ball). */
-const R = 202, CX = 300, CY = 282;
+/* A ball laid flat: its panels as they are cut (the football's 32, see net.ts; the rugby ball's four leaves, see
+   rugby.ts), each in its colour with a soft padded shading,
+   a stitch line inside every edge and the seams in dark, as the pieces lie on the table before they are joined. The
+   logo sits upright on its panel as it does on the ball, and free paint lands on every panel it crosses, cut at
+   the panel's edge, so the pattern shows the whole design at once. With `onPaint` (the Colours step) the hand paints
+   on the pattern too: a tap paints a panel; the panel brush paints every panel a drag crosses; free paint draws on
+   whichever panel is under the finger (a stroke that leaves the pattern ends there, and the next panel starts a new
+   one), mapped back onto the ball, so the 3D view shows it in the same place. */
+const SPOTS = logoSpots(footballPanels());
+const KINDS = footballPanels().map((p) => p.kind);
+const footballFill = (i: number, l: BallLook) => (KINDS[i] === 'pent' ? l.secondary : i % 7 === 3 ? l.accent : l.primary);
+const V = new THREE.Vector3();
+const circle = (x: number, y: number, r: number) => {
+  const s = r.toFixed(2), w = (2 * r).toFixed(2);
+  return `M${(x - r).toFixed(1)} ${y.toFixed(1)}a${s} ${s} 0 1 0 ${w} 0a${s} ${s} 0 1 0 -${w} 0`;
+};
 
-function Ball({ look, onPaint }: { look: BallLook; onPaint?: (panel: number) => void }) {
+/** the strokes' marks, panel by panel (each panel's marks are cut at its edge), in the order they were painted */
+function paintByPanel(net: FlatNet, strokes: Stroke[]): Map<number, React.ReactNode[]> {
+  const by = new Map<number, React.ReactNode[]>();
+  strokes.forEach((st, k) => {
+    const solid = new Map<number, string[]>(), mist = new Map<number, string[]>();
+    marks(st, 0, rng(st.seed), (x, y, z, r, a) => net.place(V.set(x, y, z), r, (i, px, py, pr) => {
+      const m = a < 0.5 ? mist : solid;
+      if (!m.has(i)) m.set(i, []);
+      m.get(i)!.push(circle(px, py, pr));
+    }));
+    for (const i of new Set([...mist.keys(), ...solid.keys()])) {
+      if (!by.has(i)) by.set(i, []);
+      by.get(i)!.push(
+        <g key={`${k}-${st.seed}`} fill={st.colour}>
+          {(mist.get(i) ?? []).map((d, j) => <path key={j} d={d} fillOpacity=".1" />)}
+          {solid.has(i) ? <path d={solid.get(i)!.join('')} fillOpacity={st.kind === 'spray' ? 0.9 : 1} /> : null}
+        </g>,
+      );
+    }
+  });
+  return by;
+}
+
+function NetBall({ net, spots, fallback, look, onPaint, onStroke, tool, brush }: {
+  net: FlatNet; spots: { front: number; side: number; back: number }; fallback: (i: number, look: BallLook) => string;
+  look: BallLook; onPaint?: (panel: number, n: number) => void; onStroke?: (stroke: Stroke) => void; tool: Tool; brush?: Brush;
+}) {
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
-  const shapes = useMemo(() => {
-    const panels = footballPanels();
-    // turn the ball so one of the starting design's accent hexagons faces the viewer, a little right of the middle
-    const accent = panels.find((p, i) => p.kind === 'hex' && i % 7 === 3) ?? panels[0];
-    const q = new THREE.Quaternion().setFromUnitVectors(accent.center.clone().normalize(), new THREE.Vector3(0.24, 0.1, 1).normalize());
-    const at = (v: THREE.Vector3) => {
-      const p = v.clone().normalize().applyQuaternion(q);
-      if (p.z >= 0) return { x: CX + p.x * R, y: CY - p.y * R, z: p.z };
-      const l = Math.hypot(p.x, p.y) || 1; // behind the ball: folded onto its outline
-      return { x: CX + (p.x / l) * R, y: CY - (p.y / l) * R, z: p.z };
-    };
-    return panels.map((p, i) => {
-      const pts: { x: number; y: number; z: number }[] = [];
-      p.corners.forEach((a, k) => {
-        const b = p.corners[(k + 1) % p.corners.length];
-        for (let s = 0; s < 10; s++) pts.push(at(a.clone().lerp(b, s / 10)));
-      });
-      if (pts.every((v) => v.z < 0.01)) return null; // wholly on the far side
-      // rounded, so the server's drawing and the browser's agree to the digit (no hydration mismatch)
-      const d = pts.map((v, k) => `${k ? 'L' : 'M'}${v.x.toFixed(1)} ${v.y.toFixed(1)}`).join(' ') + 'Z';
-      const c = at(p.center);
-      return { d, kind: p.kind, i, z: Math.round(c.z * 1000) / 1000, cx: Math.round(c.x), cy: Math.round(c.y) };
-    }).filter(Boolean) as { d: string; kind: string; i: number; z: number; cx: number; cy: number }[];
-  }, []);
-  const front = shapes.filter((s) => s.kind === 'hex').reduce((a, b) => (b.z > a.z ? b : a), shapes[0]);
-  const fill = (s: { kind: string; i: number }) => look.panels?.[s.i] ?? (s.kind === 'pent' ? look.secondary : s.i % 7 === 3 ? look.accent : look.primary);
+  const shapes = useMemo(() => net.polys.map((p) => `M${p.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join('L')}Z`), [net]);
+  // a stitch line just inside every edge
+  const stitches = useMemo(() => net.polys.map((p, i) => {
+    // about 5 units in from every edge, however long or round the piece (a rugby leaf or a hexagon)
+    const [cx, cy] = net.centres[i];
+    const w = Math.max(...p.map((q) => q[0])) - Math.min(...p.map((q) => q[0]));
+    const h = Math.max(...p.map((q) => q[1])) - Math.min(...p.map((q) => q[1]));
+    const sx = Math.max(0.5, 1 - 10 / w), sy = Math.max(0.5, 1 - 10 / h);
+    return `M${p.map(([x, y]) => `${(cx + (x - cx) * sx).toFixed(1)} ${(cy + (y - cy) * sy).toFixed(1)}`).join('L')}Z`;
+  }), [net]);
+  const fill = (i: number) => look.panels?.[i] ?? fallback(i, look);
+  const painted = useMemo(() => paintByPanel(net, look.strokes ?? []), [net, look.strokes]);
+  const logoOn = look.logo ? (look.logoPlace === 'front' ? [spots.front] : look.logoPlace === 'side' ? [spots.side] : [spots.front, spots.back]) : [];
+  const logoPx = net.logo;
+
+  // the hand: one finger at a time; the stroke being drawn shows as it grows
+  const drag = useRef<{ id: number; n: number; last: number; stroke: Stroke | null; panel: number } | null>(null);
+  const [live, setLive] = useState<{ st: Stroke; n: number } | null>(null);
+  const brushing = !!onPaint && tool !== 'turn';
+  const panelAt = (e: React.PointerEvent) => {
+    const el = document.elementFromPoint(e.clientX, e.clientY)?.closest(`[data-net="${id}"] [data-panel]`);
+    return el ? Number(el.getAttribute('data-panel')) : -1;
+  };
+  const end = () => {
+    const g = drag.current;
+    if (g?.stroke?.pts.length) onStroke?.(g.stroke);
+    if (g) g.stroke = null;
+    setLive(null);
+  };
+  const paintAt = (e: React.PointerEvent) => {
+    const g = drag.current;
+    if (!g) return;
+    const i = panelAt(e);
+    if (tool === 'panel') {
+      if (i >= 0 && i !== g.last) { g.last = i; onPaint?.(i, g.n++); }
+      return;
+    }
+    // off the pattern, or onto a panel that is not this one's neighbour in the pattern: the stroke ends there
+    if (i < 0) { if (g.stroke) end(); g.panel = -1; return; }
+    const m = (e.currentTarget as SVGGraphicsElement).ownerSVGElement?.getScreenCTM();
+    if (!m) return;
+    const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
+    const d = net.fromNet(i, pt.x, pt.y);
+    if (g.stroke && g.panel >= 0 && g.panel !== i) {
+      const last = new THREE.Vector3().fromArray(g.stroke.pts, g.stroke.pts.length - 3);
+      if (last.angleTo(d) > 0.25) end();
+    }
+    g.panel = i;
+    if (!g.stroke) g.stroke = newStroke(brush ?? { colour: '#1b2a4a', size: 'm', kind: 'brush' });
+    if (addPoint(g.stroke, d) >= 0) setLive({ st: g.stroke, n: g.stroke.pts.length });
+  };
+  const release = (e: React.PointerEvent, last: boolean) => {
+    const g = drag.current;
+    if (!g || g.id !== e.pointerId) return;
+    if (last) paintAt(e); // where the finger lifted is part of the stroke
+    end();
+    drag.current = null;
+  };
+  const handlers = brushing ? {
+    onPointerDown: (e: React.PointerEvent) => {
+      if (drag.current) return;
+      e.preventDefault();
+      try { (e.currentTarget as Element).setPointerCapture(e.pointerId); } catch { /* the drag still paints on the pattern */ }
+      drag.current = { id: e.pointerId, n: 0, last: -1, stroke: null, panel: -1 };
+      paintAt(e);
+    },
+    onPointerMove: (e: React.PointerEvent) => { if (drag.current?.id === e.pointerId) paintAt(e); },
+    onPointerUp: (e: React.PointerEvent) => release(e, true),
+    onPointerCancel: (e: React.PointerEvent) => release(e, false),
+  } : {};
+  const livePaint = live ? paintByPanel(net, [live.st]) : null;
+
   return (
-    <g>
+    <g data-net={id} {...handlers} style={brushing ? { cursor: tool === 'free' ? 'crosshair' : 'pointer' } : undefined}>
       <defs>
-        <clipPath id={`${id}-ball`}><circle cx={CX} cy={CY} r={R} /></clipPath>
-        <radialGradient id={`${id}-key`} cx="0.34" cy="0.28" r="0.72">
-          <stop offset="0" stopColor="#fff" stopOpacity=".34" />
-          <stop offset=".38" stopColor="#fff" stopOpacity=".08" />
-          <stop offset=".62" stopColor="#fff" stopOpacity="0" />
+        {shapes.map((d, i) => <clipPath key={i} id={`${id}-p${i}`}><path d={d} /></clipPath>)}
+        {/* each panel padded: a little lighter in the middle, darker toward its seams */}
+        <radialGradient id={`${id}-pad`} cx="0.42" cy="0.38" r="0.62">
+          <stop offset="0" stopColor="#fff" stopOpacity=".16" />
+          <stop offset=".55" stopColor="#fff" stopOpacity="0" />
+          <stop offset="1" stopColor="#000" stopOpacity=".28" />
         </radialGradient>
-        <radialGradient id={`${id}-rim`} cx="0.42" cy="0.38" r="0.66">
-          <stop offset=".55" stopColor="#000" stopOpacity="0" />
-          <stop offset=".86" stopColor="#000" stopOpacity=".32" />
-          <stop offset="1" stopColor="#000" stopOpacity=".62" />
-        </radialGradient>
-        <radialGradient id={`${id}-shine`} cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#fff" stopOpacity=".55" />
-          <stop offset="1" stopColor="#fff" stopOpacity="0" />
-        </radialGradient>
-        <filter id={`${id}-soft`} x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="4" /></filter>
+        <filter id={`${id}-lift`} x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#000" floodOpacity=".55" /></filter>
       </defs>
-      <g clipPath={`url(#${id}-ball)`}>
-        <circle cx={CX} cy={CY} r={R} fill="#111" />
-        {shapes.map((s) => (
-          <path key={s.i} d={s.d} fill={fill(s)} onClick={onPaint ? () => onPaint(s.i) : undefined}
-            style={onPaint ? { cursor: 'pointer', transition: 'fill 150ms' } : undefined} />
+      {/* the pieces, lifted a little off the table */}
+      <g filter={`url(#${id}-lift)`}>
+        {shapes.map((d, i) => (
+          <path key={i} d={d} fill={fill(i)} data-panel={i} onClick={onPaint && !brushing ? () => onPaint(i, 0) : undefined}
+            style={onPaint ? { cursor: brushing ? undefined : 'pointer', transition: 'fill 150ms' } : undefined} />
         ))}
-        {look.logo ? <image href={look.logo} x={front.cx - 46} y={front.cy - 46} width="92" height="92" preserveAspectRatio="xMidYMid meet" style={{ pointerEvents: 'none' }} /> : null}
-        {/* the light, laid over the colours; none of it catches a tap */}
-        <g style={{ pointerEvents: 'none' }}>
-          <g filter={`url(#${id}-soft)`} fill="none" stroke="#000" strokeOpacity=".3" strokeWidth="11" strokeLinejoin="round">
-            {shapes.map((s) => <path key={s.i} d={s.d} />)}
-          </g>
-          <g fill="none" stroke="#0a0a0a" strokeOpacity=".85" strokeWidth="2.4" strokeLinejoin="round">
-            {shapes.map((s) => <path key={s.i} d={s.d} />)}
-          </g>
-          <circle cx={CX} cy={CY} r={R} fill={`url(#${id}-key)`} />
-          <circle cx={CX} cy={CY} r={R} fill={`url(#${id}-rim)`} />
-          <ellipse cx={CX - R * 0.36} cy={CY - R * 0.44} rx={R * 0.2} ry={R * 0.11} fill={`url(#${id}-shine)`} transform={`rotate(-32 ${CX - R * 0.36} ${CY - R * 0.44})`} />
+      </g>
+      <g style={{ pointerEvents: 'none' }}>
+        {logoOn.map((i) => {
+          const [cx, cy] = net.centres[i];
+          return <image key={i} href={look.logo!} x={cx - logoPx / 2} y={cy - logoPx / 2} width={logoPx} height={logoPx} preserveAspectRatio="xMidYMid meet" transform={`rotate(${net.up[i].toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)})`} />;
+        })}
+        {shapes.map((_, i) => {
+          const marks = [...(painted.get(i) ?? []), ...(livePaint?.get(i) ?? [])];
+          return marks.length ? <g key={i} clipPath={`url(#${id}-p${i})`}>{marks}</g> : null;
+        })}
+        {shapes.map((d, i) => <path key={i} d={d} fill={`url(#${id}-pad)`} />)}
+        <g fill="none" stroke="#8a8a8a" strokeOpacity=".55" strokeWidth="1" strokeDasharray="3 3">
+          {stitches.map((d, i) => <path key={i} d={d} />)}
+        </g>
+        <g fill="none" stroke="#050505" strokeOpacity=".9" strokeWidth="1.6" strokeLinejoin="round">
+          {shapes.map((d, i) => <path key={i} d={d} />)}
         </g>
       </g>
-      <circle cx={CX} cy={CY} r={R} fill="none" stroke="#000" strokeOpacity=".5" strokeWidth="1.5" style={{ pointerEvents: 'none' }} />
     </g>
   );
 }

@@ -13,6 +13,21 @@ export const startColours = (panels: Panel[]): string[] =>
 export type PanelKind = 'pent' | 'hex';
 export type Panel = { kind: PanelKind; center: THREE.Vector3; corners: THREE.Vector3[] };
 
+/** The hexagons that carry a logo, fixed on the ball (the same panels in the 3D and the Flat view): the front one,
+    one on the side, and the one opposite the front. */
+export function logoSpots(panels: Panel[]): { front: number; side: number; back: number } {
+  const hex = panels.map((p, i) => ({ i, p })).filter((x) => x.p.kind === 'hex');
+  const best = (dir: THREE.Vector3) => hex.reduce((a, b) => (b.p.center.dot(dir) > a.p.center.dot(dir) ? b : a)).i;
+  return { front: best(new THREE.Vector3(0, 0.15, 1)), side: best(new THREE.Vector3(1, 0, 0.2)), back: best(new THREE.Vector3(0, -0.1, -1)) };
+}
+
+/** How the 3D ball first faces the viewer (the camera stands a little above it), as the turn from the ball's own
+    frame to the view (x right, y up, z towards the viewer); the Flat drawing starts from the same view. */
+export const START_VIEW: [number, number, number, number] = (() => {
+  const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.atan2(0.32, 4.4));
+  return [q.x, q.y, q.z, q.w];
+})();
+
 const PHI = (1 + Math.sqrt(5)) / 2;
 
 function icosahedronVertices(): THREE.Vector3[] {

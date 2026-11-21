@@ -112,7 +112,7 @@ export const products = pgTable('products', {
   specs: jsonb('specs').$type<Spec[]>().notNull().default([]),
   images: jsonb('images').$type<ProductImage[]>().notNull().default([]),
   spinFrames: jsonb('spin_frames').$type<string[]>().notNull().default([]),
-  studioModel: text('studio_model').$type<'football' | 'glove' | 'jersey' | null>(),
+  studioModel: text('studio_model').$type<'football' | 'rugby' | 'glove' | 'jersey' | null>(),
   relatedIds: jsonb('related_ids').$type<string[]>().notNull().default([]),
   status: text('status').$type<'draft' | 'published'>().notNull().default('draft'),
   featured: boolean('featured').notNull().default(false),

@@ -158,7 +158,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
       const room = () => fd.getAll('files').filter((x) => x instanceof File && x.size > 0).length < 5;
       for (const i of items) {
         const sku = (i.sku || 'design').toLowerCase();
-        for (const [k, name, type] of [[`ms_preview_${i.key}`, `design-${sku}.jpg`, 'image/jpeg'], [`ms_logo_${i.key}`, `logo-${sku}.png`, 'image/png']] as const) {
+        for (const [k, name, type] of [[`ms_preview_${i.key}`, `design-${sku}.jpg`, 'image/jpeg'], [`ms_logo_${i.key}`, `logo-${sku}.png`, 'image/png'], [`ms_net_${i.key}`, `pattern-${sku}.jpg`, 'image/jpeg']] as const) {
           try {
             const data = localStorage.getItem(k);
             if (data && room()) {
@@ -176,7 +176,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
       const data = await res.json().catch(() => ({}));
       clearTimeout(wait);
       if (res.ok && data.reference) {
-        if (withProducts) { items.forEach((i) => { try { localStorage.removeItem(`ms_logo_${i.key}`); localStorage.removeItem(`ms_preview_${i.key}`); } catch { /* none */ } }); clearBasket(); writeMode(null); }
+        if (withProducts) { items.forEach((i) => { try { localStorage.removeItem(`ms_logo_${i.key}`); localStorage.removeItem(`ms_preview_${i.key}`); localStorage.removeItem(`ms_net_${i.key}`); } catch { /* none */ } }); clearBasket(); writeMode(null); }
         location.assign(`/${locale}/inquiry/sent?ref=${encodeURIComponent(data.reference)}&type=${encodeURIComponent(data.type || mode)}`);
         return;
       }

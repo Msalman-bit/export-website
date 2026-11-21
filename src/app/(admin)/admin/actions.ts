@@ -430,7 +430,7 @@ export async function saveProduct(fd: FormData) {
     sizes: list(str(fd, 'sizes', 500)), weight: str(fd, 'weight', 120), colours: list(str(fd, 'colours', 500)),
     brandingOptions: list(str(fd, 'brandingOptions', 800)), packagingOptions: list(str(fd, 'packagingOptions', 800)),
     moq: str(fd, 'moq', 120), leadTime: str(fd, 'leadTime', 120), testingStandards: list(str(fd, 'testingStandards', 800)), specs,
-    studioModel: (['football', 'glove', 'jersey'].includes(str(fd, 'studioModel')) ? str(fd, 'studioModel') : null) as 'football' | 'glove' | 'jersey' | null,
+    studioModel: (['football', 'rugby', 'glove', 'jersey'].includes(str(fd, 'studioModel')) ? str(fd, 'studioModel') : null) as 'football' | 'rugby' | 'glove' | 'jersey' | null,
     status: (str(fd, 'status') === 'published' ? 'published' : 'draft') as 'draft' | 'published', featured: fd.get('featured') === 'on',
     seoTitle: str(fd, 'seoTitle', 160), seoDescription: str(fd, 'seoDescription', 300), updatedAt: new Date(),
   };
