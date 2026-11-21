@@ -121,6 +121,14 @@ body.admin { background: var(--surface); }
    on Your account; "confirm with a passkey" under a deletion's code field */
 .auth-or { display: flex; align-items: center; gap: var(--s-3); color: var(--muted); font-size: 14px; }
 .auth-or::before, .auth-or::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+/* on the sign-in pages an empty message line takes no room (nor the gap above it), so "or" sits as close to Continue
+   as to "Sign in with a passkey"; it stays in the page (out of the layout only), so a message that appears in it is
+   still read out */
+.admin__auth .status-line:empty { position: absolute; min-height: 0; }
+/* "Sign in with a passkey" is drawn as a link inside a full-height button (the kit's block buttons), so its words sit
+   half the empty height below the top of its tap area: it moves up by that much, so the words are as far from "or"
+   as "or" is from Continue; the tap area keeps its full height */
+.auth-or + .block { margin-top: calc((var(--t-body) - var(--btn-h)) / 2); }
 .passkey-add { display: grid; gap: var(--s-3); padding-top: var(--s-4); border-top: 1px solid var(--line); }
 .passkey-add h3 { font-size: 17px; font-family: var(--font-text); font-weight: 500; }
 .passkey-remove > summary { list-style: none; cursor: pointer; width: max-content; }
