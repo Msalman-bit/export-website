@@ -30,7 +30,11 @@ export function RichText({ body, locale, headingLevel = 2 }: { body: string; loc
     const flush = () => {
       if (para.length) { out.push(<p key={`p${bi}-${out.length}`}>{inline(para.join(' '), locale, `p${bi}`)}</p>); para = []; }
       if (list.length) {
-        out.push(<ul key={`u${bi}-${out.length}`}>{list.map((li, i) => <li key={i}>{inline(li, locale, `l${bi}${i}`)}</li>)}</ul>);
+        // a list item shaped "term: explanation" sets its term in bold, so a list of definitions scans
+        out.push(<ul key={`u${bi}-${out.length}`}>{list.map((li, i) => {
+          const term = li.match(/^([^:[\]]{2,60}):\s+(.+)$/);
+          return <li key={i}>{term ? <><strong>{term[1]}</strong>: {inline(term[2], locale, `l${bi}${i}`)}</> : inline(li, locale, `l${bi}${i}`)}</li>;
+        })}</ul>);
         list = [];
       }
     };

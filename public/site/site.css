@@ -117,8 +117,17 @@
   @starting-style { .consent { transform: none; opacity: 0; } }
   .consent.is-closing { transform: none; opacity: 0; transition: opacity 200ms var(--m-ease); }
 }
-.consent__row { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: center; justify-content: space-between; }
-.consent__row p { max-width: 70ch; }
+.consent__row { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-4); align-items: center; justify-content: space-between; }
+.consent__row p { max-width: 70ch; margin: 0; }
+.consent__link { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+.consent__actions { display: flex; gap: var(--s-2); }
+.consent__actions .chip-btn { justify-content: center; }
+/* a phone: the two choices side by side, equal, across the full width, clear of the home indicator */
+@media (max-width: 639px) {
+  .consent { padding: var(--s-3) 0 calc(var(--s-3) + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -8px 24px rgb(0 0 0 / .06); }
+  .consent__row p { font-size: var(--t-small); }
+  .consent__actions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+}
 
 /* ======================================================================== app pages */
 .page { padding-top: calc(var(--nav) + var(--s-8)); padding-bottom: var(--s-9); }
@@ -145,7 +154,9 @@
 /* rich text from the CMS */
 .prose { display: grid; gap: var(--s-4); max-width: 68ch; font-size: 17px; line-height: 1.7; }
 .prose h2 { font-size: clamp(24px, 1vw + 18px, 32px); margin-top: var(--s-5); }
-.prose ul { display: grid; gap: var(--s-2); padding-left: 1.2em; margin: 0; }
+.prose ul { display: grid; gap: var(--s-2); padding-left: 1.2em; margin: 0; list-style: disc; }
+.prose li::marker { color: var(--muted); }
+.prose li strong { font-weight: 600; }
 .prose a:not(.btn) { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
 .prose a:not(.btn):hover { text-decoration-color: currentColor; }
 .prose .btn-row { margin-top: var(--s-4); }

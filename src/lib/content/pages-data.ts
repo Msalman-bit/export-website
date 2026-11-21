@@ -371,10 +371,19 @@ You can ask for a copy of your data, correction, deletion, restriction or portab
     title: 'Cookie policy',
     summary: 'Which cookies this site sets, and how to change your choice.',
     body: `## Cookies that are always on
-- Session cookie: keeps you signed in to your customer account. Deleted when you sign out or after 14 days.
-- Preference cookie: remembers your cookie choice for 12 months.
+These are needed for the site to work or to remember a choice you made, so they need no consent.
+- Session cookie (ms_session): keeps you signed in to your customer account. Deleted when you sign out or after 14 days.
+- Staff session cookie (ms_staff): only for our own team, when signed in to the site's administration.
+- Language cookie (ms_locale): remembers the language you chose, for 12 months.
+- Cookie choice (ms_consent): remembers your analytics choice, for 12 months.
 
-Your inquiry list is kept in your browser’s local storage, not in a cookie, and is never sent to us until you submit it.
+## Kept in your browser, not in cookies
+These stay on your device in your browser's local storage. Nothing is sent to us until you submit an inquiry, and you can remove them at any time by clearing this site's data in your browser.
+- Your inquiry list, and whether you are asking for a quotation or for samples.
+- Designs you save in the customisation studio (the last 20), if you are not signed in.
+- A design's pictures and your logo, waiting to be attached to your inquiry. They are removed once the inquiry is sent.
+
+We count page and product views without cookies and without storing your IP address.
 
 ## Cookies you choose
 - Analytics (Google Analytics 4): counts visits and the pages they include. Set only after you accept analytics. It is off by default.

@@ -16,10 +16,11 @@ export function ConsentBanner({ locale, decided }: { locale: string; decided: bo
   return (
     <section className={`consent${closing ? ' is-closing' : ''}`} aria-label="Cookie choice">
       <div className="wrap consent__row">
-        <p>We use one optional analytics cookie to count visits. It stays off unless you allow it. <a className="link" href={`/${locale}/cookies`}>Cookie policy</a></p>
-        <div className="btn-row">
-          <button type="button" className="btn btn--secondary" onClick={() => choose('essential')}>Keep analytics off</button>
-          <button type="button" className="btn btn--secondary" onClick={() => choose('analytics')}>Allow analytics</button>
+        <p>We use one optional analytics cookie to count visits. It stays off unless you allow it. <a className="consent__link" href={`/${locale}/cookies`}>Cookie policy</a></p>
+        {/* two equal buttons: refusing is as easy and as visible as allowing */}
+        <div className="consent__actions">
+          <button type="button" className="chip-btn" onClick={() => choose('essential')}>Keep analytics off</button>
+          <button type="button" className="chip-btn" onClick={() => choose('analytics')}>Allow analytics</button>
         </div>
       </div>
     </section>
