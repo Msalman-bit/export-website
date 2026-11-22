@@ -8,7 +8,7 @@ export default async function NotFound() {
       <div className="wrap">
         <div className="page-head">
           <h1>Page not found</h1>
-          <p>This address has no page. It may have moved when the catalogue changed.</p>
+          <p>There is no page at this address. It may have moved when the catalogue was updated.</p>
           <div className="btn-row">
             <a className="btn btn--primary" href={`/${locale}/products`}>See the catalogue</a>
             <a className="btn btn--secondary" href={`/${locale}`}>Go to the home page</a>

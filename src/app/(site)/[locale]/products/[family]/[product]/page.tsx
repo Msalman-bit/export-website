@@ -4,6 +4,7 @@ import { localeFrom, getDict } from '@/lib/i18n/server';
 import { getProduct } from '@/lib/data';
 import { pageMeta, jsonLd, siteUrl } from '@/lib/seo';
 import { pic } from '@/lib/media';
+import { shortLine } from '@/lib/text';
 import { track } from '@/lib/audit';
 import { countryFrom } from '@/lib/security/request';
 import { readSession } from '@/lib/auth/session';
@@ -70,9 +71,9 @@ export default async function ProductPage({ params }: Props) {
       <div className="pdp">
         <Gallery images={p.images} spin={p.spinFrames} name={p.name} />
         <div className="buy">
-          <p className="sku">{sub.name} · {t['product.sku']} {p.sku}</p>
+          <p className="sku">{sub.name}, {t['product.sku']} {p.sku}</p>
           <h1>{p.name}</h1>
-          <p className="t-lead">{p.summary}</p>
+          <p className="t-lead">{shortLine(p.summary)}</p>
           <AddToInquiry locale={locale} product={{ id: p.id, name: p.name, sku: p.sku, image: main?.src, href }}
             labels={{ add: t['cta.add'], sample: t['cta.sample'], added: t['cta.added'], quantity: t['basket.quantity'], quote: t['cta.quote'] }} />
           <div className="btn-row">
@@ -104,7 +105,7 @@ export default async function ProductPage({ params }: Props) {
               <a key={r.id} className="card tile" href={`/${locale}/products/${r.familySlug}/${r.slug}`}>
                 <div className="tile__media"><Img url={r.images[0]?.url} alt={r.images[0]?.alt ?? r.name} sizes="(max-width: 1023px) 50vw, 302px" prefer={640} /></div>
                 <div className="tile__head"><h3>{r.name}</h3></div>
-                <p>{r.summary}</p>
+                <p>{shortLine(r.summary)}</p>
               </a>
             ))}
           </div>

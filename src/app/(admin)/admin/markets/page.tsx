@@ -1,6 +1,4 @@
-import { asc } from 'drizzle-orm';
-import { getDb } from '@/lib/db/client';
-import * as s from '@/lib/db/schema';
+import { getMarkets } from '@/lib/data';
 import { requireStaff } from '@/lib/auth/session';
 import { Flash, type SP } from '../ui';
 import { setMarket } from '../actions';
@@ -8,8 +6,7 @@ import { setMarket } from '../actions';
 export default async function Markets({ searchParams }: { searchParams: SP }) {
   await requireStaff('markets.write');
   const sp = await searchParams;
-  const db = await getDb();
-  const rows = await db.select().from(s.markets).orderBy(asc(s.markets.region), asc(s.markets.name));
+  const rows = await getMarkets();
   return (
     <>
       <div className="admin-head"><h1>Export markets</h1></div>

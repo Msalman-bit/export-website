@@ -24,15 +24,15 @@ export default async function Sent({ params, searchParams }: Props) {
               <circle className="sent__ring" cx="24" cy="24" r="22" />
               <path className="sent__tick" d="M14 24.5l7 7 13-14" />
             </svg>
-            <h1>Your {what} is in</h1>
-            <p>Your reference:</p>
+            <h1>Your {what} has been received</h1>
+            <p>Your reference number:</p>
             <p className="ref">{ref}</p>
-            <p>A copy is on its way to your email. Quote the reference when you write to us.</p>
+            <p>A copy will be sent to your email address. Please quote this reference when you contact us.</p>
           </>
         ) : (
           <>
             <h1>Reference not found</h1>
-            <p>This page shows the reference of a request you just sent. Check the confirmation email for it.</p>
+            <p>This page shows the reference number of a request you have just sent. You will also find it in your confirmation email.</p>
           </>
         )}
         <div className="btn-row">

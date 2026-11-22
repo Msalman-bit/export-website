@@ -1,7 +1,7 @@
 'use client';
 import { useActionState } from 'react';
 import { register, login, forgot, reset, resendVerification, updateCompany, sendCustomerMessage, type FormState } from './actions';
-import { COUNTRIES } from '@/lib/inquiry/countries';
+import { COUNTRIES, countryName, isOfferedCountry } from '@/lib/inquiry/countries';
 
 const init: FormState = {};
 
@@ -38,12 +38,12 @@ export function RegisterForm({ locale }: { locale: string }) {
       <div className="field">
         <label htmlFor="country">Country</label>
         <select id="country" name="country" defaultValue="" required aria-invalid={state.errors?.country ? 'true' : undefined} aria-describedby={state.errors?.country ? 'country-err' : undefined}>
-          <option value="" disabled>Choose a country</option>
+          <option value="" disabled>Select a country</option>
           {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
         </select>
         {state.errors?.country ? <p className="err" id="country-err">{state.errors.country}</p> : null}
       </div>
-      <Field id="password" label="Password" type="password" state={state} auto="new-password" hint="12 characters or more, not only letters" />
+      <Field id="password" label="Password" type="password" state={state} auto="new-password" hint="at least 12 characters, including a number or symbol" />
       <label className="chk"><input type="checkbox" className="m-check" name="terms" aria-describedby={state.errors?.terms ? 'terms-err' : undefined} /> I accept the <a className="link" href={`/${locale}/terms`}>terms</a> and have read the <a className="link" href={`/${locale}/privacy`}>privacy policy</a>.</label>
       {state.errors?.terms ? <p className="err" id="terms-err">{state.errors.terms}</p> : null}
       <div className="newsletter__trap" aria-hidden="true"><label htmlFor="company_website">Website</label><input id="company_website" name="company_website" tabIndex={-1} autoComplete="off" /></div>
@@ -84,8 +84,8 @@ export function ResetForm({ locale, token }: { locale: string; token: string }) 
     <form action={action} className="block" noValidate>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="token" value={token} />
-      <Field id="password" label="New password" type="password" state={state} auto="new-password" hint="12 characters or more, not only letters" />
-      <Field id="confirm" label="The same password again" type="password" state={state} auto="new-password" />
+      <Field id="password" label="New password" type="password" state={state} auto="new-password" hint="at least 12 characters, including a number or symbol" />
+      <Field id="confirm" label="Confirm the new password" type="password" state={state} auto="new-password" />
       <Submit label="Save the new password" pending={pending} />
       <Status state={state} />
     </form>
@@ -111,7 +111,7 @@ export function CompanyForm({ locale, company }: { locale: string; company: { na
       <Field id="name" label="Company name" state={state} defaultValue={company.name} auto="organization" />
       <div className="field">
         <label htmlFor="country">Country</label>
-        <select id="country" name="country" defaultValue={company.country}>{COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}</select>
+        <select id="country" name="country" defaultValue={company.country}>{isOfferedCountry(company.country) ? null : <option value={company.country}>{countryName(company.country)}</option>}{COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}</select>
       </div>
       <Field id="website" label="Website" state={state} defaultValue={company.website} required={false} auto="url" />
       <Field id="phone" label="Phone" type="tel" state={state} defaultValue={company.phone} required={false} auto="tel" />

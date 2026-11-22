@@ -3,6 +3,7 @@ import { searchProducts } from '@/lib/data';
 import { pageMeta } from '@/lib/seo';
 import { PageShell } from '@/components/site/PageShell';
 import { Img } from '@/components/site/Img';
+import { shortLine } from '@/lib/text';
 
 type Props = { params: Promise<{ locale: string }>; searchParams: Promise<{ q?: string }> };
 
@@ -37,8 +38,8 @@ export default async function Search({ params, searchParams }: Props) {
                 <a key={p.id} className="card tile" href={`/${locale}/products/${p.familySlug}/${p.slug}`}>
                   <div className="tile__media"><Img url={p.images[0]?.url} alt={p.images[0]?.alt ?? p.name} sizes="300px" prefer={640} /></div>
                   <div className="tile__head"><h2 className="t-card">{p.name}</h2></div>
-                  <p>{p.summary}</p>
-                  <p className="sku">{p.subName} · {p.sku}</p>
+                  <p>{shortLine(p.summary)}</p>
+                  <p className="sku">{p.subName}, {p.sku}</p>
                 </a>
               ))}
             </div>

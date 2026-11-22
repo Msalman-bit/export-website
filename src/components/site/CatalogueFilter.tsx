@@ -2,6 +2,7 @@
 import { useMemo, useState } from 'react';
 import type { ProductImage } from '@/lib/db/schema';
 import { pic } from '@/lib/media';
+import { shortLine } from '@/lib/text';
 
 type Opt = { value: string; label: string };
 type Item = { id: string; name: string; sku: string; summary: string; type: string; typeName: string; constructions: string[]; studio: boolean; href: string; image: ProductImage | null };
@@ -35,7 +36,7 @@ export function CatalogueFilter({ locale, labels, types, constructions, products
     <div className="cat-layout">
       <form className={`filters${open ? ' is-open' : ''}`} method="get" aria-label="Filter products" onSubmit={(e) => e.preventDefault()}>
         <button type="button" className="filters__toggle" aria-expanded={open} aria-controls="filters-panel" onClick={() => setOpen(!open)}>
-          Filter{active ? ` (${active} on)` : ''}
+          Filter{active ? ` (${active} selected)` : ''}
         </button>
         <div className="filters__panel" id="filters-panel"><div className="filters__inner">
         <fieldset>
@@ -74,14 +75,14 @@ export function CatalogueFilter({ locale, labels, types, constructions, products
                 <a key={p.id} className="card tile" href={p.href}>
                   <div className="tile__media">{im ? <img src={im.src} srcSet={im.srcSet} sizes="(max-width: 639px) 50vw, 300px" width={im.width} height={im.height} alt={p.image?.alt ?? p.name} loading="lazy" decoding="async" data-source={im.generated ? 'stand-in' : 'client'} /> : null}</div>
                   <div className="tile__head"><h2 className="t-card">{p.name}</h2></div>
-                  <p>{p.summary}</p>
-                  <p className="sku">{p.typeName} · {p.sku}</p>
+                  <p>{shortLine(p.summary)}</p>
+                  <p className="sku">{p.typeName}, {p.sku}</p>
                 </a>
               );
             })}
           </div>
         ) : (
-          <div className="empty"><p>No product matches these filters.</p><a className="btn btn--secondary" href={`/${locale}/inquiry`}>Describe what you need</a></div>
+          <div className="empty"><p>No product matches these filters.</p><a className="btn btn--secondary" href={`/${locale}/inquiry`}>Describe your requirements</a></div>
         )}
       </div>
     </div>

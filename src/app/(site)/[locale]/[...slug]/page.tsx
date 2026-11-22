@@ -11,6 +11,7 @@ import { Img } from '@/components/site/Img';
 import { LeadForm } from '@/components/site/LeadForm';
 import { CookieChoice } from '@/components/site/CookieChoice';
 import { PAGES } from '@/lib/content/pages-data';
+import { shortLine } from '@/lib/text';
 
 type Params = { params: Promise<{ locale: string; slug: string[] }> };
 const one = async (p: Params['params']) => { const { slug } = await p; return slug.length === 1 ? slug[0] : ''; };
@@ -64,7 +65,7 @@ export default async function ContentPage({ params }: Params) {
         <div className="block" lang={lang}>
           <header className="page-head">
             <h1>{page.title}</h1>
-            <p>{page.summary}</p>
+            <p>{shortLine(page.summary)}</p>
           </header>
           {factRows.length ? (
             <table className="spec-table"><tbody>{factRows.map(([k, label]) => <tr key={k}><th scope="row">{label}</th><td>{facts[k]}</td></tr>)}</tbody></table>
@@ -74,7 +75,7 @@ export default async function ContentPage({ params }: Params) {
             <div className="block">
               <h2>Certificates on file</h2>
               <table className="spec-table"><tbody>{certificates.map((c) => (
-                <tr key={c.id}><th scope="row">{c.name}</th><td>{[c.issuer, c.number, c.scope, c.validUntil && `valid until ${c.validUntil}`].filter(Boolean).join(' · ')}{c.attachmentId ? <> · <a className="link" href={`/media/${c.attachmentId}`}>Certificate document</a></> : null}</td></tr>
+                <tr key={c.id}><th scope="row">{c.name}</th><td>{[c.issuer, c.number, c.scope, c.validUntil && `valid until ${c.validUntil}`].filter(Boolean).join(', ')}{c.attachmentId ? <>, <a className="link" href={`/media/${c.attachmentId}`}>Certificate document</a></> : null}</td></tr>
               ))}</tbody></table>
             </div>
           ) : null}

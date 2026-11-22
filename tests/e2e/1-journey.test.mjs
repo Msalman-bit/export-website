@@ -13,7 +13,7 @@ test('home page renders with its headline, metadata and security headers', async
   const r = await get('/en');
   assert.equal(r.status, 200);
   const html = await r.text();
-  assert.match(html, /<h1[^>]*>Custom sports equipment, made in Pakistan/);
+  assert.match(html, /<h1[^>]*>Custom and private-label sports equipment made in Pakistan/);
   assert.match(html, /<link rel="canonical"/);
   assert.match(html, /hrefLang="x-default"|hreflang="x-default"/i);
   assert.equal(r.headers.get('x-frame-options'), 'DENY');

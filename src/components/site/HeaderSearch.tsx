@@ -137,7 +137,7 @@ export function HeaderSearch({ locale, searchHref, catalogueHref, families, text
               <a key={h.id} id={`${id}-o${n}`} className={`hs__hit${n === active ? ' is-active' : ''}`} role="option" aria-selected={n === active} tabIndex={-1}
                 href={h.href} onPointerMove={() => setActive(n)}>
                 <span className="hs__pic">{h.image ? <img src={h.image} alt="" width={48} height={48} decoding="async" /> : null}</span>
-                <span className="hs__words"><span className="hs__name">{h.name}</span><span className="hs__line">{h.type} · {h.sku}</span></span>
+                <span className="hs__words"><span className="hs__name">{h.name}</span><span className="hs__line">{h.type}, {h.sku}</span></span>
               </a>
             ))}
           </div>
@@ -145,7 +145,7 @@ export function HeaderSearch({ locale, searchHref, catalogueHref, families, text
           <div className="hs__none"><p>{text.none}</p><a className="link" href={catalogueHref}>{text.catalogue}</a></div>
         ) : (
           <div className="hs__families">
-            <p className="t-label">Product families</p>
+            <p className="t-label">Categories</p>
             {families.map((f) => (
               <a key={f.href} href={f.href}>
                 <span className="hs__pic">{f.image ? <img src={f.image} alt="" width={48} height={48} loading="lazy" decoding="async" /> : null}</span>

@@ -83,7 +83,7 @@ export function Footer({ locale, t, families, pages, path, close, salesEmail }: 
               <ul>
                 {page('contact', t['footer.contactForm'])}
                 <li><a href={`mailto:${salesEmail}`}>{t['footer.emailUs']}</a></li>
-                {page('faq', 'Questions')}{page('sample-ordering', 'Sample ordering')}{page('shipping-logistics', 'Shipping')}
+                {page('faq', 'FAQ')}{page('sample-ordering', 'Sample ordering')}{page('shipping-logistics', 'Shipping')}
                 <li><a href={L('/catalogues')}>Catalogues</a></li>
                 <li><a href={L('/insights')}>Insights</a></li>
                 <li><a href={L('/account')}>{t['footer.portal']}</a></li>

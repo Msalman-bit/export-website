@@ -6,6 +6,7 @@ import { PageShell } from '@/components/site/PageShell';
 import { Img } from '@/components/site/Img';
 import { CatalogueFilter } from '@/components/site/CatalogueFilter';
 import { pic } from '@/lib/media';
+import { shortLine } from '@/lib/text';
 
 type Props = { params: Promise<{ locale: string; family: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 
@@ -44,7 +45,7 @@ export default async function FamilyPage({ params, searchParams }: Props) {
     <PageShell locale={locale} crumbs={[{ name: t['nav.products'], path: '/products' }, { name: f.name, path: `/products/${f.slug}` }]} enter="content">
       <header className="page-head">
         <h1>{f.name}</h1>
-        <p>{f.summary}</p>
+        <p>{shortLine(f.summary)}</p>
       </header>
       <CatalogueFilter
         locale={locale}

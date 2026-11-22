@@ -3,7 +3,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 
 export type PickedProduct = { id: string; name: string; sku: string; type: string; image: string | null; href: string };
 
-/* The inquiry form's "Add a product": a buyer who knows what they want types a name or a product code, picks one of
+/* The inquiry form's "Add a product": a buyer who knows what they want types a name or a SKU, picks one of
    up to six matches and it joins the list right here, without the trip to the catalogue. A combobox: the arrow keys
    move through the matches, Enter adds the one marked (and never sends the form), Escape closes the list. The box has
    no name, so the words typed are not sent with the inquiry. */
@@ -52,7 +52,7 @@ export function ProductPicker({ locale, onPick }: { locale: string; onPick: (p: 
 
   return (
     <div className="field picker">
-      <label htmlFor={`${id}-q`}>Add a product <span className="hint">(name or product code)</span></label>
+      <label htmlFor={`${id}-q`}>Add a product <span className="hint">(name or SKU)</span></label>
       <div className="picker__box">
         {/* the menu's own magnifier, so the box reads as a search, not one more field to fill in */}
         <svg className="picker__icon" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M11.6 11.6 16 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
@@ -76,12 +76,12 @@ export function ProductPicker({ locale, onPick }: { locale: string; onPick: (p: 
                 // a press keeps the focus in the box (so the list stays until the click lands)
                 onMouseDown={(e) => e.preventDefault()} onClick={() => pick(h)} onMouseEnter={() => setActive(n)}>
                 {h.image ? <img src={h.image} alt="" width={40} height={40} /> : <span className="picker__ph" />}
-                <span className="picker__text"><span className="picker__name">{h.name}</span><span className="picker__meta">{h.type} · {h.sku}</span></span>
+                <span className="picker__text"><span className="picker__name">{h.name}</span><span className="picker__meta">{h.type}, {h.sku}</span></span>
               </li>
             ))}
             {!hits.length ? (
               <li className="picker__none" role="presentation">
-                {state === 'error' ? 'The search is not answering right now: see the catalogue instead.' : 'No product matches. Describe it in the message below.'}
+                {state === 'error' ? 'The search is temporarily unavailable. Please use the catalogue.' : 'No matching product. Describe it in the message below.'}
               </li>
             ) : null}
           </ul>

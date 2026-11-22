@@ -31,10 +31,10 @@ export function AddToInquiry({ product, locale, labels }: {
   const add = (sample: boolean) => {
     const n = Number(qty);
     // a sample needs no quantity: it is one piece, and the order expected later is asked on the inquiry form
-    if (!sample && (!Number.isInteger(n) || n < 1)) { setErr('Write a quantity of 1 or more, as a whole number.'); return; }
+    if (!sample && (!Number.isInteger(n) || n < 1)) { setErr('Enter a whole number of 1 or more.'); return; }
     setErr('');
     addToBasket({ productId: product.id, name: product.name, sku: product.sku, image: product.image, href: product.href, quantity: sample ? 0 : n, notes: '', sample });
-    say(sample ? `A sample of ${product.name} is on your inquiry list.` : `${n.toLocaleString('en-GB')} × ${product.name}: ${labels.added.toLowerCase()}.`);
+    say(sample ? `Sample request for ${product.name}: ${labels.added.toLowerCase()}.` : `${n.toLocaleString('en-GB')} × ${product.name}: ${labels.added.toLowerCase()}.`);
   };
 
   const statusLine = (
@@ -46,7 +46,7 @@ export function AddToInquiry({ product, locale, labels }: {
   if (samplesFirst) {
     return (
       <div className="buy__actions">
-        <p className="buy__mode">You are asking for samples first. <button type="button" className="btn-text" onClick={() => writeMode('quote')}>Switch to a bulk quote</button></p>
+        <p className="buy__mode">You are requesting samples first. <button type="button" className="btn-text" onClick={() => writeMode('quote')}>Switch to a bulk quotation</button></p>
         <button type="button" className="btn btn--primary" onClick={() => add(true)}>{labels.sample}</button>
         {statusLine}
       </div>

@@ -4,12 +4,12 @@ import map from '@/lib/world-map.json';
 
 type Market = { code: string; name: string; region: string; status: 'established' | 'target' };
 
-/* The export map: target markets in ink, markets already shipped to in lime (shown only once the owner
+/* The export map of Europe: target markets in ink, markets already shipped to in lime (shown only once the owner
    marks one established in Admin > Markets), the rest in silver. The list beside it is the accessible
    version: hovering or focusing a row lights its country, and the reverse. */
 export function ExportMap({ markets }: { markets: Market[] }) {
   const [on, setOn] = useState<string | null>(null);
-  // a phone shows Europe large and the names as plain text (no hover there; the list is the key)
+  // a phone shows the names as plain text (no hover there; the list is the key)
   const [phone, setPhone] = useState(false);
   useEffect(() => {
     const mq = matchMedia('(max-width: 639px)');
@@ -19,7 +19,7 @@ export function ExportMap({ markets }: { markets: Market[] }) {
   }, []);
   const byCode = new Map(markets.map((m) => [m.code, m]));
   const established = markets.filter((m) => m.status === 'established');
-  const ORDER = ['Ireland and the UK', 'Western Europe', 'Southern Europe', 'Scandinavia and the Nordics', 'Central Europe', 'North America'];
+  const ORDER = ['Ireland and the UK', 'Western Europe', 'Southern Europe', 'Scandinavia and the Nordics', 'Central Europe'];
   const regions = [...new Set(markets.map((m) => m.region))].sort((a, b) => (ORDER.indexOf(a) + 99) % 99 - (ORDER.indexOf(b) + 99) % 99);
   const focus = on ? byCode.get(on) : null;
 
@@ -53,7 +53,7 @@ export function ExportMap({ markets }: { markets: Market[] }) {
           </dl>
         </div>
         <details className="export__more">
-          <summary>See the {markets.length} markets</summary>
+          <summary>See all {markets.length} markets</summary>
           <dl className="export__regions">
             {regions.map((r) => (
               <div key={r}>
@@ -71,7 +71,7 @@ export function ExportMap({ markets }: { markets: Market[] }) {
         </details>
       </div>
       <figure className="span-7 start-6 export__map">
-        <svg viewBox={phone ? (map as { europe?: string }).europe ?? map.viewBox : map.viewBox} role="img" aria-label={`Map of Europe and North America marking ${markets.length} target markets`}>
+        <svg viewBox={map.viewBox} role="img" aria-label={`Map of Europe marking ${markets.length} target markets`}>
           {map.countries.map((c) => {
             const m = byCode.get(c.id);
             const cls = m ? (m.status === 'established' ? 'is-done' : 'is-target') : '';

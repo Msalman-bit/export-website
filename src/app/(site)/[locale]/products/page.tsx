@@ -5,12 +5,11 @@ import { PageShell } from '@/components/site/PageShell';
 import { Img } from '@/components/site/Img';
 import { shortName } from '@/components/site/Header';
 import { siteUrl } from '@/lib/seo';
+import { shortLine } from '@/lib/text';
 
 type Props = { params: Promise<{ locale: string }> };
 
-// the count and the names come from the families on show, so a family hidden or emptied in the admin leaves the text too
-const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
-const count = (n: number) => WORDS[n] ?? String(n);
+// the names come from the categories on show, so one hidden or emptied in the admin leaves the text too (no number is stated)
 const listOf = (names: string[]) => (names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0] ?? '');
 
 export async function generateMetadata({ params }: Props) {
@@ -18,8 +17,8 @@ export async function generateMetadata({ params }: Props) {
   const families = await getFamilies();
   return pageMeta({
     locale, path: '/products',
-    title: 'Sports equipment catalogue: footballs, gloves, teamwear | Monolith Sports',
-    description: `${count(families.length)} product families made in Pakistan for clubs, distributors and private-label brands: ${listOf(families.map((f) => shortName(f).toLowerCase()))}.`,
+    title: 'Sports equipment catalogue: footballs, gloves and teamwear | Monolith Sports',
+    description: `Sports equipment made in Pakistan for clubs, distributors and private-label brands: ${listOf(families.map((f) => shortName(f).toLowerCase()))}.`,
   });
 }
 
@@ -34,14 +33,14 @@ export default async function Products({ params }: Props) {
     <PageShell locale={locale} crumbs={[{ name: t['nav.products'], path: '/products' }]}>
       <header className="page-head">
         <h1>Product catalogue</h1>
-        <p>{count(families.length)} product {families.length === 1 ? 'family' : 'families'}, each made to your specification and branding. Open a family to filter its products, or add products to one inquiry as you go.</p>
+        <p>Every product in the catalogue is made to your specification and under your brand. Open a category to filter its products, or add products from several categories to one inquiry.</p>
       </header>
       <div className="fam-grid">
         {families.map((f) => (
           <a key={f.slug} className="card tile" href={`/${locale}/products/${f.slug}`}>
             <div className="tile__media"><Img url={f.image?.url} alt={f.image?.alt ?? f.name} sizes="(max-width: 639px) 50vw, (max-width: 1023px) 50vw, 302px" prefer={640} /></div>
             <div className="tile__head"><h2 className="t-card">{shortName(f)}</h2></div>
-            <p>{f.summary}</p>
+            <p>{shortLine(f.summary)}</p>
             <p className="sku">{f.subs.length} product {f.subs.length === 1 ? 'type' : 'types'}</p>
           </a>
         ))}

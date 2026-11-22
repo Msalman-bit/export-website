@@ -4,6 +4,7 @@ import { getArticle } from '@/lib/data';
 import { pageMeta, jsonLd, siteUrl } from '@/lib/seo';
 import { PageShell } from '@/components/site/PageShell';
 import { RichText } from '@/components/site/RichText';
+import { longDate, shortLine } from '@/lib/text';
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -31,8 +32,8 @@ export default async function Article({ params }: Props) {
       <article className="block" lang={locale === 'en' ? undefined : 'en'}>
         <header className="page-head">
           <h1>{a.title}</h1>
-          <p>{a.summary}</p>
-          <p className="t-small muted">{a.author}{a.publishedAt ? ` · ${a.publishedAt.toISOString().slice(0, 10)}` : ''}</p>
+          <p>{shortLine(a.summary)}</p>
+          <p className="t-small muted">{[a.author, longDate(a.publishedAt)].filter(Boolean).join(', ')}</p>
         </header>
         <RichText body={a.body} locale={locale} />
       </article>

@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   if (String(form.get('company') ?? '').trim()) return NextResponse.json({ ok: true });
   const parsed = z.object({ email: z.string().trim().toLowerCase().email().max(160), locale: z.string().max(5).default('en') })
     .safeParse({ email: form.get('email'), locale: form.get('locale') || 'en' });
-  if (!parsed.success) return NextResponse.json({ error: 'Write an email address with an @.' }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: 'Enter an email address, for example name@club.com.' }, { status: 400 });
   const db = await getDb();
   await db.insert(s.subscribers).values({ email: parsed.data.email, locale: parsed.data.locale, unsubscribeToken: randomToken(18) })
     .onConflictDoUpdate({ target: s.subscribers.email, set: { unsubscribedAt: null } });

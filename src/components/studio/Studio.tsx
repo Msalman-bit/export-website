@@ -97,15 +97,15 @@ const SPOT_DIRS: Record<'football' | 'rugby', { front: number[]; side: number[];
 })();
 /* each ball's panels: their kinds and names, its starting colours and its whole-ball shortcuts. The 32-panel ball is
    the football's, the futsal ball's and the handball's; the rugby ball has four panels running tip to tip. */
-const BALL: Record<Shape, { kinds: string[]; start: string[]; words: Record<string, [string, string, string, string]>; whole: [string, (i: number) => boolean][] }> = {
+const BALL: Record<Shape, { kinds: string[]; start: string[]; words: Record<string, [string, string]>; whole: [string, (i: number) => boolean][] }> = {
   football: {
     kinds: PANELS.map((p) => p.kind), start: START,
-    words: { hex: ['hexagon', 'hexagons', 'hex', 'hex'], pent: ['pentagon', 'pentagons', 'pent', 'pent'] },
+    words: { hex: ['hexagon', 'hexagons'], pent: ['pentagon', 'pentagons'] },
     whole: [['All hexagons', (i) => PANELS[i].kind === 'hex'], ['All pentagons', (i) => PANELS[i].kind === 'pent'], ['Whole ball', () => true]],
   },
   rugby: {
     kinds: RUGBY_START.map(() => 'panel'), start: RUGBY_START,
-    words: { panel: ['panel', 'panels', 'panel', 'panels'] },
+    words: { panel: ['panel', 'panels'] },
     whole: [['Every other panel', (i) => i % 2 === 0], ['Whole ball', () => true]],
   },
 };
@@ -253,8 +253,8 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
     return [...m.entries()];
   }, [paint, spec]);
   const kinds = Object.keys(spec.words);
-  const count = (e: Record<string, number>, short: boolean) => kinds.filter((k) => e[k]).map((k) => `${e[k]} ${spec.words[k][(short ? 2 : 0) + (e[k] === 1 ? 0 : 1)]}`);
-  const usedText = used.map(([c, e]) => `${colourName(c)}: ${count(e, false).join(', ')}`).join('; ');
+  const count = (e: Record<string, number>) => kinds.filter((k) => e[k]).map((k) => `${e[k]} ${spec.words[k][e[k] === 1 ? 0 : 1]}`);
+  const usedText = used.map(([c, e]) => `${colourName(c)}: ${count(e).join(', ')}`).join('; ');
 
   /* ---------- the logo ---------- */
   const readLogo = (file: File | undefined) => {
@@ -287,7 +287,7 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
     ...(material ? { [opts.materialLabel.toLowerCase()]: material } : {}), ...(size ? { size } : {}), ...(construction ? { construction } : {}),
     packaging, quantity: Number(quantity) || 0, instructions: notes,
   });
-  const summary = [product?.name, isBall ? `${used.length} ${used.length === 1 ? 'colour' : 'colours'}${strokes.length ? ' + free paint' : ''}` : colourName(primary), logo ? (isBall && logoAt ? 'logo placed by hand' : `logo on ${opts.place.find(([v]) => v === place)?.[1].toLowerCase()}`) : 'no logo yet'].filter(Boolean).join(' · ');
+  const summary = [product?.name, isBall ? `${used.length} ${used.length === 1 ? 'colour' : 'colours'}${strokes.length ? ' + free paint' : ''}` : colourName(primary), logo ? (isBall && logoAt ? 'logo placed by hand' : `logo on ${opts.place.find(([v]) => v === place)?.[1].toLowerCase()}`) : 'no logo yet'].filter(Boolean).join(', ');
 
   const svgPicture = async (svg: SVGSVGElement | null): Promise<string> => {
     if (!svg) return '';
@@ -325,8 +325,8 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
       `Colours: ${isBall ? usedText : `${colourName(primary)}, ${colourName(secondary)}, ${colourName(accent)}`}`,
       ...(freeText ? [`Free paint: ${freeText}`] : []),
       logo ? `Logo: ${cf.logo} (${cf.logoPlacement})` : 'Logo: none',
-      ...([material, construction, size].some(Boolean) ? [[material, construction, size].filter(Boolean).join(' · ')] : []),
-      `Quantity: ${cf.quantity} · ${cf.packaging}`,
+      ...([material, construction, size].some(Boolean) ? [[material, construction, size].filter(Boolean).join(', ')] : []),
+      `Quantity: ${cf.quantity}, ${cf.packaging}`,
     ];
     const measure = document.createElement('canvas').getContext('2d')!;
     measure.font = '28px Archivo, Arial, sans-serif';
@@ -345,7 +345,7 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
     const k = Math.min(1200 / img.width, 1200 / img.height);
     g.drawImage(img, (1200 - img.width * k) / 2, (1200 - img.height * k) / 2, img.width * k, img.height * k);
     g.fillStyle = '#c5f900'; g.fillRect(0, 1200, 1200, 6);
-    g.fillStyle = '#ffffff'; g.font = '500 40px Archivo, Arial, sans-serif'; g.fillText(`Monolith Sports · ${product?.name ?? ''}`, 56, 1270);
+    g.fillStyle = '#ffffff'; g.font = '500 40px Archivo, Arial, sans-serif'; g.fillText(`Monolith Sports, ${product?.name ?? ''}`, 56, 1270);
     g.font = '28px Archivo, Arial, sans-serif'; g.fillStyle = '#d6d8db';
     lines.forEach((l, i) => g.fillText(l, 56, 1325 + i * 42));
     g.fillStyle = '#959595'; g.font = '24px Archivo, Arial, sans-serif';
@@ -373,7 +373,7 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
 
   const toInquiry = async () => {
     const n = Number(quantity);
-    if (!Number.isInteger(n) || n < 1) { setStep(3); setErr('Write a quantity of 1 or more, as a whole number.'); return; }
+    if (!Number.isInteger(n) || n < 1) { setStep(3); setErr('Enter a whole number of 1 or more.'); return; }
     setErr('');
     const items = addToBasket({ productId: product?.id ?? null, name: product?.name ?? 'Custom product', sku: product?.sku ?? '', image: product?.image, href: product?.href, quantity: n, notes, customisation: config() });
     const key = items[items.length - 1]?.key;
@@ -465,7 +465,7 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
           <h2 className="sr-only" id={`${uid}-step-h`}>Step {step + 1} of {STEPS.length}: {STEPS[step]}</h2>
           {step === 0 ? (
             <>
-              <p className="studio__lead">Choose what to design. Balls are painted panel by panel or with a free brush; gloves and kit take three colours.</p>
+              <p className="studio__lead">Choose a product to design. Balls are coloured panel by panel or with a free brush; gloves and kits use three colours.</p>
               <div className="studio__products" role="group" aria-label="Product">
                 {products.map((p) => (
                   <button key={p.id} type="button" className="studio__product" aria-pressed={p.id === product.id} onClick={() => setProductId(p.id)}>
@@ -532,7 +532,7 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
                 </div>
                 <div className="studio__used" aria-label="Colours on the ball">
                   {used.map(([c, e]) => (
-                    <span key={c}><span className="studio__dot" style={{ background: c }} aria-hidden="true" />{colourName(c)} <span className="muted">{count(e, true).join(' · ')}</span></span>
+                    <span key={c}><span className="studio__dot" style={{ background: c }} aria-hidden="true" />{colourName(c)} <span className="muted">{count(e).join(', ')}</span></span>
                   ))}
                   {strokes.length ? <span><span className="studio__dot studio__dot--free" aria-hidden="true" />Free paint <span className="muted">{strokes.length} {strokes.length === 1 ? 'stroke' : 'strokes'}</span></span> : null}
                 </div>
@@ -603,7 +603,7 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
               {err && step === 3 ? <p className="err" id={`${uid}-err`} role="alert">{err}</p> : null}
               <div className="field"><label htmlFor={`${uid}-notes`}>Manufacturing instructions <span className="hint">(optional)</span></label>
                 <textarea id={`${uid}-notes`} value={notes} maxLength={500} onChange={(e) => setNotes(e.target.value)} /></div>
-              <p className="t-small muted">These are the options you can ask to be quoted; the quotation confirms what is possible for your order.</p>
+              <p className="t-small muted">These are the options you can request; the quotation confirms what is possible for your order.</p>
             </>
           ) : null}
         </section>
@@ -612,7 +612,7 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
             actions follow it in the flow */}
         <div className="studio__bar">
           <p className="studio__summary">{summary}</p>
-          <button type="button" className="btn btn--primary" onClick={toInquiry}>Add to my inquiry</button>
+          <button type="button" className="btn btn--primary" onClick={toInquiry}>Add to inquiry</button>
           <p className="status-line" role="status">{status ? <span key={statusN} className="status-line__msg">{status}</span> : null}{status.includes('inquiry list') ? <> <a className="link" href={`/${locale}/inquiry`}>Send the inquiry</a></> : null}</p>
         </div>
         <div className="studio__more">
@@ -624,7 +624,7 @@ export function Studio({ locale, products, initialId, signedIn }: { locale: stri
             <Flat ref={netRef} model={shape} look={look} label="Flat pattern" />
           </div>
         ) : null}
-        <p className="studio__note">Visual concept, not a production sample. Screen colours differ from printed and dyed materials; the sample you approve is the production reference.</p>
+        <p className="studio__note">This preview is a visual concept, not a production sample. Screen colours differ from printed and dyed materials; the sample you approve is the production reference.</p>
       </form>
     </div>
   );

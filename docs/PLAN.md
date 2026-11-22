@@ -27,7 +27,7 @@ virtue words, certification claims, invented figures. Admission: businesses only
 | 5 | process | Eight stages from brief to shipment | Materials, prototype, inspection, packing (use) | 2 live | pinned-chapters: eight stages read as four steps beside one changing frame |
 | 6 | customise (split) | Your colours, logo and packaging; the sample is the reference | Custom club balls (object) | 1 | picture-develops: the custom range comes up like a print |
 | 7 | quality (dark band) | Built without compromise: each lot checked against the sample | Seam macro (parts) | 1 | |
-| 8 | markets | Europe and North America; target vs shipped | The export map (diagram, still) | 1 | Hover or focus lights a country |
+| 8 | markets | Europe; target vs shipped | The export map (diagram, still) | 1 | Hover or focus lights a country |
 | 9 | faq | The buyer's last questions | Valve close-up (parts) | 1 | |
 | 10 | footer.closing | Send us your product list | The big button | 1 | |
 

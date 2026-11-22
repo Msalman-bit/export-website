@@ -85,7 +85,7 @@ test('an admin deletes an inquiry only with the confirmation and a fresh authent
   Object.entries({ type: 'quote', companyName: 'Quick FC', contactName: 'Quick Buyer', email: 'quick@e2e.example', country: 'IE', currency: 'EUR', locale: 'en', sourcePage: '/en/inquiry', elapsed: '800', items: '[{"name":"Match football","quantity":100}]' }).forEach(([k, v]) => quick.set(k, v));
   const fast = await fetch(`${BASE}/api/inquiries`, { method: 'POST', body: quick, headers: { Origin: BASE } });
   assert.equal(fast.status, 400, 'too fast: refused');
-  assert.match((await fast.json()).errors?.form ?? '', /That was very quick\. Check the form, then send it again\./);
+  assert.match((await fast.json()).errors?.form ?? '', /The form was submitted too quickly\. Please check it and send it again\./);
 
   // A: a buyer views a product, adds a sample of it and sends the request (with a file); the team drafts a quotation
   const before = await funnel();

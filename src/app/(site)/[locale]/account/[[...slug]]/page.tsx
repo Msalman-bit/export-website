@@ -8,6 +8,7 @@ import { readSession, requireCustomer } from '@/lib/auth/session';
 import { PageShell } from '@/components/site/PageShell';
 import { STATUS_LABEL, ORDER_STEPS } from '@/lib/status';
 import { pic } from '@/lib/media';
+import { longDate } from '@/lib/text';
 import { confirmEmail, logout } from '../actions';
 import { RegisterForm, LoginForm, ForgotForm, ResetForm, ResendForm, CompanyForm, MessageForm } from '../forms';
 
@@ -25,7 +26,10 @@ export async function generateMetadata({ params }: Props) {
   return pageMeta({ locale, path: `/account${slug.length ? '/' + slug[0] : ''}`, title: `${TITLES[slug[0] ?? ''] ?? 'Account'} | Monolith Sports`, description: 'The Monolith Sports customer portal: quotations, samples, orders, production status, tracking and documents.', noindex: true });
 }
 
-const fmtDate = (d: Date | string | null | undefined) => (d ? new Date(d).toISOString().slice(0, 10) : '');
+const fmtDate = longDate;
+// the words a customer reads for the stored type and status codes
+const TYPE_LABEL: Record<string, string> = { quote: 'Quotation', sample: 'Sample', contact: 'Message', distributor: 'Distributor application', partnership: 'Partnership inquiry' };
+const asWord = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ') : s);
 
 export default async function Account({ params, searchParams }: Props) {
   const locale = await localeFrom(params);
@@ -41,14 +45,14 @@ export default async function Account({ params, searchParams }: Props) {
       <PageShell locale={locale} crumbs={[{ name: TITLES[page], path: `/account/${page}` }]} close={null}>
         <div className="auth">
           <header className="page-head"><h1>{TITLES[page]}</h1>
-            {page === 'login' ? <p>Follow your quotations, samples, orders and shipments.</p> : null}
-            {page === 'register' ? <p>For clubs, distributors and brands buying from Monolith Sports. Your earlier inquiries sent from the same email appear in the account once you confirm it.</p> : null}
-            {page === 'forgot' ? <p>We send a link that lets you choose a new password.</p> : null}
+            {page === 'login' ? <p>Follow your quotations, samples, orders and shipments</p> : null}
+            {page === 'register' ? <p>Customer accounts are for clubs, distributors and brands that buy from Monolith Sports. Inquiries already sent from the same email address appear in the account once you confirm the address.</p> : null}
+            {page === 'forgot' ? <p>We will send you a link to choose a new password</p> : null}
           </header>
-          {sp.reset ? <p className="notice">Your password is changed. Sign in with the new one.</p> : null}
+          {sp.reset ? <p className="notice">Your password has been changed. Sign in with the new password.</p> : null}
           {page === 'login' ? <LoginForm locale={locale} /> : page === 'register' ? <RegisterForm locale={locale} /> : page === 'forgot' ? <ForgotForm locale={locale} /> : <ResetForm locale={locale} token={sp.token ?? ''} />}
           <p className="t-small">
-            {page === 'login' ? <><a className="link" href={`/${locale}/account/register`}>Create an account</a> · <a className="link" href={`/${locale}/account/forgot`}>Reset your password</a></> : <a className="link" href={`/${locale}/account/login`}>Back to sign in</a>}
+            {page === 'login' ? <><a className="link" href={`/${locale}/account/register`}>Create an account</a> or <a className="link" href={`/${locale}/account/forgot`}>reset your password</a></> : <a className="link" href={`/${locale}/account/login`}>Back to sign in</a>}
           </p>
         </div>
       </PageShell>
@@ -63,7 +67,7 @@ export default async function Account({ params, searchParams }: Props) {
         <PageShell locale={locale} crumbs={[]} close={null}>
           <div className="auth">
             <header className="page-head"><h1>{done ? 'Email confirmed' : failed ? 'This link has expired' : 'Confirm your email'}</h1>
-              <p>{done ? 'Your account is open. Earlier requests sent from this address are now in it.' : failed ? 'Sign in and ask for a new confirmation link.' : 'One click opens your customer account.'}</p></header>
+              <p>{done ? 'Your account is now active. Earlier requests sent from this address have been added to it.' : failed ? 'Sign in and ask for a new confirmation link' : 'Use the button below to open your customer account'}</p></header>
             {done || failed ? (
               <div className="btn-row"><a className="btn btn--primary" href={`/${locale}/account`}>{done ? 'Open your account' : 'Sign in'}</a></div>
             ) : (
@@ -82,7 +86,7 @@ export default async function Account({ params, searchParams }: Props) {
     return (
       <PageShell locale={locale} crumbs={[]} close={null}>
         <div className="auth"><header className="page-head"><h1>Confirm your email</h1>
-          <p>We sent a confirmation link to {user.email}. Open it to finish setting up the account; it works for 24 hours.</p></header>
+          <p>We have sent a confirmation link to {user.email}. Open it to finish setting up the account; the link is valid for 24 hours.</p></header>
           <ResendForm locale={locale} /></div>
       </PageShell>
     );
@@ -114,7 +118,7 @@ export default async function Account({ params, searchParams }: Props) {
           <div className="stat-card"><span className="t-small muted">Orders</span><strong>{orders.length}</strong><a className="link" href={`/${locale}/account/orders`}>Follow production</a></div>
         </div>
         <section className="block"><h2>Latest requests</h2>{requestTable(inquiries.slice(0, 6))}</section>
-        <div className="btn-row"><a className="btn btn--primary" href={`/${locale}/inquiry`}>Request a quote</a><a className="btn btn--secondary" href={`/${locale}/products`}>See the catalogue</a></div>
+        <div className="btn-row"><a className="btn btn--primary" href={`/${locale}/inquiry`}>Request a quotation</a><a className="btn btn--secondary" href={`/${locale}/products`}>See the catalogue</a></div>
       </>
     );
   } else if (current === 'quotations') {
@@ -125,9 +129,9 @@ export default async function Account({ params, searchParams }: Props) {
         <section className="block"><h2>Quotations</h2>
           {quotes.length ? (
             <div className="table-wrap"><table className="data"><thead><tr><th>Number</th><th>Request</th><th>Total</th><th>Valid until</th><th>Status</th><th>PDF</th></tr></thead><tbody>
-              {quotes.map((q) => (<tr key={q.id}><td>{q.number}</td><td>{inquiries.find((i) => i.id === q.inquiryId)?.reference}</td><td>{q.currency} {Number(q.total).toLocaleString('en-GB', { minimumFractionDigits: 2 })}</td><td>{q.validUntil}</td><td><span className="pill-status">{q.status}</span></td><td><a className="link" href={`/api/portal/quotations/${q.id}`}>Download</a></td></tr>))}
+              {quotes.map((q) => (<tr key={q.id}><td>{q.number}</td><td>{inquiries.find((i) => i.id === q.inquiryId)?.reference}</td><td>{q.currency} {Number(q.total).toLocaleString('en-GB', { minimumFractionDigits: 2 })}</td><td>{fmtDate(q.validUntil)}</td><td><span className="pill-status">{asWord(q.status)}</span></td><td><a className="link" href={`/api/portal/quotations/${q.id}`}>Download</a></td></tr>))}
             </tbody></table></div>
-          ) : <p className="empty">No quotation has been sent to this account yet. Quotations appear here as soon as sales sends them.</p>}
+          ) : <p className="empty">No quotation has been sent to this account yet. Quotations appear here as soon as the sales team sends them.</p>}
         </section>
       </>
     );
@@ -144,15 +148,15 @@ export default async function Account({ params, searchParams }: Props) {
       return (
         <section className="form-section" key={o.id}>
           <h2>Order {o.number}</h2>
-          <p className="t-small muted">{fmtDate(o.createdAt)} · {o.currency} {Number(o.total).toLocaleString('en-GB', { minimumFractionDigits: 2 })}</p>
+          <p className="t-small muted">{fmtDate(o.createdAt)}, {o.currency} {Number(o.total).toLocaleString('en-GB', { minimumFractionDigits: 2 })}</p>
           <ol className="timeline" aria-label="Production status">
             {ORDER_STEPS.map((st, i) => <li key={st} className={i < step ? 'is-done' : i === step ? 'is-now' : ''}><span>{`${STATUS_LABEL[st]}${i === step ? ' (current stage)' : ''}`}</span></li>)}
           </ol>
           {ships.filter((x) => x.orderId === o.id).map((x) => (
-            <p key={x.id}>Shipment: {x.method} {x.carrier ? `with ${x.carrier}` : ''} {x.trackingNumber ? `· tracking ${x.trackingNumber}` : ''} {x.eta ? `· expected ${x.eta}` : ''} {x.trackingUrl ? <a className="link" href={x.trackingUrl} rel="noopener noreferrer" target="_blank">Track the shipment</a> : null}</p>
+            <p key={x.id}>Shipment: {[[x.method, x.carrier ? `with ${x.carrier}` : ''].filter(Boolean).join(' '), x.trackingNumber ? `tracking ${x.trackingNumber}` : '', x.eta ? `expected ${x.eta}` : ''].filter(Boolean).join(', ')} {x.trackingUrl ? <a className="link" href={x.trackingUrl} rel="noopener noreferrer" target="_blank">Track the shipment</a> : null}</p>
           ))}
           {invs.filter((x) => x.orderId === o.id).map((x) => (
-            <p key={x.id}>Invoice {x.number}: {x.currency} {Number(x.amount).toLocaleString('en-GB', { minimumFractionDigits: 2 })} · {x.status} · <a className="link" href={`/api/portal/invoices/${x.id}`}>Download the invoice</a></p>
+            <p key={x.id}>Invoice {x.number}: {x.currency} {Number(x.amount).toLocaleString('en-GB', { minimumFractionDigits: 2 })}, {x.status}. <a className="link" href={`/api/portal/invoices/${x.id}`}>Download the invoice</a></p>
           ))}
         </section>
       );
@@ -171,25 +175,25 @@ export default async function Account({ params, searchParams }: Props) {
     const designs = await db.select().from(s.customisations).where(eq(s.customisations.companyId, cid)).orderBy(desc(s.customisations.createdAt));
     body = designs.length ? (
       <div className="table-wrap"><table className="data"><thead><tr><th>Design</th><th>Saved</th><th>Details</th></tr></thead><tbody>
-        {designs.map((d) => <tr key={d.id}><td>{d.name}</td><td>{fmtDate(d.createdAt)}</td><td>{Object.entries(d.config).filter(([, v]) => v !== '' && v != null).map(([k, v]) => `${k}: ${String(v)}`).join(' · ')}</td></tr>)}
+        {designs.map((d) => <tr key={d.id}><td>{d.name}</td><td>{fmtDate(d.createdAt)}</td><td>{Object.entries(d.config).filter(([, v]) => v !== '' && v != null).map(([k, v]) => `${k}: ${String(v)}`).join(', ')}</td></tr>)}
       </tbody></table></div>
     ) : <div className="empty"><p>No saved designs yet.</p><a className="btn btn--secondary" href={`/${locale}/studio`}>Open the customisation studio</a></div>;
   } else if (current === 'documents') {
     const docs = await db.select().from(s.documents).where(or(eq(s.documents.companyId, cid), eq(s.documents.visibility, 'customers'), eq(s.documents.visibility, 'public'))).orderBy(desc(s.documents.createdAt));
     body = docs.length ? (
       <div className="table-wrap"><table className="data"><thead><tr><th>Document</th><th>Type</th><th>Added</th><th>File</th></tr></thead><tbody>
-        {docs.map((d) => <tr key={d.id}><td>{d.title}</td><td>{d.kind}</td><td>{fmtDate(d.createdAt)}</td><td><a className="link" href={`/media/${d.attachmentId}`}>Download</a></td></tr>)}
+        {docs.map((d) => <tr key={d.id}><td>{d.title}</td><td>{asWord(d.kind)}</td><td>{fmtDate(d.createdAt)}</td><td><a className="link" href={`/media/${d.attachmentId}`}>Download</a></td></tr>)}
       </tbody></table></div>
     ) : <p className="empty">Technical documents, datasheets and certificates shared with your company appear here.</p>;
   } else if (current === 'messages') {
     const msgs = await db.select().from(s.messages).where(eq(s.messages.companyId, cid)).orderBy(desc(s.messages.createdAt)).limit(100);
     body = (
       <>
-        <section className="form-section"><h2>Write to the sales team</h2><MessageForm locale={locale} inquiries={inquiries.map((i) => ({ id: i.id, reference: i.reference }))} /></section>
+        <section className="form-section"><h2>Contact the sales team</h2><MessageForm locale={locale} inquiries={inquiries.map((i) => ({ id: i.id, reference: i.reference }))} /></section>
         <section className="block" aria-label="Message history">
           {msgs.length ? msgs.map((m) => (
             <div key={m.id} className={`msg${m.fromStaff ? ' msg--staff' : ''}`}>
-              <p className="msg__meta">{m.fromStaff ? 'Monolith Sports' : 'You'} · {fmtDate(m.createdAt)}{m.inquiryId ? ` · ${inquiries.find((i) => i.id === m.inquiryId)?.reference ?? ''}` : ''}</p>
+              <p className="msg__meta">{m.fromStaff ? 'Monolith Sports' : 'You'}, {fmtDate(m.createdAt)}{m.inquiryId ? `, ${inquiries.find((i) => i.id === m.inquiryId)?.reference ?? ''}` : ''}</p>
               <p style={{ whiteSpace: 'pre-wrap' }}>{m.body}</p>
             </div>
           )) : <p className="empty">No messages yet.</p>}
@@ -201,10 +205,10 @@ export default async function Account({ params, searchParams }: Props) {
   }
 
   function requestTable(list: typeof inquiries) {
-    if (!list.length) return <div className="empty"><p>No requests yet.</p><a className="btn btn--secondary" href={`/${locale}/inquiry`}>Request a quote</a></div>;
+    if (!list.length) return <div className="empty"><p>No requests yet.</p><a className="btn btn--secondary" href={`/${locale}/inquiry`}>Request a quotation</a></div>;
     return (
       <div className="table-wrap"><table className="data"><thead><tr><th>Reference</th><th>Type</th><th>Sent</th><th>Status</th></tr></thead><tbody>
-        {list.map((i) => <tr key={i.id}><td>{i.reference}</td><td>{i.type}</td><td>{fmtDate(i.createdAt)}</td><td><span className="pill-status">{STATUS_LABEL[i.status] ?? i.status}</span></td></tr>)}
+        {list.map((i) => <tr key={i.id}><td>{i.reference}</td><td>{TYPE_LABEL[i.type] ?? asWord(i.type)}</td><td>{fmtDate(i.createdAt)}</td><td><span className="pill-status">{STATUS_LABEL[i.status] ?? i.status}</span></td></tr>)}
       </tbody></table></div>
     );
   }
@@ -217,7 +221,7 @@ export default async function Account({ params, searchParams }: Props) {
           <form action={logout}><input type="hidden" name="locale" value={locale} /><button className="btn-text" type="submit">Sign out</button></form>
         </nav>
         <div className="block">
-          <header className="page-head"><h1>{TITLES[current]}</h1><p>{company.name} · {user.email}</p></header>
+          <header className="page-head"><h1>{TITLES[current]}</h1><p>{company.name}, {user.email}</p></header>
           {body}
         </div>
       </div>

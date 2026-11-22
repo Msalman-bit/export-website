@@ -17,10 +17,10 @@ export const shortName = (f: { slug: string; name: string }) => CATALOGUE.find((
    full load, so the kit's scripts start fresh on each one. */
 
 const FAMILY_LINE: Record<string, string> = {
-  football: 'Balls, gloves, shin guards', futsal: 'Match, training, junior balls', rugby: 'Balls and protection',
-  handball: 'Match, training, junior balls', cricket: 'Bats, balls, gloves, pads',
-  'combat-sports': 'Gloves, bags, pads, guards', fitness: 'Belts, gloves, wraps, bands', 'racket-sports': 'Padel, tennis, badminton',
-  sportswear: 'Kits, training wear, teamwear', accessories: 'Bags, cones, bibs, aids',
+  football: 'Balls, gloves and shin guards', futsal: 'Match, training and junior balls', rugby: 'Balls and protection',
+  handball: 'Match, training and junior balls', cricket: 'Bats, balls, gloves and pads',
+  'combat-sports': 'Gloves, bags, pads and guards', fitness: 'Belts, gloves, wraps and bands', 'racket-sports': 'Padel, tennis and badminton',
+  sportswear: 'Kits, training wear and teamwear', accessories: 'Bags, cones, bibs and training aids',
 };
 
 const Chev = () => (
@@ -39,48 +39,48 @@ export function Header({ locale, t, families, pages, path }: {
 
   const half = Math.ceil(families.length / 2);
   const services = live([
-    { label: 'OEM manufacturing', line: 'Your design, made to spec', path: '/oem-manufacturing', slug: 'oem-manufacturing' },
-    { label: 'ODM manufacturing', line: 'Our base, your brand', path: '/odm-manufacturing', slug: 'odm-manufacturing' },
+    { label: 'OEM manufacturing', line: 'Your design, made to your specification', path: '/oem-manufacturing', slug: 'oem-manufacturing' },
+    { label: 'ODM manufacturing', line: 'Our product types with your branding', path: '/odm-manufacturing', slug: 'odm-manufacturing' },
     { label: 'Private labelling', line: 'Your labels and packaging', path: '/private-label', slug: 'private-label' },
     { label: 'Custom development', line: 'New products from a brief', path: '/custom-development', slug: 'custom-development' },
   ]);
   const production = live([
-    { label: 'Capabilities', line: 'What we make and how', path: '/manufacturing', slug: 'manufacturing' },
-    { label: 'Factory and facilities', line: 'Visits and video audits', path: '/factory', slug: 'factory' },
+    { label: 'Capabilities', line: 'What we make and how we make it', path: '/manufacturing', slug: 'manufacturing' },
+    { label: 'Factory and facilities', line: 'Visits, video walk-throughs and audits', path: '/factory', slug: 'factory' },
     { label: 'Quality control', line: 'Checks against your sample', path: '/quality-control', slug: 'quality-control' },
     { label: 'Research and development', line: 'From brief to prototype', path: '/research-development', slug: 'research-development' },
   ]);
   const guides = live([
     { label: 'Insights', line: 'Guides for buyers', path: '/insights' },
-    { label: 'Questions', line: 'Orders, samples, files', path: '/faq', slug: 'faq' },
-    { label: 'Product catalogues', line: 'PDF catalogue to download', path: '/catalogues' },
+    { label: 'FAQ', line: 'Orders, samples and artwork files', path: '/faq', slug: 'faq' },
+    { label: 'Product catalogues', line: 'PDF catalogues to download', path: '/catalogues' },
   ]);
   const ordering = live([
-    { label: 'Sample ordering', line: 'Approve before bulk', path: '/sample-ordering', slug: 'sample-ordering' },
+    { label: 'Sample ordering', line: 'Approve before the bulk order', path: '/sample-ordering', slug: 'sample-ordering' },
     { label: 'Global exports', line: 'Markets and currencies', path: '/global-exports', slug: 'global-exports' },
   ]);
   // the Customisation menu: the studio, and the services that make a product to a buyer's own brief (lines the site
   // already uses in its other menus and on the homepage)
   const studio: Link[] = [
-    { label: 'Customisation studio', line: 'Colours and logo on a football', path: '/studio' },
+    { label: 'Customisation studio', line: 'Colours and logo on balls, gloves and kits', path: '/studio' },
     { label: 'Your inquiry list', line: 'Products added so far', path: '/inquiry' },
   ];
   const madeForYou = live([
     { label: 'Private labelling', line: 'Your labels and packaging', path: '/private-label', slug: 'private-label' },
     { label: 'Custom development', line: 'New products from a brief', path: '/custom-development', slug: 'custom-development' },
-    { label: 'Sample ordering', line: 'Approve before bulk', path: '/sample-ordering', slug: 'sample-ordering' },
+    { label: 'Sample ordering', line: 'Approve before the bulk order', path: '/sample-ordering', slug: 'sample-ordering' },
   ]);
   const company = live([
     { label: 'Mission and vision', line: 'What we work towards', path: '/mission-vision', slug: 'mission-vision' },
     { label: 'Company history', line: 'How we started', path: '/company-history', slug: 'company-history' },
-    { label: 'Sustainability', line: 'Freight, packing, materials', path: '/sustainability', slug: 'sustainability' },
+    { label: 'Sustainability', line: 'Freight, packaging and materials', path: '/sustainability', slug: 'sustainability' },
     { label: 'Ethical sourcing', line: 'Labour and audits', path: '/ethical-sourcing', slug: 'ethical-sourcing' },
   ]);
   const work = live([
     { label: 'Become a distributor', line: 'Sell our range in your region', path: '/become-a-distributor', slug: 'become-a-distributor' },
     { label: 'Partnerships', line: 'Supply and co-development', path: '/partnerships', slug: 'partnerships' },
-    { label: 'Contact', line: 'Write to the sales team', path: '/contact', slug: 'contact' },
-    { label: t['footer.portal'], line: 'Quotes, orders, tracking', path: '/account' },
+    { label: 'Contact', line: 'Send a message to the sales team', path: '/contact', slug: 'contact' },
+    { label: t['footer.portal'], line: 'Quotations, orders and tracking', path: '/account' },
   ]);
 
   // the page you are on keeps its row in a menu (aria-current), like the bar's own words do
@@ -102,7 +102,7 @@ export function Header({ locale, t, families, pages, path }: {
     </a>
   );
   // the next steps at a panel's foot: what its own lists do not already offer (the header bar carries the quote)
-  const nextSteps = [{ label: t['cta.sample'], path: '/inquiry?type=sample' }, pages.has('contact') && { label: 'Write to the sales team', path: '/contact' }] as ({ label: string; path: string } | false)[];
+  const nextSteps = [{ label: t['cta.sample'], path: '/inquiry?type=sample' }, pages.has('contact') && { label: 'Contact the sales team', path: '/contact' }] as ({ label: string; path: string } | false)[];
   const foot = (...links: ({ label: string; path: string } | false)[]) => (
     <div className="menu-foot">
       {links.flatMap((l) => (l ? [<a key={l.path} className="link" href={L(l.path)}>{l.label}</a>] : []))}
@@ -119,9 +119,9 @@ export function Header({ locale, t, families, pages, path }: {
             <a className="nav__link" href={L('/products')} {...current('products')}>{t['nav.products']} <Chev /></a>
             <div className="nav__menu">
               <div className="wrap grid">
-                {col('Product families', families.slice(0, half).map((f) => ({ label: shortName(f), line: FAMILY_LINE[f.slug] ?? '', path: `/products/${f.slug}` })))}
-                {col('More families', families.slice(half).map((f) => ({ label: shortName(f), line: FAMILY_LINE[f.slug] ?? '', path: `/products/${f.slug}` })))}
-                {tile({ path: '/studio', url: 'gen:nav-footballs', alt: 'Five footballs in different colourways in a row', title: 'Customisation studio', line: 'Colours and logo on a football' })}
+                {col('Categories', families.slice(0, half).map((f) => ({ label: shortName(f), line: FAMILY_LINE[f.slug] ?? '', path: `/products/${f.slug}` })))}
+                {col('More categories', families.slice(half).map((f) => ({ label: shortName(f), line: FAMILY_LINE[f.slug] ?? '', path: `/products/${f.slug}` })))}
+                {tile({ path: '/studio', url: 'gen:nav-footballs', alt: 'Five footballs in different colourways in a row', title: 'Customisation studio', line: 'Colours and logo on balls, gloves and kits' })}
                 {foot({ label: t['cta.catalogue'], path: '/products' }, { label: t['cta.sample'], path: '/inquiry?type=sample' }, { label: t['nav.basket'], path: '/inquiry' })}
               </div>
             </div>
@@ -132,7 +132,7 @@ export function Header({ locale, t, families, pages, path }: {
               <div className="wrap grid">
                 {col('Services', services)}
                 {col('Production', production)}
-                {tile({ path: '/sample-ordering', url: 'gen:process-prototype', alt: 'A sample football beside die-cut panels, a ruler and calipers', title: 'Sample ordering', line: 'See it before the bulk order' })}
+                {tile({ path: '/sample-ordering', url: 'gen:process-prototype', alt: 'A sample football beside die-cut panels, a ruler and calipers', title: 'Sample ordering', line: 'See the product before the bulk order' })}
                 {foot(...nextSteps)}
               </div>
             </div>
@@ -141,9 +141,9 @@ export function Header({ locale, t, families, pages, path }: {
             <a className="nav__link" href={L('/studio')} {...current('studio')}>{t['nav.customisation']} <Chev /></a>
             <div className="nav__menu">
               <div className="wrap grid">
-                {col('Design it yourself', studio)}
-                {madeForYou.length ? col('Made for you', madeForYou) : null}
-                {tile({ path: '/studio', url: 'gen:custom-range', alt: 'Four footballs in custom club colourways: navy and crimson, black and lime, white and silver, green and white', title: 'Your colours, logo and packaging', line: 'The preview goes into your inquiry' })}
+                {col('Design and inquiry', studio)}
+                {madeForYou.length ? col('Customisation services', madeForYou) : null}
+                {tile({ path: '/studio', url: 'gen:custom-range', alt: 'Four footballs in custom club colourways: navy and crimson, black and lime, white and silver, green and white', title: 'Your colours, logo and packaging', line: 'The preview is attached to your inquiry' })}
                 {foot(...nextSteps)}
               </div>
             </div>
@@ -155,8 +155,8 @@ export function Header({ locale, t, families, pages, path }: {
                 {col('Guides', guides)}
                 {col('Ordering', ordering)}
                 {pages.has('shipping-logistics')
-                  ? tile({ path: '/shipping-logistics', url: 'gen:process-packing', alt: 'Export cartons stacked on a wrapped pallet with deflated footballs packed in polybags', title: 'Shipping and logistics', line: 'Sea, air and courier' })
-                  : tile({ path: '/catalogues', url: 'gen:terms-swatches', alt: 'Synthetic leather colour swatches, a cut football panel, a measuring tape and a ruler on a steel desk', title: 'Product catalogues', line: 'PDF catalogue to download' })}
+                  ? tile({ path: '/shipping-logistics', url: 'gen:process-packing', alt: 'Export cartons stacked on a wrapped pallet with deflated footballs packed in polybags', title: 'Shipping and logistics', line: 'Sea freight, air freight and courier' })
+                  : tile({ path: '/catalogues', url: 'gen:terms-swatches', alt: 'Synthetic leather colour swatches, a cut football panel, a measuring tape and a ruler on a steel desk', title: 'Product catalogues', line: 'PDF catalogues to download' })}
                 {foot(...nextSteps)}
               </div>
             </div>
@@ -166,8 +166,8 @@ export function Header({ locale, t, families, pages, path }: {
             <div className="nav__menu">
               <div className="wrap grid">
                 {col('Company', company)}
-                {col('Work with us', work)}
-                {tile({ path: '/about', url: 'gen:intro-stitching', alt: 'A curved needle pulling waxed white thread through the edges of a white hexagon and a black pentagon', title: 'About Monolith Sports', line: 'Who we are and who for' })}
+                {col('Partner with us', work)}
+                {tile({ path: '/about', url: 'gen:intro-stitching', alt: 'A curved needle pulling waxed white thread through the edges of a white hexagon and a black pentagon', title: 'About Monolith Sports', line: 'Who we are and who we supply' })}
                 {foot({ label: t['cta.sample'], path: '/inquiry?type=sample' }, { label: t['cta.catalogue'], path: '/products' })}
               </div>
             </div>

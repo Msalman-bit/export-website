@@ -688,6 +688,11 @@
 @media (max-width: 359px) {
   .nav:not(.is-open) .nav__actions .btn--primary { display: none; }
 }
+/* 360 to 411: the main button's words stand on two lines, so the name, the button and the menu button keep inside the
+   page's side margins (the other languages' longer words too) */
+@media (min-width: 360px) and (max-width: 411px) {
+  .nav:not(.is-open) .nav__actions .btn { max-width: 100px; padding-inline: 10px; font-size: 13px; line-height: 1.15; text-align: center; white-space: normal; }
+}
 
 :root {
   --m-film-in: 900ms;   /* the scroll film's canvas fading in over the still (marketing, longer by design) */
@@ -1066,7 +1071,7 @@ main > #terms .terms-split__text > .section-head, main > #faq .faq-split__text >
    buttons below never move. Transitions, not keyframes: a fast scroll across two chapters retargets. ---------- */
 .hero-chapters { display: none; }
 html.hero-seq .hero--scroll .hero-chapters { display: grid; margin-top: var(--s-4); }
-html.hero-seq .hero--scroll .hero__over h1 { font-family: var(--font-text); font-size: var(--t-lead); font-weight: 500; line-height: 1.3;
+html.hero-seq .hero--scroll .hero__over h1 { max-width: 20rem; font-family: var(--font-text); font-size: var(--t-lead); font-weight: 500; line-height: 1.3;
   letter-spacing: 0; color: rgba(255, 255, 255, .82); text-wrap: pretty; }
 html.hero-seq .hero--scroll .hero__lead { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

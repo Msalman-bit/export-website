@@ -1,6 +1,7 @@
 /* Target markets from the brief. `code` is the ISO 3166-1 numeric code the world map uses.
    Every market starts as a target market; mark it established in Admin > Markets only after an
-   order has been shipped there. */
+   order has been shipped there. A market taken off this list (North America, 2026-11-22) leaves the map, the
+   home page and the admin at once; its database row is left alone. */
 export const MARKETS = [
   { code: '372', iso2: 'IE', name: 'Ireland', region: 'Ireland and the UK' },
   { code: '826', iso2: 'GB', name: 'United Kingdom', region: 'Ireland and the UK' },
@@ -21,6 +22,4 @@ export const MARKETS = [
   { code: '352', iso2: 'IS', name: 'Iceland', region: 'Scandinavia and the Nordics' },
   { code: '616', iso2: 'PL', name: 'Poland', region: 'Central Europe' },
   { code: '203', iso2: 'CZ', name: 'Czechia', region: 'Central Europe' },
-  { code: '840', iso2: 'US', name: 'United States', region: 'North America' },
-  { code: '124', iso2: 'CA', name: 'Canada', region: 'North America' },
 ];

@@ -11,7 +11,7 @@ type Props = { params: Promise<{ locale: string }>; searchParams: Promise<{ type
 
 export async function generateMetadata({ params }: Props) {
   const locale = await localeFrom(params);
-  return pageMeta({ locale, path: '/inquiry', title: 'Request a quote | Monolith Sports', description: 'Send one inquiry for every product you need: quantities, branding, packaging, delivery and files. You get a reference number at once.' });
+  return pageMeta({ locale, path: '/inquiry', title: 'Request a quotation | Monolith Sports', description: 'Send one inquiry for every product you need: quantities, branding, packaging, delivery and files. You receive a reference number immediately.' });
 }
 
 export default async function InquiryPage({ params, searchParams }: Props) {
@@ -28,25 +28,25 @@ export default async function InquiryPage({ params, searchParams }: Props) {
   const nonce = (await headers()).get('x-nonce') ?? undefined;
   const turnstile = process.env.TURNSTILE_SITE_KEY || '';
   return (
-    <PageShell locale={locale} crumbs={[{ name: 'Request a quote', path: '/inquiry' }]} close={null}>
+    <PageShell locale={locale} crumbs={[{ name: 'Request a quotation', path: '/inquiry' }]} close={null}>
       <div className="split-page">
         <div className="block">
           <header className="page-head">
-            <h1>Request a quote</h1>
-            <p>One request for every product on your list. Tell us the quantities, your branding and where the goods go; the quotation comes back in {settings.currencies.enabled.join(', ').replace(/, ([^,]*)$/, ' or $1')}.</p>
+            <h1>Request a quotation</h1>
+            <p>Use one request for every product on your list. Tell us the quantities, the branding and the destination, and we will send the quotation in {settings.currencies.enabled.join(', ').replace(/, ([^,]*)$/, ' or $1')}.</p>
           </header>
           <InquiryForm locale={locale} mode={type === 'sample' ? 'sample' : 'quote'} pickSaved={type !== 'sample' && type !== 'quote'} currencies={settings.currencies.enabled} user={prefill} turnstileKey={turnstile || undefined} />
         </div>
         <aside className="block">
           <div className="form-section">
-            <h2>What happens next</h2>
+            <h2>Next steps</h2>
             <ol className="timeline">
-              <li className="is-done"><span>You send the request and get a reference number.</span></li>
-              <li><span>Sales reviews it and asks about anything missing.</span></li>
+              <li className="is-done"><span>You send the request and receive a reference number.</span></li>
+              <li><span>Our sales team reviews the request and asks for any missing details.</span></li>
               <li><span>You receive the quotation as a PDF.</span></li>
-              <li><span>You approve a sample; production starts.</span></li>
+              <li><span>You approve a sample, and production starts.</span></li>
             </ol>
-            <p className="t-small">With a <a className="link" href={`/${locale}/account/register`}>customer account</a> you can follow every request and download its documents.</p>
+            <p className="t-small">With a <a className="link" href={`/${locale}/account/register`}>customer account</a>, you can follow every request and download its documents.</p>
           </div>
         </aside>
       </div>

@@ -32,7 +32,7 @@ export async function PageShell({ locale, crumbs, children, close, mainClass = '
         </div>
       </main>
       <Footer locale={locale} t={t} families={families} pages={pages} path={path} salesEmail={settings.company.salesEmail}
-        close={close === undefined ? { title: 'Send us your product list', line: 'One form for every product you need. You get a reference number straight away.' } : close} />
+        close={close === undefined ? { title: 'Send us your product list', line: 'One form covers every product you need. You receive a reference number immediately.' } : close} />
       {crumbs.length ? <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(breadcrumbLd(trail.map((c) => ({ name: c.name, url: `/${locale}${c.path}` }))))} /> : null}
     </>
   );

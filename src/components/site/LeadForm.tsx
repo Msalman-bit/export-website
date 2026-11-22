@@ -4,7 +4,7 @@ import { InquiryForm } from './InquiryForm';
 export function LeadForm({ locale, type }: { locale: string; type: 'contact' | 'distributor' | 'partnership' }) {
   return (
     <div className="block">
-      <h2>{type === 'contact' ? 'Write to the sales team' : type === 'distributor' ? 'Apply as a distributor' : 'Tell us about your business'}</h2>
+      <h2>{type === 'contact' ? 'Contact the sales team' : type === 'distributor' ? 'Distributor application' : 'Partnership inquiry'}</h2>
       <InquiryForm locale={locale} mode={type} currencies={['EUR', 'GBP', 'USD']} turnstileKey={process.env.TURNSTILE_SITE_KEY || undefined} />
     </div>
   );

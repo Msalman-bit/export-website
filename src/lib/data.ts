@@ -2,6 +2,7 @@ import { and, asc, eq, ilike, inArray, isNull, or, sql, desc } from 'drizzle-orm
 import { getDb } from './db/client';
 import * as s from './db/schema';
 import { DEFAULT_SETTINGS } from './db/seed';
+import { MARKETS } from './content/markets';
 
 /* Read-side queries for the public site. Everything the public sees is filtered to published rows. */
 
@@ -138,9 +139,10 @@ export async function getArticle(slug: string) {
   return a ?? null;
 }
 
+/** The markets on the list in content/markets.ts, with their status from the database. */
 export async function getMarkets() {
   const db = await getDb();
-  return db.select().from(s.markets).orderBy(asc(s.markets.region), asc(s.markets.name));
+  return db.select().from(s.markets).where(inArray(s.markets.code, MARKETS.map((m) => m.code))).orderBy(asc(s.markets.region), asc(s.markets.name));
 }
 
 /** Facts the owner has entered AND marked verified; anything else is never shown publicly. */

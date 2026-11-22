@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from 'react';
    words leave upward and the next arrive from below, and scrolling up the reverse. The motion itself is CSS
    transitions (site.css, "the hero's chapters"), so a fast scroll across two chapters retargets rather than queues. */
 
-const STEPS = ['Idea', 'Made', 'Brand', 'Range'];
+const STEPS = ['Design', 'Production', 'Branding', 'Range'];
 
 export function HeroScene() {
   const host = useRef<HTMLDivElement>(null);

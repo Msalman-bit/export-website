@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   try { form = await req.formData(); } catch { return NextResponse.json({ error: 'Send the form as multipart/form-data.' }, { status: 400 }); }
   // a bot that filled the hidden field gets a normal-looking answer and nothing is stored
   if (filledHoneypot(form)) return NextResponse.json({ reference: 'MS-000000-00000' });
-  if (sentTooFast(form)) return NextResponse.json({ errors: { form: 'That was very quick. Check the form, then send it again.' } }, { status: 400 });
+  if (sentTooFast(form)) return NextResponse.json({ errors: { form: 'The form was submitted too quickly. Please check it and send it again.' } }, { status: 400 });
   if (!(await verifyTurnstile(form.get('cf-turnstile-response') as string | null, clientIpFrom(req.headers)))) {
     return NextResponse.json({ errors: { form: 'The spam check failed. Reload the page and send the form again.' } }, { status: 400 });
   }

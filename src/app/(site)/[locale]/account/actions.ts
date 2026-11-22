@@ -15,7 +15,7 @@ import { sendEmail } from '@/lib/email/send';
 import { verifyEmail, resetEmail } from '@/lib/email/templates';
 import { siteUrl } from '@/lib/seo';
 import { audit, track } from '@/lib/audit';
-import { COUNTRIES } from '@/lib/inquiry/countries';
+import { isKnownCountry, isOfferedCountry } from '@/lib/inquiry/countries';
 import { isLocale } from '@/lib/i18n/config';
 
 /* Customer account actions. Server Actions are POST-only and Next.js checks their Origin against the
@@ -38,10 +38,10 @@ export async function register(_: FormState, fd: FormData): Promise<FormState> {
   if (!rateLimit(`reg:${await ipKey()}`, LIMITS.register).ok) return { message: 'Too many sign-ups from this connection. Try again in an hour.' };
   if (String(fd.get('company_website') || '')) return { message: 'Check your email to confirm the address.' };
   const parsed = z.object({
-    company: z.string().trim().min(2, 'Write your company name.').max(120),
-    name: z.string().trim().min(2, 'Write your name.').max(120),
-    email: z.string().trim().toLowerCase().email('Write your business email with an @.').max(160),
-    country: z.string().refine((c) => COUNTRIES.some((x) => x.code === c), 'Choose your country.'),
+    company: z.string().trim().min(2, 'Enter your company name.').max(120),
+    name: z.string().trim().min(2, 'Enter your name.').max(120),
+    email: z.string().trim().toLowerCase().email('Enter a business email address, for example name@club.com.').max(160),
+    country: z.string().refine(isOfferedCountry, 'Select your country.'),
     password: z.string(),
     terms: z.literal('on', { error: 'Accept the terms to open an account.' }),
   }).safeParse(Object.fromEntries(fd));
@@ -78,7 +78,7 @@ export async function login(_: FormState, fd: FormData): Promise<FormState> {
   const locale = loc(fd);
   const email = String(fd.get('email') || '').trim().toLowerCase();
   const password = String(fd.get('password') || '');
-  if (!email || !password) return { errors: { ...(email ? {} : { email: 'Write your email address.' }), ...(password ? {} : { password: 'Write your password.' }) } };
+  if (!email || !password) return { errors: { ...(email ? {} : { email: 'Enter your email address.' }), ...(password ? {} : { password: 'Enter your password.' }) } };
   const ip = await ipKey();
   if (!rateLimit(`login:${ip}`, LIMITS.login).ok || !rateLimit(`login:${email}`, LIMITS.login).ok) return { message: 'Too many attempts. Wait 15 minutes and try again.' };
   const db = await getDb();
@@ -89,7 +89,7 @@ export async function login(_: FormState, fd: FormData): Promise<FormState> {
       const fails = user.failedLogins + 1;
       await db.update(s.users).set({ failedLogins: fails, lockedUntil: fails >= 10 ? new Date(Date.now() + 15 * 60_000) : user.lockedUntil }).where(eq(s.users.id, user.id));
     }
-    return { message: 'That email and password do not match an account.' };
+    return { message: 'The email address or password is incorrect.' };
   }
   await db.update(s.users).set({ failedLogins: 0, lockedUntil: null, lastLoginAt: new Date() }).where(eq(s.users.id, user.id));
   await createSession(user.id, 'customer');
@@ -106,10 +106,10 @@ export async function resendVerification(_: FormState, fd: FormData): Promise<Fo
   const locale = loc(fd);
   const user = await readSession('customer');
   if (!user) redirect(`/${locale}/account/login`);
-  if (!rateLimit(`resend:${user.id}`, LIMITS.reset).ok) return { message: 'We sent several links already. Check your spam folder, or wait an hour.' };
+  if (!rateLimit(`resend:${user.id}`, LIMITS.reset).ok) return { message: 'We have already sent several links. Check your spam folder, or wait an hour.' };
   const token = await issueToken(user.id, 'verify', 24);
   await sendEmail({ to: user.email, ...verifyEmail({ name: user.name, url: `${siteUrl()}/${locale}/account/verify/${token}` }) });
-  return { ok: true, message: 'A new confirmation link is on its way.' };
+  return { ok: true, message: 'A new confirmation link has been sent.' };
 }
 
 /** Called by the verification page: marks the email verified and attaches earlier inquiries sent from it. */
@@ -150,7 +150,7 @@ export async function confirmEmail(fd: FormData) {
 export async function forgot(_: FormState, fd: FormData): Promise<FormState> {
   const locale = loc(fd);
   const email = String(fd.get('email') || '').trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { errors: { email: 'Write your email address with an @.' } };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { errors: { email: 'Enter your email address, for example name@club.com.' } };
   if (!rateLimit(`forgot:${await ipKey()}`, LIMITS.reset).ok) return { message: 'Too many requests. Try again in an hour.' };
   const db = await getDb();
   const [user] = await db.select().from(s.users).where(and(eq(s.users.email, email), eq(s.users.kind, 'customer'))).limit(1);
@@ -158,7 +158,7 @@ export async function forgot(_: FormState, fd: FormData): Promise<FormState> {
     const token = await issueToken(user.id, 'reset', 1);
     await sendEmail({ to: user.email, ...resetEmail({ name: user.name, url: `${siteUrl()}/${locale}/account/reset?token=${token}` }) });
   }
-  return { ok: true, message: 'If an account uses that address, a reset link is on its way. It works for one hour.' };
+  return { ok: true, message: 'If an account exists for that address, a reset link has been sent. It is valid for one hour.' };
 }
 
 export async function reset(_: FormState, fd: FormData): Promise<FormState> {
@@ -167,10 +167,10 @@ export async function reset(_: FormState, fd: FormData): Promise<FormState> {
   const pw = String(fd.get('password') || '');
   const problem = passwordProblem(pw);
   if (problem) return { errors: { password: problem } };
-  if (pw !== String(fd.get('confirm') || '')) return { errors: { confirm: 'Type the same password twice.' } };
+  if (pw !== String(fd.get('confirm') || '')) return { errors: { confirm: 'The two passwords do not match.' } };
   const db = await getDb();
   const [t] = await db.select().from(s.tokens).where(and(eq(s.tokens.tokenHash, sha256(token)), eq(s.tokens.purpose, 'reset'), isNull(s.tokens.usedAt), gt(s.tokens.expiresAt, new Date()))).limit(1);
-  if (!t) return { message: 'This reset link has expired or was used. Ask for a new one.' };
+  if (!t) return { message: 'This reset link has expired or has already been used. Please request a new one.' };
   await db.update(s.tokens).set({ usedAt: new Date() }).where(eq(s.tokens.id, t.id));
   await db.update(s.users).set({ passwordHash: await hashPassword(pw), failedLogins: 0, lockedUntil: null }).where(eq(s.users.id, t.userId));
   await destroyAllSessions(t.userId);
@@ -182,8 +182,8 @@ export async function updateCompany(_: FormState, fd: FormData): Promise<FormSta
   const locale = loc(fd);
   const user = await requireCustomer(locale);
   const parsed = z.object({
-    name: z.string().trim().min(2, 'Write the company name.').max(120),
-    country: z.string().refine((c) => COUNTRIES.some((x) => x.code === c), 'Choose a country.'),
+    name: z.string().trim().min(2, 'Enter the company name.').max(120),
+    country: z.string().refine(isKnownCountry, 'Select a country.'),
     website: z.string().trim().max(200).refine((v) => !v || /^https?:\/\/[^\s]+$/.test(v), 'Start the address with https://.'),
     address: z.string().trim().max(500),
     phone: z.string().trim().max(40).regex(/^[+\d\s().-]*$/, 'Use digits, spaces and + only.'),
@@ -204,7 +204,7 @@ export async function sendCustomerMessage(_: FormState, fd: FormData): Promise<F
   const locale = loc(fd);
   const user = await requireCustomer(locale);
   const body = String(fd.get('body') || '').trim();
-  if (body.length < 2) return { errors: { body: 'Write your message.' } };
+  if (body.length < 2) return { errors: { body: 'Enter your message.' } };
   if (body.length > 4000) return { errors: { body: 'Keep the message under 4,000 characters.' } };
   const inquiryId = String(fd.get('inquiryId') || '') || null;
   const db = await getDb();

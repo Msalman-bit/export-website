@@ -1,7 +1,7 @@
 # Monolith Sports website
 
 B2B website and business platform for **Monolith Sports**, a Pakistani sports equipment manufacturer, sourcing
-and export brand selling to clubs, distributors, retailers and private-label brands in Europe and North America.
+and export brand selling to clubs, distributors, retailers and private-label brands in Europe.
 
 Public site with a product catalogue, a customisation studio and a consolidated quotation system, plus a
 customer portal and an administration dashboard. One Next.js application, one PostgreSQL schema.

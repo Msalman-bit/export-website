@@ -55,7 +55,7 @@ export async function checkFile(file: File, kind: UploadKind): Promise<CheckedFi
   if (file.size > rule.maxBytes) throw new UploadError(`${filename} is over ${Math.round(rule.maxBytes / 1048576)} MB.`);
   const bytes = Buffer.from(await file.arrayBuffer());
   const kindFound = sniff(bytes);
-  if (!kindFound || !FAMILY[kindFound]?.includes(ext)) throw new UploadError(`${filename} is not a real ${ext.toUpperCase()} file.`);
+  if (!kindFound || !FAMILY[kindFound]?.includes(ext)) throw new UploadError(`${filename} is not a valid ${ext.toUpperCase()} file.`);
   return { filename, ext, mime: MIME[ext] || 'application/octet-stream', size: bytes.length, bytes };
 }
 

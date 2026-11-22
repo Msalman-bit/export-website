@@ -44,6 +44,10 @@ async function open(): Promise<DB> {
   }
   const { seedIfEmpty } = await import('./seed');
   await seedIfEmpty(db);
+  // the texts reworded on 2026-11-22, once per database; a failure never stops the site, it is tried again at the next start
+  const { updateTexts } = await import('./text-update');
+  const r = await updateTexts(db).catch((err) => { console.error('[text-update] not applied', err); return null; });
+  if (r?.changed) console.log(`[text-update] ${r.changed} texts updated, ${r.left.length} edited ones left alone`);
   return db;
 }
 

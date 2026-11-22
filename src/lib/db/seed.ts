@@ -72,7 +72,7 @@ async function seedCatalogue(db: DB) {
     const [parent] = await db.insert(s.categories).values({
       slug: fam.slug, name: fam.name, summary: fam.summary, body: fam.body, sortOrder: order++, published: true,
       image: { url: `gen:${fam.image}`, alt: altFor(fam.image, fam.name), source: 'generated' },
-      seoTitle: `${fam.name} manufacturer, private label and wholesale`, seoDescription: fam.summary,
+      seoTitle: `${fam.name} manufacturer for private label and wholesale`, seoDescription: fam.summary,
     }).returning();
     let subOrder = 0;
     for (const sub of fam.subs) {

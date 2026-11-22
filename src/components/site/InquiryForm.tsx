@@ -2,12 +2,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { readBasket, writeBasket, clearBasket, readMode, writeMode, addToBasket, type BasketItem } from '@/lib/basket';
 import { ProductPicker, type PickedProduct } from '@/components/site/ProductPicker';
-import { COUNTRIES } from '@/lib/inquiry/countries';
+import { COUNTRIES, isOfferedCountry } from '@/lib/inquiry/countries';
 
 type Mode = 'quote' | 'sample' | 'contact' | 'distributor' | 'partnership';
 
 const BUTTON: Record<Mode, string> = {
-  quote: 'Request a quote', sample: 'Request a sample', contact: 'Send the message',
+  quote: 'Request a quotation', sample: 'Request a sample', contact: 'Send the message',
   distributor: 'Send the distributor application', partnership: 'Send the partnership inquiry',
 };
 
@@ -84,14 +84,14 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
 
   const validate = (fd: FormData): Record<string, string> => {
     const e: Record<string, string> = {};
-    if (String(fd.get('companyName') || '').trim().length < 2) e.companyName = 'Write your company name.';
-    if (String(fd.get('contactName') || '').trim().length < 2) e.contactName = 'Write the name we should reply to.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(fd.get('email') || '').trim())) e.email = 'Write a business email with an @, like name@club.com.';
-    if (!fd.get('country')) e.country = 'Choose the destination country.';
+    if (String(fd.get('companyName') || '').trim().length < 2) e.companyName = 'Enter your company name.';
+    if (String(fd.get('contactName') || '').trim().length < 2) e.contactName = 'Enter a contact name.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(fd.get('email') || '').trim())) e.email = 'Enter a business email address, for example name@club.com.';
+    if (!fd.get('country')) e.country = 'Select the destination country.';
     const msg = String(fd.get('message') || '').trim();
-    if (withProducts && items.length === 0 && msg.length < 10) e.message = 'Add products to your list, or describe what you need in a sentence or two.';
-    if (!withProducts && msg.length < 10) e.message = 'Write your message in a sentence or two.';
-    items.forEach((i, n) => { if (!asSample(i) && (!Number.isInteger(i.quantity) || i.quantity < 1)) e[`items.${n}.quantity`] = 'Write a quantity of 1 or more.'; });
+    if (withProducts && items.length === 0 && msg.length < 10) e.message = 'Add products to your list, or describe your requirements in one or two sentences.';
+    if (!withProducts && msg.length < 10) e.message = 'Describe your request in one or two sentences.';
+    items.forEach((i, n) => { if (!asSample(i) && (!Number.isInteger(i.quantity) || i.quantity < 1)) e[`items.${n}.quantity`] = 'Enter a quantity of 1 or more.'; });
     const files = fd.getAll('files').filter((f) => f instanceof File && f.size > 0) as File[];
     if (files.length > 5) e.files = 'Attach at most 5 files.';
     if (files.some((f) => f.size > 10 * 1024 * 1024)) e.files = 'Each file must be 10 MB or smaller.';
@@ -108,9 +108,9 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
     const next: Record<string, string> = {};
     for (const k of [...Object.keys(errors), ...also]) if (e[k]) next[k] = e[k];
     setErrors(next);
-    // the count under the form follows the fixes ("3 fields to fix.", then nothing once all are right)
+    // the count under the form follows the fixes ("Please correct 3 fields.", then nothing once all are right)
     const n = Object.keys(next).length;
-    if (/to fix|needs a change/.test(status)) setStatus(n === 0 ? '' : n === 1 ? '1 field to fix.' : `${n} fields to fix.`);
+    if (/^Please correct/.test(status)) setStatus(n === 0 ? '' : n === 1 ? 'Please correct 1 field.' : `Please correct ${n} fields.`);
   };
   const leave = (ev: React.FocusEvent<HTMLFormElement>) => {
     const name = (ev.target as unknown as HTMLInputElement).name;
@@ -138,7 +138,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
     const e = validate(fd);
     setErrors(e);
     if (Object.keys(e).length) {
-      setStatus(Object.keys(e).length === 1 ? '1 field to fix.' : `${Object.keys(e).length} fields to fix.`);
+      setStatus(Object.keys(e).length === 1 ? 'Please correct 1 field.' : `Please correct ${Object.keys(e).length} fields.`);
       focusFirst(e);
       return;
     }
@@ -180,11 +180,11 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
         location.assign(`/${locale}/inquiry/sent?ref=${encodeURIComponent(data.reference)}&type=${encodeURIComponent(data.type || mode)}`);
         return;
       }
-      if (data.errors) { setErrors(data.errors); setStatus('The form needs a change before it can be sent.'); focusFirst(data.errors); }
-      else setStatus(data.error || 'Not sent: the server did not answer. Your words are still here; try again.');
+      if (data.errors) { setErrors(data.errors); setStatus('Please correct the marked fields before sending the form.'); focusFirst(data.errors); }
+      else setStatus(data.error || 'Your request was not sent because the server did not respond. Your entries have been kept; please try again.');
     } catch {
       clearTimeout(wait);
-      setStatus('Not sent: the connection failed. Your words are still here; try again.');
+      setStatus('Your request was not sent because the connection failed. Your entries have been kept; please try again.');
     } finally {
       setBusy(false);
     }
@@ -205,8 +205,8 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
           <ProductPicker locale={locale} onPick={addPicked} />
           {!loaded ? null : items.length === 0 ? (
             <div className="basket__none">
-              <p>Nothing on your list yet. Search above, or describe what you need in your message below.</p>
-              <a className="link" href={`/${locale}/products`}>Browse the catalogue</a>
+              <p>Your list is empty. Search above, or describe your requirements in the message below.</p>
+              <a className="link" href={`/${locale}/products`}>See the catalogue</a>
             </div>
           ) : (
             <ul className="basket">
@@ -215,7 +215,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
                   {i.image ? <img src={i.image} alt="" width={88} height={88} /> : <span />}
                   <div>
                     <p className="basket__name">{i.href ? <a href={i.href}>{i.name}</a> : i.name}</p>
-                    <p className="basket__meta">{[i.sku, asSample(i) ? 'Sample first' : '', i.customisation ? 'Studio design attached' : ''].filter(Boolean).join(' · ')}</p>
+                    <p className="basket__meta">{[i.sku, asSample(i) ? 'Sample first' : '', i.customisation ? 'Studio design attached' : ''].filter(Boolean).join(', ')}</p>
                     <div className="field">
                       <label htmlFor={`items-${n}-notes`}>Notes for this product</label>
                       <input id={`items-${n}-notes`} type="text" value={i.notes} maxLength={500} onChange={(e) => update(i.key, { notes: e.target.value })} />
@@ -247,8 +247,8 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
           <div className="field"><label htmlFor="phone">Phone number <span className="hint">(optional)</span></label>
             <input id="phone" name="phone" type="tel" autoComplete="tel" {...err('phone')} />{errLine('phone')}</div>
           <div className="field"><label htmlFor="country">{withProducts ? 'Destination country' : 'Country'}</label>
-            <select id="country" name="country" defaultValue={user?.country ?? ''} required {...err('country')}>
-              <option value="" disabled>Choose a country</option>
+            <select id="country" name="country" defaultValue={user && isOfferedCountry(user.country) ? user.country : ''} required {...err('country')}>
+              <option value="" disabled>Select a country</option>
               {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
             </select>{errLine('country')}</div>
           {withProducts ? (
@@ -260,7 +260,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
 
       {withProducts ? (
         <section className="form-section" aria-labelledby="spec-h">
-          <h2 id="spec-h">Branding, packing and delivery</h2>
+          <h2 id="spec-h">Branding, packaging and delivery</h2>
           <div className="form-grid">
             <div className="field field--full"><label htmlFor="branding">Custom branding <span className="hint">(logo placement, methods, colours)</span></label>
               <textarea id="branding" name="branding" maxLength={2000} /></div>
@@ -268,18 +268,18 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
               <textarea id="packaging" name="packaging" maxLength={2000} /></div>
             <div className="field"><label htmlFor="targetDate">Target delivery date <span className="hint">(optional)</span></label>
               <input id="targetDate" name="targetDate" type="date" {...err('targetDate')} />{errLine('targetDate')}</div>
-            <div className="field"><label htmlFor="shippingMethod">Preferred shipping</label>
+            <div className="field"><label htmlFor="shippingMethod">Preferred shipping method</label>
               <select id="shippingMethod" name="shippingMethod" defaultValue="">
                 <option value="">No preference</option><option value="sea">Sea freight</option><option value="air">Air freight</option><option value="courier">Courier</option>
               </select></div>
-            <div className="field field--full"><label htmlFor="files">Logo, artwork or brief <span className="hint">(PDF, AI, EPS, PNG, JPG or WEBP; up to 5 files of 10 MB)</span></label>
+            <div className="field field--full"><label htmlFor="files">Logo, artwork or brief <span className="hint">(PDF, AI, EPS, PNG, JPG or WEBP; up to 5 files, 10 MB each)</span></label>
               <input id="files" name="files" type="file" multiple accept=".pdf,.ai,.eps,.png,.jpg,.jpeg,.webp" {...err('files')} />{errLine('files')}</div>
           </div>
         </section>
       ) : null}
 
       <section className="form-section" aria-labelledby="msg-h">
-        <h2 id="msg-h">{withProducts ? 'Anything else' : 'Your message'}</h2>
+        <h2 id="msg-h">{withProducts ? 'Additional information' : 'Your message'}</h2>
         <div className="field field--full"><label htmlFor="message">{withProducts ? 'Additional requirements' : mode === 'distributor' ? 'Your region, customers and the products you want to carry' : 'Message'}</label>
           <textarea id="message" name="message" maxLength={5000} rows={6} {...err('message')} />{errLine('message')}</div>
         <div className="newsletter__trap" aria-hidden="true"><label htmlFor="company_website">Website</label><input id="company_website" name="company_website" tabIndex={-1} autoComplete="off" /></div>
@@ -289,7 +289,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
         {/* keyed by its words: a new message arrives (fades in and rises 6px), the same one repeated while a field is
             being fixed stays still */}
         <p className="status-line" role="status">{status ? <span key={status} className="status-line__msg">{status}</span> : null}</p>
-        <p className="t-small muted">You get a reference number at once and a copy by email. We use these details only to answer this request (<a className="link" href={`/${locale}/privacy`}>privacy policy</a>).</p>
+        <p className="t-small muted">You receive a reference number immediately and a copy by email. We use these details only to answer this request (<a className="link" href={`/${locale}/privacy`}>privacy policy</a>).</p>
       </section>
     </form>
   );

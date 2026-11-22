@@ -56,4 +56,4 @@ tools and materials close up. Real people only with consent. Generated concepts 
 | Share image | `public/share.jpg`, the hero |
 
 Slogan (one use a page at most, never as a heading over a plain claim): "Engineered for performance. Built
-for the world." The home page spends its one brand line as "Built without compromise."
+for the world." The home page no longer carries a brand line (removed 2026-11-22).
