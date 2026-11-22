@@ -1186,9 +1186,42 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
   }
   /* the picture card keeps its title and its line together instead of spreading them down the panel's height */
   .nav__menu .menu-card { align-content: start; }
-  /* the page behind dims while a menu is open: under the header, never over it, and it never takes a click */
+  /* the page behind dims while a big menu is open (not for the small language list): under the header, never over
+     it, and it never takes a click */
   .nav::after { content: ""; position: fixed; inset: var(--nav) 0 0; z-index: -1; pointer-events: none; background: rgb(0 0 0 / .14); opacity: 0; visibility: hidden; }
-  .nav:has(.nav__item:is(:hover, :focus-within) > .nav__menu)::after { opacity: 1; visibility: visible; }
+  .nav:has(.nav__item:not(.nav__item--lang):is(:hover, :focus-within) > .nav__menu)::after { opacity: 1; visibility: visible; }
+
+  /* the links in a panel answer the pointer: a soft row comes up behind the link, its line darkens to the ink and a
+     small arrow arrives 4px from the left (in --m-in, out --m-out, a press darkens the row). The keyboard's focus
+     shows the same row. The row reaches 12px past the text on the left, so the words stay where they were */
+  .nav__menu .menu-col a { position: relative; margin-inline: calc(-1 * var(--s-3)); padding: var(--s-2) var(--s-6) var(--s-2) var(--s-3); border-radius: var(--r-lg); }
+  .nav__menu .menu-col a::after { content: ""; position: absolute; right: var(--s-4); top: 50%; width: 7px; height: 7px; margin-top: -4px;
+    border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; opacity: 0; transform: translateX(-4px) rotate(45deg); }
+  .nav__menu .menu-col a:focus-visible { background: var(--surface); outline-offset: 0; }
+  .nav__menu .menu-col a:focus-visible > span { color: var(--ink); }
+  .nav__menu .menu-col a:focus-visible::after { opacity: 1; transform: translateX(0) rotate(45deg); }
+  html:not([data-motion="off"]) .nav__menu .menu-col a { transition: color var(--m-out) var(--m-ease), background-color var(--m-out) var(--m-ease); }
+  html:not([data-motion="off"]) .nav__menu .menu-col a > span { transition: color var(--m-out) var(--m-ease); }
+  html:not([data-motion="off"]) .nav__menu .menu-col a::after { transition: opacity var(--m-out) var(--m-ease), transform var(--m-out) var(--m-ease); }
+  html:not([data-motion="off"]) .nav__menu .menu-col a:is(:hover, :focus-visible),
+  html:not([data-motion="off"]) .nav__menu .menu-col a:is(:hover, :focus-visible) > span,
+  html:not([data-motion="off"]) .nav__menu .menu-col a:is(:hover, :focus-visible)::after { transition-duration: var(--m-in); }
+  html:not([data-motion="off"]) .nav__menu .menu-col a:active { transition-duration: var(--m-press); }
+
+  /* the language menu: a small list under its own word instead of a page-wide panel for six names. Each language on
+     one row (its name, then its code), the one in use ticked; it grows out of the word (from 96%, 4px above) */
+  .nav__item--lang { position: relative; }
+  .nav__item--lang > .nav__menu { left: auto; right: calc(-1 * var(--s-3)); width: 240px; margin: 0; }
+  .nav__item--lang > .nav__menu > .wrap { display: block; padding: var(--s-2); }
+  .nav__item--lang .menu-col { gap: 0; }
+  .nav__item--lang .menu-col > .t-label { margin: 0; padding: var(--s-2) var(--s-3); }
+  .nav__item--lang .menu-col a { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); margin-inline: 0; padding: var(--s-2) var(--s-3); font-weight: 400; }
+  .nav__item--lang .menu-col a::after { display: none; }
+  .nav__item--lang .menu-col a > span { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-small); letter-spacing: .04em; }
+  .nav__item--lang .menu-col a[aria-current] { font-weight: 500; }
+  .nav__item--lang .menu-col a[aria-current] > span { color: var(--ink); }
+  .nav__item--lang .menu-col a[aria-current] > span::before { content: ""; width: 9px; height: 5px; border-left: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(-45deg); }
+  html:not([data-motion="off"]) .nav__item--lang > .nav__menu { transform-origin: calc(100% - 48px) 0; transform: translateY(-4px) scale(.96); }
 
   html:not([data-motion="off"]) .nav__menu {
     transform-origin: 50% 0; transform: translateY(-8px) scale(.98);
@@ -1204,15 +1237,24 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
   }
   /* the dim waits 60ms before fading out, so crossing the small gap between two words does not flicker it */
   html:not([data-motion="off"]) .nav::after { transition: opacity var(--m-close) var(--m-ease) 60ms, visibility 0s linear calc(var(--m-close) + 60ms); }
-  html:not([data-motion="off"]) .nav:has(.nav__item:is(:hover, :focus-within) > .nav__menu)::after { transition: opacity var(--m-panel) var(--m-ease-enter) 150ms, visibility 0s linear 150ms; }
+  html:not([data-motion="off"]) .nav:has(.nav__item:not(.nav__item--lang):is(:hover, :focus-within) > .nav__menu)::after { transition: opacity var(--m-panel) var(--m-ease-enter) 150ms, visibility 0s linear 150ms; }
   /* the kit's swap at once while a menu is open, kept for the contents and the dim too */
   html:not([data-motion="off"]) .nav.m-menu-open .nav__menu > .wrap > *,
   html:not([data-motion="off"]) .nav.m-menu-open .nav__item:is(:hover, :focus-within) > .nav__menu > .wrap > *,
-  html:not([data-motion="off"]) .nav.m-menu-open:has(.nav__item:is(:hover, :focus-within) > .nav__menu)::after { transition-duration: 0s; transition-delay: 0s; }
+  html:not([data-motion="off"]) .nav.m-menu-open:has(.nav__item:not(.nav__item--lang):is(:hover, :focus-within) > .nav__menu)::after { transition-duration: 0s; transition-delay: 0s; }
+}
+/* the hover row only where there is a real pointer (a tap on a touch screen would leave it stuck on) */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .nav__menu .menu-col a:hover { background: var(--surface); color: var(--ink); }
+  .nav__menu .menu-col a:hover > span { color: var(--ink); }
+  .nav__menu .menu-col a:hover::after { opacity: 1; transform: translateX(0) rotate(45deg); }
+  .nav__menu .menu-col a:active { background: color-mix(in oklab, var(--surface), var(--ink) 7%); }
 }
 @media (min-width: 1024px) and (max-height: 700px) { .nav__menu > .wrap { padding: var(--s-5); } }
 @media (min-width: 1024px) and (max-height: 600px) { .nav__menu > .wrap { padding: var(--s-4) var(--s-5); } }
 @media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  .nav__menu .menu-col a::after, .nav__menu .menu-col a:is(:hover, :focus-visible)::after { transform: rotate(45deg); }
+  html:not([data-motion="off"]) .nav__item--lang > .nav__menu { transform: none; }
   html:not([data-motion="off"]) .nav__menu > .wrap > *,
   html:not([data-motion="off"]) .nav__item:is(:hover, :focus-within) > .nav__menu > .wrap > * { opacity: 1; transform: none; transition: none; }
 }

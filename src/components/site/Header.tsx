@@ -8,9 +8,9 @@ import { CATALOGUE } from '@/lib/catalogue-data';
 // a family added in the admin has no short name of its own: "Basketball equipment" reads "Basketball", like the others
 export const shortName = (f: { slug: string; name: string }) => CATALOGUE.find((c) => c.slug === f.slug)?.short ?? (f.name.replace(/\s+equipment$/i, '') || f.name);
 
-/* nav-mega (sections-library.md): five words, Products/Manufacturing/Resources/About open a full-width
+/* nav-mega (sections-library.md): five words, Products/Manufacturing/Customisation/Resources/About open a
    panel after 150ms of hover; a click on the word goes to its page. Search and language are two more
-   items with small panels; system.js turns the bar into the phone sheet. Plain links: every page is a
+   items, language with a small list under its word; system.js turns the bar into the phone sheet. Plain links: every page is a
    full load, so the kit's scripts start fresh on each one. */
 
 const FAMILY_LINE: Record<string, string> = {
@@ -56,6 +56,17 @@ export function Header({ locale, t, families, pages, path }: {
     { label: 'Sample ordering', line: 'Approve before bulk', path: '/sample-ordering', slug: 'sample-ordering' },
     { label: 'Shipping and logistics', line: 'Sea, air and courier', path: '/shipping-logistics', slug: 'shipping-logistics' },
     { label: 'Global exports', line: 'Markets and currencies', path: '/global-exports', slug: 'global-exports' },
+  ]);
+  // the Customisation menu: the studio, and the services that make a product to a buyer's own brief (lines the site
+  // already uses in its other menus and on the homepage)
+  const studio: Link[] = [
+    { label: 'Customisation studio', line: 'Colours and logo on a football', path: '/studio' },
+    { label: 'Your inquiry list', line: 'Products added so far', path: '/inquiry' },
+  ];
+  const madeForYou = live([
+    { label: 'Private labelling', line: 'Your labels and packaging', path: '/private-label', slug: 'private-label' },
+    { label: 'Custom development', line: 'New products from a brief', path: '/custom-development', slug: 'custom-development' },
+    { label: 'Sample ordering', line: 'Approve before bulk', path: '/sample-ordering', slug: 'sample-ordering' },
   ]);
   const company = live([
     { label: 'About Monolith Sports', line: 'Who we are and who for', path: '/about', slug: 'about' },
@@ -121,7 +132,20 @@ export function Header({ locale, t, families, pages, path }: {
               </div>
             </div>
           </div>
-          <div className="nav__item nav__item--wide"><a className="nav__link" href={L('/studio')} {...current('studio')}>{t['nav.customisation']}</a></div>
+          <div className="nav__item nav__item--wide">
+            <a className="nav__link" href={L('/studio')} {...current('studio')}>{t['nav.customisation']} <Chev /></a>
+            <div className="nav__menu">
+              <div className="wrap grid">
+                {col('Design it yourself', studio)}
+                {madeForYou.length ? col('Made for you', madeForYou) : null}
+                <a className="menu-card span-3 start-10" href={L('/studio')}>
+                  <div className="panel"><Img className="frame__img" url="gen:custom-range" alt="Four footballs in custom club colourways: navy and crimson, black and lime, white and silver, green and white" eager sizes="300px" prefer={640} /></div>
+                  <span className="t-card">Your colours, logo and packaging</span>
+                  <span className="t-small muted">The preview goes into your inquiry</span>
+                </a>
+              </div>
+            </div>
+          </div>
           <div className="nav__item nav__item--wide">
             <a className="nav__link" href={L('/insights')} {...current('insights')}>{t['nav.resources']} <Chev /></a>
             <div className="nav__menu">
@@ -140,7 +164,7 @@ export function Header({ locale, t, families, pages, path }: {
               <span className="nav__tool-label">{t['nav.search']}</span>
             </a>
           </div>
-          <div className="nav__item nav__item--tool">
+          <div className="nav__item nav__item--tool nav__item--lang">
             <a className="nav__link" href={swapLocale(path, locale)} aria-label={`${t['nav.language']}: ${LOCALE_NAMES[locale]}`} lang={locale}>
               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6" fill="none" stroke="currentColor" strokeWidth="1.3" /><path d="M1.6 8h12.8M8 1.4c2 2 2 11.2 0 13.2M8 1.4c-2 2-2 11.2 0 13.2" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>
               {locale.toUpperCase()} <Chev />
