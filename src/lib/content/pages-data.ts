@@ -13,8 +13,8 @@ export const PAGES: SeedPage[] = [
   {
     slug: 'about', section: 'company', image: 'intro-stitching',
     title: 'About Monolith Sports',
-    summary: 'Monolith Sports manufactures sports equipment in Pakistan and exports it under the buyer’s brand to clubs, distributors and brands abroad.',
-    body: `Monolith Sports makes and sources sports equipment in Pakistan for businesses in Europe. We work from your design, a reference product or a written brief, and we deliver the order under your brand.
+    summary: 'Monolith Sports manufactures sports equipment in Pakistan for the buyer’s brand and exports it to clubs, distributors and brands abroad.',
+    body: `Monolith Sports makes and sources sports equipment in Pakistan for businesses in Europe. We work from your design, a reference product or a written brief, and we deliver the order with your branding.
 
 ## Product range
 We make and source football, futsal, rugby and handball equipment, combat-sports and fitness equipment, racket-sports accessories, sportswear and training accessories. The [catalogue](/products) lists every product category we quote.
@@ -129,8 +129,8 @@ Development work is quoted together with the order that follows. Send your brief
   {
     slug: 'oem-manufacturing', section: 'manufacturing', image: 'process-prototype',
     title: 'OEM manufacturing',
-    summary: 'We make the product to your design and specification, under your brand.',
-    body: `In OEM manufacturing, the design is yours. You send the drawings, the technical specification or a reference product, and we make the product to that specification under your brand.
+    summary: 'We make the product to your design and specification, for your brand.',
+    body: `In OEM manufacturing, the design is yours. You send the drawings, the technical specification or a reference product, and we make the product to that specification for your brand.
 
 ## Information we need
 - Drawings or a tech pack, with measurements and tolerances.
@@ -147,7 +147,7 @@ You receive a quotation with the unit price for your quantities, the sample cost
   {
     slug: 'odm-manufacturing', section: 'manufacturing',
     title: 'ODM manufacturing',
-    summary: 'Start from a product in our catalogue, change its specification and sell it under your brand.',
+    summary: 'Start from a product in our catalogue, change its specification and sell it as your own brand.',
     body: `In ODM manufacturing, you start from one of our product types rather than a complete design of your own. You choose the construction, materials and colours and add your branding, and we develop it into your product.
 
 ## ODM process
@@ -163,7 +163,7 @@ ODM suits brands that want their own product without a design team and distribut
   {
     slug: 'private-label', section: 'manufacturing', image: 'custom-embroidery',
     title: 'Private labelling',
-    summary: 'Products made and packed under your brand, with your labels, swing tags and cartons.',
+    summary: 'Products made and packed for your brand, with your labels, swing tags and cartons.',
     body: `With private labelling, your brand appears on every part that the end customer sees: the product itself, its labels and its packaging.
 
 ## Branding options
@@ -312,7 +312,7 @@ Create a [customer account](/account/register) with the email address you used f
 These partnerships cover planned seasonal orders with agreed production slots and reorder terms.
 
 ## Co-development
-This covers the joint development of a product line under your brand, from brief to range.
+This covers the joint development of a product line for your brand, from brief to range.
 
 ## Representation
 This is for agents and sourcing offices in Europe that represent Monolith Sports to clubs and retailers.

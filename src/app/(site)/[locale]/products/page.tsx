@@ -33,7 +33,7 @@ export default async function Products({ params }: Props) {
     <PageShell locale={locale} crumbs={[{ name: t['nav.products'], path: '/products' }]}>
       <header className="page-head">
         <h1>Product catalogue</h1>
-        <p>Every product in the catalogue is made to your specification and under your brand. Open a category to filter its products, or add products from several categories to one inquiry.</p>
+        <p>Every product in the catalogue is made to your specification, for your brand. Open a category to filter its products, or add products from several categories to one inquiry.</p>
       </header>
       <div className="fam-grid">
         {families.map((f) => (

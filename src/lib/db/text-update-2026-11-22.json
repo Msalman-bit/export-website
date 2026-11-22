@@ -4,18 +4,20 @@
   "key": "about",
   "field": "summary",
   "from": [
-   "A Pakistani manufacturer and exporter of sports equipment, made under the buyer’s brand for clubs, distributors and brands abroad."
+   "A Pakistani manufacturer and exporter of sports equipment, made under the buyer’s brand for clubs, distributors and brands abroad.",
+   "Monolith Sports manufactures sports equipment in Pakistan and exports it under the buyer’s brand to clubs, distributors and brands abroad."
   ],
-  "to": "Monolith Sports manufactures sports equipment in Pakistan and exports it under the buyer’s brand to clubs, distributors and brands abroad."
+  "to": "Monolith Sports manufactures sports equipment in Pakistan for the buyer’s brand and exports it to clubs, distributors and brands abroad."
  },
  {
   "table": "pages",
   "key": "about",
   "field": "seoDescription",
   "from": [
-   "A Pakistani manufacturer and exporter of sports equipment, made under the buyer’s brand for clubs, distributors and brands abroad."
+   "A Pakistani manufacturer and exporter of sports equipment, made under the buyer’s brand for clubs, distributors and brands abroad.",
+   "Monolith Sports manufactures sports equipment in Pakistan and exports it under the buyer’s brand to clubs, distributors and brands abroad."
   ],
-  "to": "Monolith Sports manufactures sports equipment in Pakistan and exports it under the buyer’s brand to clubs, distributors and brands abroad."
+  "to": "Monolith Sports manufactures sports equipment in Pakistan for the buyer’s brand and exports it to clubs, distributors and brands abroad."
  },
  {
   "table": "pages",
@@ -23,9 +25,10 @@
   "field": "body",
   "from": [
    "Monolith Sports makes and sources sports equipment in Pakistan for businesses in Europe and North America. We work from your design, a reference product or a written brief, and we deliver the order under your brand.\n\n## What we make\nFootballs and football equipment, rugby and cricket equipment, combat-sports and fitness gear, racket-sports accessories, sportswear and training accessories. The [catalogue](/products) lists every product family we quote.\n\n## How an order runs\n- You send an inquiry with the products, quantities and branding you need.\n- We reply with a quotation in EUR, GBP or USD.\n- We make a sample; production starts after you approve it.\n- The bulk order is made and inspected against that sample, then packed and shipped.\n\n## Who we work with\nProfessional clubs, academies, schools and universities, sports associations, retailers, distributors, importers, fitness businesses and private-label brands. We do not sell to individual players.\n\n[[cta:Request a quote|/inquiry]]",
-   "Monolith Sports makes and sources sports equipment in Pakistan for businesses in Europe. We work from your design, a reference product or a written brief, and we deliver the order under your brand.\n\n## Product range\nWe make and source football, futsal, rugby, handball and cricket equipment, combat-sports and fitness equipment, racket-sports accessories, sportswear and training accessories. The [catalogue](/products) lists every product category we quote.\n\n## Order process\n- You send an inquiry with the products, quantities and branding you need.\n- We reply with a quotation in EUR, GBP or USD.\n- We make a sample; production starts after you approve it.\n- The bulk order is made and inspected against that sample, then packed and shipped.\n\n## Customers we supply\nWe supply professional clubs, academies, schools and universities, sports associations, retailers, distributors, importers, fitness businesses and private-label brands. We do not sell to individual players.\n\n[[cta:Request a quotation|/inquiry]]"
+   "Monolith Sports makes and sources sports equipment in Pakistan for businesses in Europe. We work from your design, a reference product or a written brief, and we deliver the order under your brand.\n\n## Product range\nWe make and source football, futsal, rugby, handball and cricket equipment, combat-sports and fitness equipment, racket-sports accessories, sportswear and training accessories. The [catalogue](/products) lists every product category we quote.\n\n## Order process\n- You send an inquiry with the products, quantities and branding you need.\n- We reply with a quotation in EUR, GBP or USD.\n- We make a sample; production starts after you approve it.\n- The bulk order is made and inspected against that sample, then packed and shipped.\n\n## Customers we supply\nWe supply professional clubs, academies, schools and universities, sports associations, retailers, distributors, importers, fitness businesses and private-label brands. We do not sell to individual players.\n\n[[cta:Request a quotation|/inquiry]]",
+   "Monolith Sports makes and sources sports equipment in Pakistan for businesses in Europe. We work from your design, a reference product or a written brief, and we deliver the order under your brand.\n\n## Product range\nWe make and source football, futsal, rugby and handball equipment, combat-sports and fitness equipment, racket-sports accessories, sportswear and training accessories. The [catalogue](/products) lists every product category we quote.\n\n## Order process\n- You send an inquiry with the products, quantities and branding you need.\n- We reply with a quotation in EUR, GBP or USD.\n- We make a sample; production starts after you approve it.\n- The bulk order is made and inspected against that sample, then packed and shipped.\n\n## Customers we supply\nWe supply professional clubs, academies, schools and universities, sports associations, retailers, distributors, importers, fitness businesses and private-label brands. We do not sell to individual players.\n\n[[cta:Request a quotation|/inquiry]]"
   ],
-  "to": "Monolith Sports makes and sources sports equipment in Pakistan for businesses in Europe. We work from your design, a reference product or a written brief, and we deliver the order under your brand.\n\n## Product range\nWe make and source football, futsal, rugby and handball equipment, combat-sports and fitness equipment, racket-sports accessories, sportswear and training accessories. The [catalogue](/products) lists every product category we quote.\n\n## Order process\n- You send an inquiry with the products, quantities and branding you need.\n- We reply with a quotation in EUR, GBP or USD.\n- We make a sample; production starts after you approve it.\n- The bulk order is made and inspected against that sample, then packed and shipped.\n\n## Customers we supply\nWe supply professional clubs, academies, schools and universities, sports associations, retailers, distributors, importers, fitness businesses and private-label brands. We do not sell to individual players.\n\n[[cta:Request a quotation|/inquiry]]"
+  "to": "Monolith Sports makes and sources sports equipment in Pakistan for businesses in Europe. We work from your design, a reference product or a written brief, and we deliver the order with your branding.\n\n## Product range\nWe make and source football, futsal, rugby and handball equipment, combat-sports and fitness equipment, racket-sports accessories, sportswear and training accessories. The [catalogue](/products) lists every product category we quote.\n\n## Order process\n- You send an inquiry with the products, quantities and branding you need.\n- We reply with a quotation in EUR, GBP or USD.\n- We make a sample; production starts after you approve it.\n- The bulk order is made and inspected against that sample, then packed and shipped.\n\n## Customers we supply\nWe supply professional clubs, academies, schools and universities, sports associations, retailers, distributors, importers, fitness businesses and private-label brands. We do not sell to individual players.\n\n[[cta:Request a quotation|/inquiry]]"
  },
  {
   "table": "pages",
@@ -139,11 +142,48 @@
  {
   "table": "pages",
   "key": "oem-manufacturing",
+  "field": "summary",
+  "from": [
+   "We make the product to your design and specification, under your brand."
+  ],
+  "to": "We make the product to your design and specification, for your brand."
+ },
+ {
+  "table": "pages",
+  "key": "oem-manufacturing",
+  "field": "seoDescription",
+  "from": [
+   "We make the product to your design and specification, under your brand."
+  ],
+  "to": "We make the product to your design and specification, for your brand."
+ },
+ {
+  "table": "pages",
+  "key": "oem-manufacturing",
   "field": "body",
   "from": [
-   "In OEM manufacturing the design is yours. You send the drawings, the technical specification or a reference product, and we make it to that specification under your brand.\n\n## What to send\n- Drawings or a tech pack, with measurements and tolerances.\n- Materials and colours, with Pantone references where you have them.\n- Logo and artwork files (PDF, AI or EPS preferred).\n- Quantities per size and per colour.\n- Packaging and labelling requirements.\n\n## What you receive\nA quotation with the price per unit at your quantities, the sample cost and the lead time, then a sample for approval before production.\n\n[[cta:Request a quote|/inquiry]]"
+   "In OEM manufacturing the design is yours. You send the drawings, the technical specification or a reference product, and we make it to that specification under your brand.\n\n## What to send\n- Drawings or a tech pack, with measurements and tolerances.\n- Materials and colours, with Pantone references where you have them.\n- Logo and artwork files (PDF, AI or EPS preferred).\n- Quantities per size and per colour.\n- Packaging and labelling requirements.\n\n## What you receive\nA quotation with the price per unit at your quantities, the sample cost and the lead time, then a sample for approval before production.\n\n[[cta:Request a quote|/inquiry]]",
+   "In OEM manufacturing, the design is yours. You send the drawings, the technical specification or a reference product, and we make the product to that specification under your brand.\n\n## Information we need\n- Drawings or a tech pack, with measurements and tolerances.\n- Materials and colours, with Pantone references where you have them.\n- Logo and artwork files (PDF, AI or EPS preferred).\n- Quantities per size and per colour.\n- Packaging and labelling requirements.\n\n## Quotation and sample\nYou receive a quotation with the unit price for your quantities, the sample cost and the lead time, followed by a sample for approval before production.\n\n[[cta:Request a quotation|/inquiry]]"
   ],
-  "to": "In OEM manufacturing, the design is yours. You send the drawings, the technical specification or a reference product, and we make the product to that specification under your brand.\n\n## Information we need\n- Drawings or a tech pack, with measurements and tolerances.\n- Materials and colours, with Pantone references where you have them.\n- Logo and artwork files (PDF, AI or EPS preferred).\n- Quantities per size and per colour.\n- Packaging and labelling requirements.\n\n## Quotation and sample\nYou receive a quotation with the unit price for your quantities, the sample cost and the lead time, followed by a sample for approval before production.\n\n[[cta:Request a quotation|/inquiry]]"
+  "to": "In OEM manufacturing, the design is yours. You send the drawings, the technical specification or a reference product, and we make the product to that specification for your brand.\n\n## Information we need\n- Drawings or a tech pack, with measurements and tolerances.\n- Materials and colours, with Pantone references where you have them.\n- Logo and artwork files (PDF, AI or EPS preferred).\n- Quantities per size and per colour.\n- Packaging and labelling requirements.\n\n## Quotation and sample\nYou receive a quotation with the unit price for your quantities, the sample cost and the lead time, followed by a sample for approval before production.\n\n[[cta:Request a quotation|/inquiry]]"
+ },
+ {
+  "table": "pages",
+  "key": "odm-manufacturing",
+  "field": "summary",
+  "from": [
+   "Start from a product in our catalogue, change its specification and sell it under your brand."
+  ],
+  "to": "Start from a product in our catalogue, change its specification and sell it as your own brand."
+ },
+ {
+  "table": "pages",
+  "key": "odm-manufacturing",
+  "field": "seoDescription",
+  "from": [
+   "Start from a product in our catalogue, change its specification and sell it under your brand."
+  ],
+  "to": "Start from a product in our catalogue, change its specification and sell it as your own brand."
  },
  {
   "table": "pages",
@@ -153,6 +193,24 @@
    "In ODM manufacturing you start from one of our product types instead of a full design of your own. You choose the construction, materials and colours, add your branding, and we develop it into your product.\n\n## How it works\n- Pick a product type from the [catalogue](/products).\n- Tell us what to change: materials, colours, panel layout, sizes.\n- Add your logo and packaging.\n- Approve the sample; we produce the order.\n\nODM suits brands that want their own product without a design team, and distributors adding a private range.\n\n[[cta:Request a quote|/inquiry]]"
   ],
   "to": "In ODM manufacturing, you start from one of our product types rather than a complete design of your own. You choose the construction, materials and colours and add your branding, and we develop it into your product.\n\n## ODM process\n- Choose a product type from the [catalogue](/products).\n- Tell us what to change: materials, colours, panel layout, sizes.\n- Add your logo and packaging.\n- Approve the sample, and we produce the order.\n\nODM suits brands that want their own product without a design team and distributors that are adding a private-label range.\n\n[[cta:Request a quotation|/inquiry]]"
+ },
+ {
+  "table": "pages",
+  "key": "private-label",
+  "field": "summary",
+  "from": [
+   "Products made and packed under your brand, with your labels, swing tags and cartons."
+  ],
+  "to": "Products made and packed for your brand, with your labels, swing tags and cartons."
+ },
+ {
+  "table": "pages",
+  "key": "private-label",
+  "field": "seoDescription",
+  "from": [
+   "Products made and packed under your brand, with your labels, swing tags and cartons."
+  ],
+  "to": "Products made and packed for your brand, with your labels, swing tags and cartons."
  },
  {
   "table": "pages",
@@ -294,9 +352,10 @@
   "key": "partnerships",
   "field": "body",
   "from": [
-   "We work with partners who buy or sell across several product families and seasons.\n\n## Supply partnerships\nPlanned seasonal orders with agreed production slots and reorder terms.\n\n## Co-development\nJoint development of a product line under your brand, from brief to range.\n\n## Representation\nAgents and sourcing offices in Europe who represent Monolith Sports to clubs and retailers.\n\nTell us about your business with the form below."
+   "We work with partners who buy or sell across several product families and seasons.\n\n## Supply partnerships\nPlanned seasonal orders with agreed production slots and reorder terms.\n\n## Co-development\nJoint development of a product line under your brand, from brief to range.\n\n## Representation\nAgents and sourcing offices in Europe who represent Monolith Sports to clubs and retailers.\n\nTell us about your business with the form below.",
+   "We work with partners who buy or sell across several product categories and seasons.\n\n## Supply partnerships\nThese partnerships cover planned seasonal orders with agreed production slots and reorder terms.\n\n## Co-development\nThis covers the joint development of a product line under your brand, from brief to range.\n\n## Representation\nThis is for agents and sourcing offices in Europe that represent Monolith Sports to clubs and retailers.\n\nTell us about your business with the form below."
   ],
-  "to": "We work with partners who buy or sell across several product categories and seasons.\n\n## Supply partnerships\nThese partnerships cover planned seasonal orders with agreed production slots and reorder terms.\n\n## Co-development\nThis covers the joint development of a product line under your brand, from brief to range.\n\n## Representation\nThis is for agents and sourcing offices in Europe that represent Monolith Sports to clubs and retailers.\n\nTell us about your business with the form below."
+  "to": "We work with partners who buy or sell across several product categories and seasons.\n\n## Supply partnerships\nThese partnerships cover planned seasonal orders with agreed production slots and reorder terms.\n\n## Co-development\nThis covers the joint development of a product line for your brand, from brief to range.\n\n## Representation\nThis is for agents and sourcing offices in Europe that represent Monolith Sports to clubs and retailers.\n\nTell us about your business with the form below."
  },
  {
   "table": "pages",
@@ -785,9 +844,10 @@
   "key": "fitness",
   "field": "body",
   "from": [
-   "Training accessories for gyms, fitness brands and retailers, made under your label."
+   "Training accessories for gyms, fitness brands and retailers, made under your label.",
+   "We supply training accessories to gyms, fitness brands and retailers, made under your label."
   ],
-  "to": "We supply training accessories to gyms, fitness brands and retailers, made under your label."
+  "to": "We supply training accessories to gyms, fitness brands and retailers, made for your brand."
  },
  {
   "table": "categories",
@@ -1059,9 +1119,10 @@
   "key": "MS-SW-ACT-001",
   "field": "description",
   "from": [
-   "Quoted by fabric, stretch and finish, under your label with your care and size labels."
+   "Quoted by fabric, stretch and finish, under your label with your care and size labels.",
+   "Activewear is quoted by fabric, stretch and finish, and is made under your label with your care and size labels."
   ],
-  "to": "Activewear is quoted by fabric, stretch and finish, and is made under your label with your care and size labels."
+  "to": "Activewear is quoted by fabric, stretch and finish, and is made for your brand with your care and size labels."
  },
  {
   "table": "products",

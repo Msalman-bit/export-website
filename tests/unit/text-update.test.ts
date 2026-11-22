@@ -69,6 +69,10 @@ describe('the one-time update of the reworded texts', () => {
     expect(row.description).toBe(thb.to);
   }, 60000);
 
+  it('says "under your brand" nowhere', () => {
+    for (const c of LIST) expect(JSON.stringify(c.to), `${c.table} ${c.key} ${c.field}`).not.toMatch(/under (your|the buyer’s) (brand|label)/i);
+  });
+
   it('names cricket nowhere on the content pages', () => {
     for (const c of LIST.filter((x) => x.table === 'pages')) expect(String(c.to), `${c.key} ${c.field}`).not.toMatch(/cricket/i);
   });

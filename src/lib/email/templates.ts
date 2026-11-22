@@ -18,7 +18,7 @@ function frame(title: string, bodyHtml: string, action?: { label: string; url: s
 <tr><td style="padding:32px 32px 8px;font-size:24px;line-height:1.25">${esc(title)}</td></tr>
 <tr><td style="padding:8px 32px 16px;font-size:16px;line-height:1.6">${bodyHtml}</td></tr>
 ${btn}
-<tr><td style="padding:24px 32px;border-top:1px solid #e3e5e8;font-size:13px;line-height:1.5;color:#5c5f63">Monolith Sports · Sports equipment made in Pakistan under your brand<br>${esc(siteUrl().replace(/^https?:\/\//, ''))}</td></tr>
+<tr><td style="padding:24px 32px;border-top:1px solid #e3e5e8;font-size:13px;line-height:1.5;color:#5c5f63">Monolith Sports · Sports equipment made in Pakistan for your brand<br>${esc(siteUrl().replace(/^https?:\/\//, ''))}</td></tr>
 </table></td></tr></table></body></html>`;
 }
 

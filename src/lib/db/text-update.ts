@@ -9,8 +9,8 @@ import changes from './text-update-2026-11-22.json';
    never touched. The result is kept in settings (TEXT_UPDATE) and in the audit log. Once the live databases have run
    it, this file, its JSON and the call in client.ts can be removed. */
 
-// raised once: the first run on the owner's computer still named cricket on About and Manufacturing
-export const TEXT_UPDATE = 'text_update_2026_11_22_b';
+// raised when a later wording followed a run: _b took cricket out of two pages, _c wrote "for your brand"
+export const TEXT_UPDATE = 'text_update_2026_11_22_c';
 
 type Table = 'pages' | 'articles' | 'categories' | 'products';
 /** `key` is the row's address (a product's SKU); `also` the SKUs it was delivered with earlier */

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageMeta({
     locale, path: '/',
     title: 'Monolith Sports: custom sports equipment made in Pakistan for European clubs and brands',
-    description: 'Footballs, gloves, teamwear and training equipment made under your brand in Pakistan, sampled before the bulk order and quoted in EUR, GBP or USD.',
+    description: 'Footballs, gloves, teamwear and training equipment made in Pakistan for your brand, sampled before the bulk order and quoted in EUR, GBP or USD.',
   });
 }
 
@@ -101,7 +101,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                       </p>
                     ))}
                   </div>
-                  <p className="hero__lead" lang={enLang}>We make footballs, gloves, teamwear and training equipment under your brand, supply a sample before the bulk order and ship to clubs and distributors across Europe.</p>
+                  <p className="hero__lead" lang={enLang}>We make footballs, gloves, teamwear and training equipment for your brand, supply a sample before the bulk order and ship to clubs and distributors across Europe.</p>
                   <div className="btn-row">
                     <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}<Arrow /></a>
                     <a className="btn btn--secondary" href={L('/products')}>{t['cta.catalogue']}</a>
@@ -145,9 +145,9 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <section className="section" id="about" aria-labelledby="about-h">
           <div className="wrap">
             <div className="grid grid--top intro__head">
-              <h2 id="about-h" className="span-5">Sports equipment under your brand</h2>
+              <h2 id="about-h" className="span-5">Sports equipment made for your brand</h2>
               <div className="intro__text span-7 start-6" lang={enLang}>
-                <p>We make and source sports equipment in Pakistan for businesses abroad. Send us a design or a reference product, and we make a sample, produce the order under your brand and arrange the export.</p>
+                <p>We make and source sports equipment in Pakistan for businesses abroad. Send us a design or a reference product, and we make a sample, produce the order with your branding and arrange the export.</p>
                 <a className="link" href={L('/about')}>Read about Monolith Sports</a>
               </div>
             </div>

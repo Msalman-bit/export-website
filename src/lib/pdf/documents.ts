@@ -123,7 +123,7 @@ export async function cataloguePdf(families: { name: string; summary: string; pr
   await d.picture(hero, M, A4.h - 80, CW);
   let y = A4.h - 80 - CW - 30;
   y -= d.write('Product catalogue', M, y, { size: 44, display: true, color: WHITE }) + 14;
-  d.write('Sports equipment made in Pakistan under your brand. Every product is made to the specification, colours, branding and packaging confirmed in your quotation.', M, y, { size: 10, color: INV_MUTED, lh: 14 });
+  d.write('Sports equipment made in Pakistan for your brand. Every product is made to the specification, colours, branding and packaging confirmed in your quotation.', M, y, { size: 10, color: INV_MUTED, lh: 14 });
   const contentsTop = y - 46;
 
   const starts: number[] = [];

@@ -44,7 +44,7 @@ export function organizationLd() {
   return {
     '@context': 'https://schema.org', '@type': 'Organization', name: 'Monolith Sports', url: base,
     logo: `${base}/favicon.svg`, slogan: 'Engineered for performance. Built for the world.',
-    description: 'Sports equipment manufacturer and exporter in Pakistan: footballs, gloves, teamwear and training equipment made under the buyer’s brand.',
+    description: 'Sports equipment manufacturer and exporter in Pakistan: footballs, gloves, teamwear and training equipment made for the buyer’s brand.',
     areaServed: ['IE', 'GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'DK', 'NO', 'SE', 'FI'],
   };
 }

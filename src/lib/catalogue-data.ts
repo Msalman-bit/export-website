@@ -167,7 +167,7 @@ export const CATALOGUE: SeedFamily[] = [
   {
     slug: 'fitness', name: 'Fitness equipment', short: 'Fitness', image: 'range-fitness',
     summary: 'Weightlifting gloves, gym belts, wrist wraps and resistance bands.',
-    body: 'We supply training accessories to gyms, fitness brands and retailers, made under your label.',
+    body: 'We supply training accessories to gyms, fitness brands and retailers, made for your brand.',
     subs: [
       { slug: 'weightlifting-gloves', name: 'Weightlifting gloves', product: { name: 'Weightlifting gloves', code: 'FT-WLG', image: 'p-weightlifting-gloves',
         summary: 'Half-finger gloves with a padded palm and wrist support.',
@@ -229,7 +229,7 @@ export const CATALOGUE: SeedFamily[] = [
         construction: 'Cut and sewn, full-zip jacket', branding: WEAR_BRANDING, packaging: WEAR_PACKING } },
       { slug: 'activewear', name: 'Activewear', product: { name: 'Activewear set', code: 'SW-ACT', image: 'p-activewear',
         summary: 'Leggings, tops and shorts for fitness brands and gyms.',
-        description: 'Activewear is quoted by fabric, stretch and finish, and is made under your label with your care and size labels.',
+        description: 'Activewear is quoted by fabric, stretch and finish, and is made for your brand with your care and size labels.',
         construction: 'Flatlock-stitched stretch fabric', branding: ['Heat transfer', 'Screen print', 'Woven and printed labels'], packaging: WEAR_PACKING } },
       { slug: 'compression-clothing', name: 'Compression clothing', product: { name: 'Compression top', code: 'SW-CMP', image: 'p-compression-top',
         summary: 'Close-fitting base layers with long or short sleeves.',
