@@ -63,8 +63,9 @@ premises. Replace them in this order:
    handball, then a rugby ball). The film ends on the rugby ball. Cut it to frames with
    `scripts/build-hero-frames.mjs --format avif` into a new folder (the site caches `/assets` for a week, so a
    new film never reuses the last one's folder: change `OUT` there and `BASE` in
-   `src/components/site/hero-sequence.ts`), and set where each chapter starts with `--stages`. The four lines of
-   words are `HERO_CHAPTERS` in `src/app/(site)/[locale]/page.tsx`.
+   `src/components/site/hero-sequence.ts`), and set where each chapter starts with `--stages`. The film plays its
+   first few seconds by itself before anyone scrolls: set `SELF_PLAY.until` in the same file to the picture it should
+   rest on (now the finished sketch). The four lines of words are `HERO_CHAPTERS` in `src/app/(site)/[locale]/page.tsx`.
    **Confirm** before launch: the film shows hand stitching, and the second chapter says the ball is "assembled
    and stitched panel by panel". If your balls are hand-stitched, that line can say so.
 2. Each product on one dark backdrop, three angles (front, three-quarter, detail), 2000 px or larger.

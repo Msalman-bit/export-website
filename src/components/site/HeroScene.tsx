@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 
-/* The hero's scroll film host. It mounts only when the page head marked the browser for it
+/* The hero's scroll film host (the film draws its sketch by itself once, then follows the scroll: hero-sequence.ts). It mounts only when the page head marked the browser for it
    (html.hero-seq: motion allowed); otherwise the hero stays the still photograph on one screen.
    The player loads after the page is interactive, so it never delays the first paint; the head has
    already asked for the first frame.
@@ -39,7 +39,7 @@ export function HeroScene() {
         dispose = mountHeroSequence({
           host: host.current, section,
           onStage: show,
-          // the line under the steps follows the scroll itself: a transform on the line, no re-render
+          // the line under the steps follows the film itself: a transform on the line, no re-render
           onProgress: (p) => { if (fill.current) fill.current.style.transform = `scaleX(${p.toFixed(4)})`; },
           onReady: () => { media?.setAttribute('data-seq', 'ready'); setLive(true); },
           onFail: fail,
@@ -52,7 +52,7 @@ export function HeroScene() {
   return (
     <>
       <div ref={host} className="hero-scene" aria-hidden="true" />
-      {/* where the film is: its four chapters and a line that fills with the scroll (the words say the same) */}
+      {/* where the film is: its four chapters and a line that fills with it (the words say the same) */}
       <div className="hero-steps" aria-hidden="true" data-live={live || undefined}>
         <ol>
           {STEPS.map((s, i) => (

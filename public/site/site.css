@@ -14,12 +14,42 @@
    default field width), which with the button made the search page 394px wide and slid it sideways on a 390px phone */
 .nav-search__row input { flex: 1 1 auto; width: 0; min-width: 0; height: 48px; padding: 0 var(--s-4); border: 1px solid var(--line-strong); border-radius: var(--r-sm); font: inherit; font-size: 16px; background: var(--bg); color: var(--ink); }
 @media (min-width: 1024px) and (max-width: 1439px) {
-  .nav__bar { gap: var(--s-5); }
+  .nav__bar { gap: var(--s-4); }
   .nav-signin { display: none; }
 }
+/* a small laptop (1024-1279px): every word stays in the bar. The header and its menus take the empty side margins
+   (32px instead of the page's 80), which is where the room for Customisation and Resources comes from; under 1200px
+   the words are also a size smaller and closer together */
 @media (min-width: 1024px) and (max-width: 1279px) {
-  .nav__item--wide { display: none; }
+  .nav { --gut: var(--s-6); }
 }
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .nav__bar { gap: var(--s-3); }
+  .nav__logo { font-size: 20px; }
+  .nav__link { padding: 0 6px; font-size: 14px; }
+  .nav__link::before, .nav__link[aria-current="page"]::after { left: 6px; right: 6px; }
+  .nav__actions .btn { padding-inline: 14px; font-size: 14px; }
+  html:not(:lang(en)) .nav__links .nav__link { padding: 0 4px; }
+  html:not(:lang(en)) .nav__links .nav__link::before, html:not(:lang(en)) .nav__links .nav__link[aria-current="page"]::after { left: 4px; right: 4px; }
+}
+/* from 1280px the words keep the small laptop's spacing (16px apart), which leaves room for the search's own word; the
+   other languages' longer words also have 24px, not 64, between the logo, the words and the buttons from 1440px
+   ("width > 1279px" so a window of 1279.33px, a 1919px screen at 150%, is held too) */
+@media (width > 1279px) {
+  .nav__links { gap: 0; }
+  .nav__links .nav__link { padding-inline: var(--s-2); }
+  .nav__links .nav__link::before, .nav__links .nav__link[aria-current="page"]::after { left: var(--s-2); right: var(--s-2); }
+}
+@media (min-width: 1440px) { html:not(:lang(en)) .nav__bar { gap: var(--s-5); } }
+/* the tools: the language stands at the right end, by the buttons, and the search has the space before it */
+@media (min-width: 1024px) {
+  .nav__links .nav__item--tool + .nav__item--lang { margin-left: auto; }
+  .nav__links .nav__item--search { margin-left: var(--s-2); }
+  .nav__item--search > .nav__link { height: 40px; border-radius: 10px; background: var(--surface); }   /* before the script, and without it */
+  .nav__item--search > .nav__link::before, .nav__item--search > .nav__link::after { display: none; }
+}
+/* a tight bar never eats its arrows or icons (they were the first things to shrink) */
+@media (min-width: 1024px) { .nav__links .nav__link svg { flex: none; } }
 @media (max-width: 1023px) {
   .nav.is-open .nav__item--tool:first-of-type { margin-left: 0; }
   .nav.is-open .nav__tool-label { position: static; width: auto; height: auto; clip-path: none; }
@@ -1184,8 +1214,19 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
     overflow-y: auto; overscroll-behavior: contain;
     scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--ink) 22%, transparent) transparent;
   }
-  /* the picture card keeps its title and its line together instead of spreading them down the panel's height */
-  .nav__menu .menu-card { align-content: start; }
+  /* one skeleton for all five menus: the links in columns on the left, a picture tile filling the other half, and a row
+     of next steps at the foot. The tile is one soft grey block with its photograph flush to its top and sides (it takes
+     whatever height the columns have) and its title, line and arrow at the bottom, so no panel ends in an empty half */
+  .nav__menu .menu-card--feature { display: grid; grid-template-rows: minmax(180px, 1fr) auto auto; gap: 0; align-content: stretch; overflow: clip;
+    border-radius: calc(var(--r-lg) + var(--s-1)); background: var(--surface); color: var(--ink); }
+  .nav__menu .menu-card--feature .panel { position: relative; height: auto; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; overflow: clip; }
+  .nav__menu .menu-card--feature .t-card { padding: var(--s-4) var(--s-5) 0; }
+  .nav__menu .menu-card--feature .t-small { padding: var(--s-1) var(--s-5) var(--s-4); }
+  .nav__menu .menu-card--feature .t-card::after { content: "\2192"; display: inline-block; margin-left: var(--s-2); }
+  /* the next steps: a hairline and two or three of the site's own links, as wide as the panel */
+  .menu-foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-6); margin-top: var(--s-2); padding-top: var(--s-4); border-top: 1px solid var(--line); }
+  /* the page you are on keeps its row lit */
+  .nav__menu .menu-col a[aria-current="page"] { background: var(--surface); font-weight: 600; }
   /* the page behind dims while a big menu is open (not for the small language list): under the header, never over
      it, and it never takes a click */
   .nav::after { content: ""; position: fixed; inset: var(--nav) 0 0; z-index: -1; pointer-events: none; background: rgb(0 0 0 / .14); opacity: 0; visibility: hidden; }
@@ -1243,15 +1284,110 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
   html:not([data-motion="off"]) .nav.m-menu-open .nav__item:is(:hover, :focus-within) > .nav__menu > .wrap > *,
   html:not([data-motion="off"]) .nav.m-menu-open:has(.nav__item:not(.nav__item--lang):is(:hover, :focus-within) > .nav__menu)::after { transition-duration: 0s; transition-delay: 0s; }
 }
+/* ---------- the header's search on a computer (HeaderSearch.tsx) ----------
+   At rest it is a grey pill: the magnifier, and its word where the space before the language holds it (--hs-r, its
+   width). Pointing at it opens a small field to its right (over the language if need be); using it gives it the whole row of words, which fade out of its way, over a dimmed page,
+   with a popup of the same width under it. The field is always laid out at its full width and uncovered with
+   clip-path, its contents sliding with it, so nothing in the bar moves: --hs-i is the icon's width, --hs-w the full
+   field, --hs-x how much of it is still covered on the left (all measured by the component). */
+.hs { display: none; }
+@media (min-width: 1024px) {
+  .nav__item--search { position: relative; z-index: 2; }
+  .nav__item--search:has(> .hs[data-ready]) > .nav__link { visibility: hidden; }   /* keeps its place; the field stands on it */
+  .hs[data-ready] { display: block; position: absolute; inset: 0; }
+  .hs__field { position: absolute; top: 50%; left: calc(-1 * var(--hs-x)); width: var(--hs-w); height: 44px; margin: -22px 0 0; overflow: clip; border-radius: 12px; background: var(--surface);
+    clip-path: inset(2px calc(var(--hs-w) - var(--hs-x) - var(--hs-r)) 2px var(--hs-x) round 10px); }
+  .hs:not([data-state="open"]) .hs__field { pointer-events: none; }
+  .hs__zone { position: absolute; top: 50%; left: 0; width: var(--hs-r); height: 44px; margin-top: -22px; cursor: text; }
+  .hs[data-state="open"] .hs__zone { display: none; }
+  .hs__in { display: flex; align-items: center; height: 100%; transform: translateX(var(--hs-x)); }
+  .hs__go { flex: none; display: grid; place-items: center; width: var(--hs-i); height: 100%; padding: 0; border: 0; background: none; color: var(--ink); cursor: pointer; }
+  .hs__field input { flex: 1 1 auto; width: 0; min-width: 0; height: 100%; padding: 0 var(--s-2) 0 var(--s-1); border: 0; background: none; color: var(--ink); font: 400 16px/1 var(--font-text); outline: none; opacity: 0; }
+  .hs__field input::placeholder { color: color-mix(in oklab, var(--ink) 72%, var(--surface)); opacity: 1; font-size: 15px; }
+  .hs__field input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
+  .hs__clear { flex: none; display: grid; place-items: center; width: 36px; height: 100%; padding: 0; border: 0; background: none; color: var(--muted); cursor: pointer; }
+  .hs:is([data-state="hover"], [data-state="open"]) .hs__field { background: color-mix(in oklab, var(--surface), var(--ink) 4%); clip-path: inset(2px 0 2px var(--hs-x) round 10px); }
+  .hs[data-state="open"] .hs__field { background: var(--surface); }
+  .hs:is([data-word], [data-state="hover"], [data-state="open"]) .hs__field input { opacity: 1; }
+  .hs[data-state="open"] .hs__field { box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--ink) 45%, var(--surface)); clip-path: inset(0 0 0 0 round 12px); }
+  .hs[data-state="open"] .hs__in { transform: none; }
+  .hs[data-state="open"] .hs__go { width: 48px; }
+
+  /* the words step aside until it closes, and the page dims as it does under a big menu */
+  .nav:has(.hs[data-state="open"]) .nav__links > .nav__item:not(.nav__item--search) { opacity: 0; pointer-events: none; }
+  .nav:has(.hs[data-state="open"])::after { opacity: 1; visibility: visible; }
+  html:not([data-motion="off"]) .nav:has(.hs[data-state="open"])::after { transition: opacity var(--m-panel) var(--m-ease-enter), visibility 0s; }
+  html:not([data-motion="off"]) .nav__links > .nav__item:not(.nav__item--search) { transition: opacity var(--m-close) var(--m-ease); }
+
+  /* the popup: the menus' own panel, its two edges on the field's */
+  .hs__panel { position: absolute; top: calc(100% + var(--s-2)); left: calc(-1 * var(--hs-x)); width: var(--hs-w); padding: var(--s-3);
+    background: var(--bg); border: 1px solid var(--line); border-radius: calc(var(--r-lg) * 2);
+    box-shadow: 0 1px 2px rgb(0 0 0 / .04), 0 12px 28px -8px rgb(0 0 0 / .14), 0 28px 64px -16px rgb(0 0 0 / .14);
+    max-height: calc(100vh - var(--nav) - var(--s-2) - var(--s-4)); max-height: calc(100svh - var(--nav) - var(--s-2) - var(--s-4));
+    overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--ink) 22%, transparent) transparent;
+    opacity: 0; visibility: hidden; }
+  .hs[data-state="open"] .hs__panel { opacity: 1; visibility: visible; }
+  .hs__status { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .hs__hit { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2); border-radius: var(--r-lg); }
+  .hs__hit.is-active { background: var(--surface); }
+  .hs__hit:active { background: color-mix(in oklab, var(--surface), var(--ink) 7%); }
+  .hs__pic { flex: none; width: 48px; height: 48px; border-radius: 8px; overflow: clip; background: var(--surface); }
+  .hs__pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .hs__words { display: grid; gap: 2px; min-width: 0; }
+  .hs__name { font-weight: 500; line-height: 1.3; }
+  .hs__line { color: var(--muted); font-size: var(--t-small); line-height: 1.3; }
+  /* the products run down each column, so the down arrow always goes down; three or fewer are one column */
+  .hs__list { display: grid; grid-auto-flow: column; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-1); }
+  .hs__list--one { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); }
+  .hs__foot { margin-top: var(--s-3); padding: var(--s-3) var(--s-2) var(--s-1); border-top: 1px solid var(--line); }
+  .hs__none { display: grid; justify-items: start; gap: var(--s-3); padding: var(--s-3); }
+  .hs__none p { margin: 0; }
+  .hs__families { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-1); }
+  .hs__families .t-label { grid-column: 1 / -1; margin: 0; padding: var(--s-1) var(--s-2) var(--s-2); color: var(--muted); }
+  .hs__families a { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-2); border-radius: var(--r-lg); }
+  .hs__families a:focus-visible { background: var(--surface); }
+
+  /* in, the field opens on the entrance curve; out, it closes in --m-close; a product list changing as you type never moves */
+  html:not([data-motion="off"]) .hs__field { transition: clip-path var(--m-close) var(--m-ease), background-color var(--m-close) var(--m-ease); }
+  html:not([data-motion="off"]) .hs__in { transition: transform var(--m-close) var(--m-ease); }
+  html:not([data-motion="off"]) .hs__field input { transition: opacity var(--m-close) var(--m-ease); }
+  html:not([data-motion="off"]) .hs__panel { transform-origin: 50% 0; transform: translateY(-8px) scale(.98);
+    transition: opacity var(--m-close) var(--m-ease), transform 0s linear var(--m-close), visibility 0s linear var(--m-close); }
+  html:not([data-motion="off"]) .hs:is([data-state="hover"], [data-state="open"]) :is(.hs__field, .hs__in, .hs__field input) { transition-duration: var(--m-panel); transition-timing-function: var(--m-ease-enter); }
+  html:not([data-motion="off"]) .hs[data-state="open"] .hs__panel { transform: none; transition: opacity var(--m-panel) var(--m-ease-enter), transform var(--m-panel) var(--m-ease-enter), visibility 0s; }
+}
+/* the size of the bar's own words there, so the longest of the six languages' words fits the small field */
+@media (min-width: 1024px) and (max-width: 1199px) { .hs__field input::placeholder { font-size: 14px; } }
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .hs__families a:hover { background: var(--surface); }
+  .hs__clear:hover { color: var(--ink); }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  html:not([data-motion="off"]) .hs__field, html:not([data-motion="off"]) .hs__in { transition: none; }
+  html:not([data-motion="off"]) .hs__panel { transform: none; }
+}
+/* the next-steps row on a phone: the sheet's own plain rows, under the group's links */
+@media (max-width: 1023px) {
+  .menu-foot { display: grid; gap: 0; }
+  html .nav .menu-foot .link { display: flex; gap: var(--s-2); padding: var(--s-2) 0; text-decoration: none; background-image: none; }
+}
+/* the tile's picture settles as the pointer comes over it (the kit's zoom), its arrow steps right, its block darkens */
+html:not([data-motion="off"]) .nav__menu .menu-card--feature { transition: background-color var(--m-out) var(--m-ease); }
+html:not([data-motion="off"]) .nav__menu .menu-card--feature .t-card::after { transition: transform var(--m-out) var(--m-ease); }
 /* the hover row only where there is a real pointer (a tap on a touch screen would leave it stuck on) */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .nav__menu .menu-card--feature:hover { background: color-mix(in oklab, var(--surface), var(--ink) 4%); }
+  .nav__menu .menu-card--feature:hover .t-card::after { transform: translateX(4px); }
+  .nav__menu .menu-card--feature:active { background: color-mix(in oklab, var(--surface), var(--ink) 9%); }
   .nav__menu .menu-col a:hover { background: var(--surface); color: var(--ink); }
   .nav__menu .menu-col a:hover > span { color: var(--ink); }
   .nav__menu .menu-col a:hover::after { opacity: 1; transform: translateX(0) rotate(45deg); }
   .nav__menu .menu-col a:active { background: color-mix(in oklab, var(--surface), var(--ink) 7%); }
 }
 @media (min-width: 1024px) and (max-height: 700px) { .nav__menu > .wrap { padding: var(--s-5); } }
-@media (min-width: 1024px) and (max-height: 600px) { .nav__menu > .wrap { padding: var(--s-4) var(--s-5); } }
+/* a very short window: the panel drops its next-steps row (the links it repeats are in the lists and the bar) so the
+   lists themselves need less scrolling */
+@media (min-width: 1024px) and (max-height: 600px) { .nav__menu > .wrap { padding: var(--s-4) var(--s-5); } .menu-foot { display: none; } }
 @media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
   .nav__menu .menu-col a::after, .nav__menu .menu-col a:is(:hover, :focus-visible)::after { transform: rotate(45deg); }
   html:not([data-motion="off"]) .nav__item--lang > .nav__menu { transform: none; }

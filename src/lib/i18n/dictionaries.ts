@@ -50,6 +50,8 @@ const T = {
   'basket.quantity': ['Quantity', 'Menge', 'Quantité', 'Cantidad', 'Quantità', 'Aantal'],
   'basket.remove': ['Remove', 'Entfernen', 'Retirer', 'Quitar', 'Rimuovi', 'Verwijderen'],
   'basket.notes': ['Notes for this product', 'Hinweise zu diesem Produkt', 'Remarques sur ce produit', 'Notas sobre este producto', 'Note su questo prodotto', 'Opmerkingen bij dit product'],
+  'search.short': ['Search', 'Suche', 'Rechercher', 'Buscar', 'Cerca', 'Zoeken'],
+  'search.all': ['See all results', 'Alle Ergebnisse ansehen', 'Voir tous les résultats', 'Ver todos los resultados', 'Vedi tutti i risultati', 'Alle resultaten bekijken'],
   'search.label': ['Search the catalogue', 'Katalog durchsuchen', 'Rechercher dans le catalogue', 'Buscar en el catálogo', 'Cerca nel catalogo', 'Zoek in de catalogus'],
   'search.none': ['No products match. Try a shorter word, such as “glove” or “ball”.', 'Keine Treffer. Versuchen Sie ein kürzeres Wort, etwa „Handschuh“ oder „Ball“.', 'Aucun produit. Essayez un mot plus court, comme « gant » ou « ballon ».', 'Sin resultados. Pruebe una palabra más corta, como «guante» o «balón».', 'Nessun prodotto. Prova una parola più breve, come “guanto” o “pallone”.', 'Geen producten. Probeer een korter woord, zoals “handschoen” of “bal”.'],
   'product.sku': ['SKU', 'Artikelnummer', 'Référence', 'Referencia', 'Codice', 'Artikelnummer'],
