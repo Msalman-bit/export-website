@@ -1162,13 +1162,57 @@ a, button, input, select, textarea, label, summary, [role="button"] { -webkit-ta
 @media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
   .nav.is-open .nav__menu { transition: none; }
 }
-/* a computer's drop-down menus hang under the fixed header, so in a short window (a laptop at 125%, about 512px
-   tall) their foot ran off the screen with no way to reach it: the language menu's last language could not be
-   clicked. A menu now ends at the window's foot and scrolls inside itself; in a normal window nothing changes. In a
-   short window the menus' space above and below their links (48 and 64px) is trimmed first, so a menu scrolls only
-   when its links themselves do not fit, not for its empty foot */
+/* ---------- a computer's drop-down menus: a floating panel instead of a full-width sheet ----------
+   The kit's panel was a full-width white band flush under the white header: it read as part of the page behind it,
+   its corners were square, and its entrance (6px in 200ms) was too small to notice. From 1024px it is a panel as
+   wide as the page's column, 8px under the header, with rounded corners, a hairline edge and a soft shadow, over a
+   light dim of the page. It still waits for the kit's 150ms of hover intent (or opens on keyboard focus).
+   Motion, on the kit's tokens: in, the panel drops 8px and grows from 98% out of the header in --m-panel on the
+   entrance curve, its contents rising 6px 50ms behind it; out, it fades where it stands in --m-close (no travel back
+   up). Once a menu is open the next word still swaps the panel at once (the kit's .m-menu-open, motion.js).
+   Reduced motion: the kit already drops the panel's travel; here the contents drop theirs, and both only fade.
+   A short window (a laptop at 125% is about 512px tall): the panel ends 16px above the window's foot and scrolls
+   inside itself, its padding trimmed first, so the language menu's last language can still be reached. ---------- */
 @media (min-width: 1024px) {
-  .nav__menu { max-height: calc(100vh - var(--nav)); max-height: calc(100svh - var(--nav)); overflow-y: auto; overscroll-behavior: contain; }
+  /* the menu itself is the hover area: the panel and the 8px above it, so the pointer can cross the gap */
+  .nav__menu { width: min(100% - 2 * var(--gut), var(--container)); margin-inline: auto; padding: var(--s-2) 0 0; background: none; border: 0; }
+  .nav__menu > .wrap {
+    width: auto; margin: 0; padding: var(--s-6);
+    background: var(--bg); border: 1px solid var(--line); border-radius: calc(var(--r-lg) * 2);
+    box-shadow: 0 1px 2px rgb(0 0 0 / .04), 0 12px 28px -8px rgb(0 0 0 / .14), 0 28px 64px -16px rgb(0 0 0 / .14);
+    max-height: calc(100vh - var(--nav) - var(--s-2) - var(--s-4)); max-height: calc(100svh - var(--nav) - var(--s-2) - var(--s-4));
+    overflow-y: auto; overscroll-behavior: contain;
+    scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--ink) 22%, transparent) transparent;
+  }
+  /* the picture card keeps its title and its line together instead of spreading them down the panel's height */
+  .nav__menu .menu-card { align-content: start; }
+  /* the page behind dims while a menu is open: under the header, never over it, and it never takes a click */
+  .nav::after { content: ""; position: fixed; inset: var(--nav) 0 0; z-index: -1; pointer-events: none; background: rgb(0 0 0 / .14); opacity: 0; visibility: hidden; }
+  .nav:has(.nav__item:is(:hover, :focus-within) > .nav__menu)::after { opacity: 1; visibility: visible; }
+
+  html:not([data-motion="off"]) .nav__menu {
+    transform-origin: 50% 0; transform: translateY(-8px) scale(.98);
+    transition: opacity var(--m-close) var(--m-ease), transform 0s linear var(--m-close), visibility 0s linear var(--m-close);
+  }
+  html:not([data-motion="off"]) .nav__item:is(:hover, :focus-within) > .nav__menu {
+    transform: none;
+    transition: opacity var(--m-panel) var(--m-ease-enter) 150ms, transform var(--m-panel) var(--m-ease-enter) 150ms, visibility 0s linear 150ms;
+  }
+  html:not([data-motion="off"]) .nav__menu > .wrap > * { opacity: 0; transform: translateY(6px); transition: opacity var(--m-close) var(--m-ease), transform 0s linear var(--m-close); }
+  html:not([data-motion="off"]) .nav__item:is(:hover, :focus-within) > .nav__menu > .wrap > * {
+    opacity: 1; transform: none; transition: opacity var(--m-panel) var(--m-ease-enter) 200ms, transform var(--m-panel) var(--m-ease-enter) 200ms;
+  }
+  /* the dim waits 60ms before fading out, so crossing the small gap between two words does not flicker it */
+  html:not([data-motion="off"]) .nav::after { transition: opacity var(--m-close) var(--m-ease) 60ms, visibility 0s linear calc(var(--m-close) + 60ms); }
+  html:not([data-motion="off"]) .nav:has(.nav__item:is(:hover, :focus-within) > .nav__menu)::after { transition: opacity var(--m-panel) var(--m-ease-enter) 150ms, visibility 0s linear 150ms; }
+  /* the kit's swap at once while a menu is open, kept for the contents and the dim too */
+  html:not([data-motion="off"]) .nav.m-menu-open .nav__menu > .wrap > *,
+  html:not([data-motion="off"]) .nav.m-menu-open .nav__item:is(:hover, :focus-within) > .nav__menu > .wrap > *,
+  html:not([data-motion="off"]) .nav.m-menu-open:has(.nav__item:is(:hover, :focus-within) > .nav__menu)::after { transition-duration: 0s; transition-delay: 0s; }
 }
-@media (min-width: 1024px) and (max-height: 700px) { .nav__menu { padding-block: var(--s-5) var(--s-6); } }
-@media (min-width: 1024px) and (max-height: 600px) { .nav__menu { padding-block: var(--s-4) var(--s-5); } }
+@media (min-width: 1024px) and (max-height: 700px) { .nav__menu > .wrap { padding: var(--s-5); } }
+@media (min-width: 1024px) and (max-height: 600px) { .nav__menu > .wrap { padding: var(--s-4) var(--s-5); } }
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  html:not([data-motion="off"]) .nav__menu > .wrap > *,
+  html:not([data-motion="off"]) .nav__item:is(:hover, :focus-within) > .nav__menu > .wrap > * { opacity: 1; transform: none; transition: none; }
+}
