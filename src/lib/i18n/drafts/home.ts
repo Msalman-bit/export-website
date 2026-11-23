@@ -18,14 +18,9 @@ const drafts = {
   'Your branding': ['Ihr Branding', 'Votre marquage', 'Su marca', 'Il vostro marchio', 'Uw branding'],
   'Printed in your colours': ['Bedruckt in Ihren Farben', 'Imprimé à vos couleurs', 'Impreso en sus colores', 'Stampato nei vostri colori', 'Bedrukt in uw kleuren'],
   'You approve a sample before the bulk order goes into production.': ['Sie geben ein Muster frei, bevor der Serienauftrag in Produktion geht.', 'Vous validez un échantillon avant que la commande en volume ne passe en production.', 'Usted aprueba una muestra antes de que el pedido en volumen entre en producción.', 'Approvate un campione prima che l’ordine di produzione entri in lavorazione.', 'U keurt een sample goed voordat de bulkorder in productie gaat.'],
-  'Your range': ['Ihr Sortiment', 'Votre gamme', 'Su gama', 'La vostra gamma', 'Uw assortiment'],
-  'One manufacturer for your whole range': ['Ein Hersteller für Ihr ganzes Sortiment', 'Un seul fabricant pour toute votre gamme', 'Un solo fabricante para toda su gama', 'Un unico produttore per tutta la vostra gamma', 'Eén fabrikant voor uw hele assortiment'],
-  'Request footballs, handballs and rugby balls in one inquiry, quoted in EUR, GBP or USD.': ['Fragen Sie Fußbälle, Handbälle und Rugbybälle in einer Anfrage an, mit Angebot in EUR, GBP oder USD.', 'Demandez ballons de football, de handball et de rugby dans une seule demande, avec un devis en EUR, GBP ou USD.', 'Solicite balones de fútbol, balonmano y rugby en una sola consulta, con presupuesto en EUR, GBP o USD.', 'Richiedete palloni da calcio, da pallamano e da rugby in un’unica richiesta, con preventivo in EUR, GBP o USD.', 'Vraag voetballen, handballen en rugbyballen aan in één aanvraag, met een offerte in EUR, GBP of USD.'],
   'Parts of the film': ['Abschnitte des Films', 'Parties du film', 'Partes del vídeo', 'Parti del filmato', 'Delen van de film'],
-  'You send the design': ['Sie senden das Design', 'Vous envoyez le design', 'Usted envía el diseño', 'Voi inviate il design', 'U stuurt het ontwerp'],
   'We make it': ['Wir fertigen es', 'Nous le fabriquons', 'Nosotros lo fabricamos', 'Noi lo produciamo', 'Wij maken het'],
-  'We add your branding': ['Wir bringen Ihr Branding an', 'Nous ajoutons votre marquage', 'Añadimos su marca', 'Aggiungiamo il vostro marchio', 'Wij voegen uw branding toe'],
-  'We cover your full range': ['Wir liefern Ihr ganzes Sortiment', 'Nous couvrons toute votre gamme', 'Cubrimos toda su gama', 'Copriamo tutta la vostra gamma', 'Wij leveren uw volledige assortiment'],
+  'Your brand': ['Ihre Marke', 'Votre marque', 'Su marca', 'Il vostro marchio', 'Uw merk'],
 
   // the range
   'Product range': ['Produktsortiment', 'Gamme de produits', 'Gama de productos', 'Gamma di prodotti', 'Assortiment'],

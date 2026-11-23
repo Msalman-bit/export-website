@@ -723,7 +723,7 @@ html.hero-seq .hero-steps[data-live] { display: block; }
 .hero-steps__line { margin: 0; font: 500 var(--t-body)/1.3 var(--font-text); color: #fff; text-shadow: 0 0 2px rgba(0, 0, 0, .9), 0 1px 6px rgba(0, 0, 0, .8); }
 .hero-steps__line > span { display: inline-block; animation: hero-line 320ms var(--m-ease-enter, ease-out) both; }
 @keyframes hero-line { from { opacity: 0; transform: translateY(6px); } }
-.hero-steps__parts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-2); }
+.hero-steps__parts { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--s-2); }   /* one column per step */
 .hero-steps__part { position: relative; display: grid; align-items: center; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; }
 .hero-steps__part::after { content: ""; position: absolute; inset: -10px -4px; } /* 44px to press */
 .hero-steps__part:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; border-radius: 2px; }

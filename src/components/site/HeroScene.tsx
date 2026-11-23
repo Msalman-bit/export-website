@@ -10,10 +10,9 @@ import { useEffect, useRef, useState } from 'react';
    words leave upward and the next arrive from below, and scrolling up the reverse. The motion itself is CSS
    transitions (site.css, "the hero's chapters"), so a fast scroll across two chapters retargets rather than queues. */
 
-/* who does what at each stage of the film: one line that changes with it, over a line in four parts. The page hands
-   over the four lines in its language ("You send the design", "We make it", "We add your branding", "We cover your full
-   range") and the group's name. */
-export function HeroScene({ parts: PARTS, label, lang }: { parts: string[]; label: string; lang?: string }) {
+/* the film's steps: one line that changes with it, over a line in as many parts. The page hands over the steps in its
+   language ("Your design", "Your brand", "We make it"), where in the film each begins, and the group's name. */
+export function HeroScene({ parts: PARTS, stepsAt, label, lang }: { parts: string[]; stepsAt?: number[]; label: string; lang?: string }) {
   const host = useRef<HTMLDivElement>(null);
   const fills = useRef<(HTMLSpanElement | null)[]>([]);
   const [stage, setStage] = useState(0);
@@ -38,7 +37,7 @@ export function HeroScene({ parts: PARTS, label, lang }: { parts: string[]; labe
       .then(({ mountHeroSequence }) => {
         if (cancelled || !host.current) return;
         dispose = mountHeroSequence({
-          host: host.current, section,
+          host: host.current, section, parts: PARTS.length, stepsAt,
           onStage: show,
           onControl: (go) => { toStage.current = go; },
           // the line follows the film itself: a transform on each of its parts, no re-render
@@ -55,7 +54,7 @@ export function HeroScene({ parts: PARTS, label, lang }: { parts: string[]; labe
     <>
       <div ref={host} className="hero-scene" aria-hidden="true" />
       {/* where the film is and who does that part: a line of words that changes with it (the chapters' words say more, so
-          it is for the eye), over a line in four parts, each a button that takes the page to its part */}
+          it is for the eye), over a line in parts, each a button that takes the page to its part */}
       <div className="hero-steps" role="group" aria-label={label} lang={lang} data-live={live || undefined}>
         <p className="hero-steps__line" aria-hidden="true"><span key={stage}>{PARTS[stage]}</span></p>
         <div className="hero-steps__parts">

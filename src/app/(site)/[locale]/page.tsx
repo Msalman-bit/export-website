@@ -43,18 +43,21 @@ const RANGE_TITLE: Record<string, string> = {
 };
 
 
-/* The hero film's four chapters (seq.json stages split the film into them): the idea is drawn, it is made, it carries
-   the buyer's brand, and it is the whole range. Only what the site states elsewhere: files are accepted with an
-   inquiry, a sample is approved before the bulk order, and quotes come in EUR, GBP or USD. */
+/* The three chapters of the hero film, the same three steps as the line under the film (FILM_STEPS_AT splits the
+   film into them): the ball is drawn, the graphic of the buyer is drawn onto it, then it is made (the bladder, the
+   panels, the stitching, the printing and the last balls of the film). Only what the site states elsewhere: files are
+   accepted with an inquiry, and a sample is approved before the bulk order. */
 const HERO_CHAPTERS = [
   { step: 'Your design', line: 'Start with a sketch', text: 'A drawing, a logo or a reference ball is enough for us to begin.' },
-  { step: 'Production', line: 'Built panel by panel', text: 'The bladder, the lining and the panels are assembled and stitched together.' },
   { step: 'Your branding', line: 'Printed in your colours', text: 'You approve a sample before the bulk order goes into production.' },
-  { step: 'Your range', line: 'One manufacturer for your whole range', text: 'Request footballs, handballs and rugby balls in one inquiry, quoted in EUR, GBP or USD.' },
+  { step: 'Production', line: 'Built panel by panel', text: 'The bladder, the lining and the panels are assembled and stitched together.' },
 ];
 
-/* who does what at each stage of the film: the line over the film's step bar (HeroScene) */
-const FILM_PARTS = ['You send the design', 'We make it', 'We add your branding', 'We cover your full range'];
+/* the film's three steps: the line over its step bar (HeroScene), one part of the bar each. Where the second and third
+   begin, in film time (frame of 403): 25, the pencil starts on the graphic; 65, the sketch is finished, which is where
+   the drawing rests at the top of the page, so the scroll is the third step */
+const FILM_PARTS = ['Your design', 'Your brand', 'We make it'];
+const FILM_STEPS_AT = [25 / 403, 65 / 403];
 
 const FAQ = [
   ['Do you sell to individual players?', 'No. We supply businesses: clubs, academies, schools, retailers, distributors and brands.'],
@@ -133,7 +136,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                 </div>
               </div>
               {/* after the words, so the keyboard meets the two main buttons first */}
-              <HeroScene parts={FILM_PARTS.map((x) => tx(x))} label={tx('Parts of the film')} lang={tx.lang(FILM_PARTS[0])} />
+              <HeroScene parts={FILM_PARTS.map((x) => tx(x))} stepsAt={FILM_STEPS_AT} label={tx('Parts of the film')} lang={tx.lang(FILM_PARTS[0])} />
             </div>
           </div></div>
         </section>

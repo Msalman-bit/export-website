@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { FILM_END, followScroll, partsDone, progressAt, scrollAt, scrollForStage, SELF_PLAY, selfPlayEase } from '@/components/site/hero-sequence';
+import { FILM_END, followScroll, partsDone, progressAt, scrollAt, scrollForStage, SELF_PLAY, selfPlayEase, stepStages } from '@/components/site/hero-sequence';
 
 const seq = JSON.parse(readFileSync('public/assets/img/hero-film/seq.json', 'utf8')) as { stages: number[]; timeline: number[][] };
 
@@ -54,7 +54,20 @@ describe('the hero film plays its sketch once, then follows the scroll', () => {
     expect(partsDone(FILM_END, seq.stages)).toEqual([1, 1, 1, 1]);
   });
 
-  it('the sketch is finished inside the first chapter, so no words change while it is drawn', () => {
+  it('three steps: your design and your brand are the sketch, and the scroll is we make it', () => {
+    const three = stepStages([25 / 403, SELF_PLAY.until], seq.timeline);
+    const base = progressAt(SELF_PLAY.until, seq.timeline);
+    expect(three[0]).toBeLessThan(three[1]);
+    expect(three[1]).toBeCloseTo(base, 10);
+    // at the top of the page the sketch is finished: the first two parts are full and the third is empty
+    expect(partsDone(base, three)).toEqual([1, 1, 0]);
+    expect(partsDone(followScroll(base, 0.5), three)[2]).toBeGreaterThan(0.4);
+    expect(partsDone(FILM_END, three)).toEqual([1, 1, 1]);
+    // the line's third part takes the page just into we make it
+    expect(followScroll(base, scrollForStage(2, three, base))).toBeGreaterThan(three[1] + 0.008);
+  });
+
+  it('the sketch is finished before the film reaches the bladder (the first stage in seq.json)', () => {
     const rest = progressAt(65 / 403, seq.timeline);
     expect(rest).toBeGreaterThan(0.1);
     expect(rest).toBeLessThan(seq.stages[0]);
