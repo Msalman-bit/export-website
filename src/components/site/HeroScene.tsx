@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 
-/* The hero's scroll film host (the film draws its sketch by itself once, then follows the scroll: hero-sequence.ts). It mounts only when the page head marked the browser for it
-   (html.hero-seq: motion allowed); otherwise the hero stays the still photograph on one screen.
+/* The hero's scroll film host (the film draws its sketch once, then moves only with the scroll: hero-sequence.ts). It mounts only when the page head marked the browser for it (html.hero-seq: motion allowed); otherwise the hero stays the still photograph on one screen.
    The player loads after the page is interactive, so it never delays the first paint; the head has
    already asked for the first frame.
 
@@ -11,13 +10,15 @@ import { useEffect, useRef, useState } from 'react';
    words leave upward and the next arrive from below, and scrolling up the reverse. The motion itself is CSS
    transitions (site.css, "the hero's chapters"), so a fast scroll across two chapters retargets rather than queues. */
 
-const STEPS = ['Design', 'Production', 'Branding', 'Range'];
+/* who does what at each stage of the film: one line that changes with it, over a line in four parts */
+const PARTS = ['You send the design', 'We make it', 'We add your branding', 'We cover your full range'];
 
-export function HeroScene() {
+export function HeroScene({ lang }: { lang?: string }) {
   const host = useRef<HTMLDivElement>(null);
-  const fill = useRef<HTMLSpanElement>(null);
+  const fills = useRef<(HTMLSpanElement | null)[]>([]);
   const [stage, setStage] = useState(0);
   const [live, setLive] = useState(false);
+  const toStage = useRef<((stage: number) => void) | null>(null);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -39,27 +40,32 @@ export function HeroScene() {
         dispose = mountHeroSequence({
           host: host.current, section,
           onStage: show,
-          // the line under the steps follows the film itself: a transform on the line, no re-render
-          onProgress: (p) => { if (fill.current) fill.current.style.transform = `scaleX(${p.toFixed(4)})`; },
+          onControl: (go) => { toStage.current = go; },
+          // the line follows the film itself: a transform on each of its parts, no re-render
+          onProgress: (_, parts) => parts.forEach((v, i) => { const f = fills.current[i]; if (f) f.style.transform = `scaleX(${v.toFixed(4)})`; }),
           onReady: () => { media?.setAttribute('data-seq', 'ready'); setLive(true); },
           onFail: fail,
         });
       })
       .catch(fail);
-    return () => { cancelled = true; dispose(); };
+    return () => { cancelled = true; toStage.current = null; dispose(); };
   }, []);
 
   return (
     <>
       <div ref={host} className="hero-scene" aria-hidden="true" />
-      {/* where the film is: its four chapters and a line that fills with it (the words say the same) */}
-      <div className="hero-steps" aria-hidden="true" data-live={live || undefined}>
-        <ol>
-          {STEPS.map((s, i) => (
-            <li key={s} data-state={i < stage ? 'past' : i === stage ? 'on' : undefined}>{s}</li>
+      {/* where the film is and who does that part: a line of words that changes with it (the chapters' words say more, so
+          it is for the eye), over a line in four parts, each a button that takes the page to its part */}
+      <div className="hero-steps" role="group" aria-label="Parts of the film" lang={lang} data-live={live || undefined}>
+        <p className="hero-steps__line" aria-hidden="true"><span key={stage}>{PARTS[stage]}</span></p>
+        <div className="hero-steps__parts">
+          {PARTS.map((label, i) => (
+            <button key={label} type="button" className="hero-steps__part" aria-label={label} title={label}
+              aria-current={stage === i ? 'step' : undefined} onClick={() => toStage.current?.(i)}>
+              <span className="hero-steps__track"><span ref={(el) => { fills.current[i] = el; }} className="hero-steps__fill" /></span>
+            </button>
           ))}
-        </ol>
-        <span className="hero-steps__track"><span ref={fill} className="hero-steps__fill" /></span>
+        </div>
       </div>
     </>
   );

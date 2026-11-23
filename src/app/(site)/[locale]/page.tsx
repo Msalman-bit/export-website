@@ -81,7 +81,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                     style={{ '--ly-pos': '78% 50%', '--ly-pos-phone': '60% 22%' } as React.CSSProperties} />
                 </picture>
               ) : null}
-              <HeroScene />
               <div className="hero__over">
                 <div>
                   <h1 id="hero-h">Custom and private-label sports equipment made in Pakistan</h1>
@@ -108,6 +107,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                   </div>
                 </div>
               </div>
+              {/* after the words, so the keyboard meets the two main buttons first */}
+              <HeroScene lang={enLang} />
             </div>
           </div></div>
         </section>

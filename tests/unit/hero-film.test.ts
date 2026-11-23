@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { followScroll, progressAt, selfPlayEase } from '@/components/site/hero-sequence';
+import { FILM_END, followScroll, partsDone, progressAt, scrollAt, scrollForStage, SELF_PLAY, selfPlayEase } from '@/components/site/hero-sequence';
 
 const seq = JSON.parse(readFileSync('public/assets/img/hero-film/seq.json', 'utf8')) as { stages: number[]; timeline: number[][] };
 
-describe('the hero film plays its sketch, then follows the scroll', () => {
-  it('self-play runs from start to end, never backwards, starting and stopping gently', () => {
+describe('the hero film plays its sketch once, then follows the scroll', () => {
+  it('self-play runs from start to end, never backwards, starting and stopping gently, in under five seconds', () => {
     expect(selfPlayEase(0)).toBe(0);
     expect(selfPlayEase(1)).toBeCloseTo(1, 10);
     expect(selfPlayEase(2)).toBeCloseTo(1, 10);
@@ -14,17 +14,47 @@ describe('the hero film plays its sketch, then follows the scroll', () => {
     expect(Math.max(...steps) * 1000).toBeLessThan(1.35); // never much faster than its average
     expect(steps[0]).toBeLessThan(0.0001);
     expect(steps[999]).toBeLessThan(0.0001);
+    expect(SELF_PLAY.seconds).toBeLessThan(5); // longer would need a pause button
   });
 
-  it('the scroll takes over without a jump, from wherever the film is, and still reaches the end', () => {
-    for (const base of [0, 0.05, 0.1657, 0.3]) {
-      expect(followScroll(base, 0)).toBe(base);
-      expect(followScroll(base, 1)).toBeCloseTo(1, 10);
-      for (let i = 0; i < 100; i++) expect(followScroll(base, (i + 1) / 100)).toBeGreaterThan(followScroll(base, i / 100));
+  it('the top of the page is the finished sketch, and the scroll goes on from there to the end', () => {
+    const base = progressAt(SELF_PLAY.until, seq.timeline);
+    expect(followScroll(base, 0)).toBe(base);
+    expect(followScroll(base, 1)).toBeCloseTo(1, 10);
+    for (let i = 0; i < 100; i++) expect(followScroll(base, (i + 1) / 100)).toBeGreaterThan(followScroll(base, i / 100));
+  });
+
+  it('every place in the film has its place in the scroll, and the other way round', () => {
+    const base = progressAt(SELF_PLAY.until, seq.timeline);
+    for (const p of [base, 0.2, 0.3, 0.5, 0.76, FILM_END]) expect(followScroll(base, scrollAt(base, p))).toBeCloseTo(p, 10);
+    expect(scrollAt(base, base)).toBe(0);
+    // the film ends with the hero still on the whole screen
+    expect(scrollAt(base, FILM_END)).toBeGreaterThan(0.9);
+    expect(scrollAt(base, FILM_END)).toBeLessThan(0.99);
+  });
+
+  it('each part of the line takes the page into that part of the film', () => {
+    for (const base of [0, progressAt(SELF_PLAY.until, seq.timeline)]) {
+      expect(scrollForStage(0, seq.stages, base)).toBe(0);
+      for (const stage of [1, 2, 3]) {
+        const p = followScroll(base, scrollForStage(stage, seq.stages, base));
+        expect(p).toBeGreaterThan(seq.stages[stage - 1] + 0.008);
+        expect(p).toBeLessThan(seq.stages[stage] ?? 1);
+      }
     }
   });
 
-  it('the resting picture is inside the first chapter, so no words change while it plays by itself', () => {
+  it('the line’s four parts fill one after the other, and all are full where the film ends', () => {
+    expect(partsDone(0, seq.stages)).toEqual([0, 0, 0, 0]);
+    expect(partsDone(seq.stages[0], seq.stages)).toEqual([1, 0, 0, 0]);
+    const mid = partsDone((seq.stages[1] + seq.stages[2]) / 2, seq.stages);
+    expect(mid[1]).toBe(1);
+    expect(mid[2]).toBeCloseTo(0.5, 5);
+    expect(mid[3]).toBe(0);
+    expect(partsDone(FILM_END, seq.stages)).toEqual([1, 1, 1, 1]);
+  });
+
+  it('the sketch is finished inside the first chapter, so no words change while it is drawn', () => {
     const rest = progressAt(65 / 403, seq.timeline);
     expect(rest).toBeGreaterThan(0.1);
     expect(rest).toBeLessThan(seq.stages[0]);

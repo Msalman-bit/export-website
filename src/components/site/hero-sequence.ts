@@ -5,11 +5,13 @@
    on, and the football turns into a handball and then a rugby ball. seq.json's stages split it into the chapters
    the hero's words follow (onStage), with its pacing in timeline.
 
-   Self-play: before anyone scrolls, the pencil sketch draws itself once (SELF_PLAY) and rests on the finished sketch.
-   The first scroll takes over at any moment, from exactly where the film is: what is left of the film is spread over
-   the whole scroll (base), so it never jumps or rewinds, and scrolling back to the top returns to that same picture.
-   It lasts under five seconds, so it needs no pause button (WCAG 2.2.2). A page opened part-way down, a visitor saving
-   data, or frames that take too long to arrive: it does not play, and the film is the scroll's alone.
+   Self-play: before anyone scrolls, the pencil sketch draws itself once (SELF_PLAY) and rests finished; from then on the
+   film moves only with the scroll. The top of the page is always the finished sketch and the end of the pinned section
+   the end of the film, so scrolling back to the top always ends on the finished sketch, wherever the film has been; a
+   visitor who scrolls while it is being drawn sees the rest of it drawn quickly, and the film goes on from there. It lasts
+   under five seconds, so it needs no pause button (WCAG 2.2.2). A page opened part-way down: the film is where the scroll
+   is. Frames that take too long to arrive: the sketch is shown finished. A visitor saving data: it does not play, and the
+   scroll draws the sketch too.
 
    Loading: the first frame first, then every second frame of the sketch (it plays first, and starts with those), then
    every 16th of the film, the sketch's others and the rest coarse to fine. A visitor who scrolls early turns what is
@@ -23,8 +25,9 @@ type Seq = { ball: { x: number; y: number; d: number }; bg?: string; stages?: nu
 const BASE = '/assets/img/hero-film';
 /* Self-play: how far into the film it runs (film time, 0 to 1: the finished sketch, frame 66 of 404), how long it
    takes, how long after the first frame it waits (the film fades in first), and how long its frames may take to arrive
-   before it does not play at all. A new film: set `until` to its resting picture. */
-const SELF_PLAY = { until: 65 / 403, seconds: 4, wait: 800, giveUp: 12000 };
+   before the sketch is shown finished instead. A new film: set `until` to its resting picture. */
+export const SELF_PLAY = { until: 65 / 403, seconds: 4, wait: 800, giveUp: 12000 };
+export const FILM_END = 0.97; // where the film ends (of the whole scroll, seq.json's timeline)
 const STAGE_MARGIN = 0.008; // of the whole scroll: about 30px on a 900px-tall window, enough to stop a boundary flickering
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
@@ -36,8 +39,17 @@ export function selfPlayEase(u: number) {
   return 1 - ((1 - x) * (1 - x)) / (2 * d) / area;
 }
 
-/* Where the film is for a scroll position (0 to 1), once self-play has left it at `base`. */
+/* Where the film is for a scroll position (0 to 1): the finished sketch (`base`) at the top, the end of the film at 1. */
 export const followScroll = (base: number, scroll: number) => base + (1 - base) * clamp01(scroll);
+/* ... and the scroll position for a place in the film, its inverse. */
+export const scrollAt = (base: number, p: number) => clamp01((p - base) / (1 - base));
+
+/* How much of each part of the film is done at p, 0 to 1 each (the last part ends where the film does). */
+export const partsDone = (p: number, stages: number[]) =>
+  [0, ...stages].map((from, i) => clamp01((p - from) / ((stages[i] ?? FILM_END) - from)));
+
+/* The scroll position (0 to 1) that opens a stage, a little past its boundary; the first one is the top. */
+export const scrollForStage = (stage: number, stages: number[], base: number) => (stage <= 0 ? 0 : scrollAt(base, stages[stage - 1] + 0.02));
 
 /* The scroll position whose film time is t: the inverse of seq.json's timeline (piecewise linear). */
 export function progressAt(t: number, timeline?: number[][]) {
@@ -61,12 +73,14 @@ export function mountHeroSequence(o: {
   host: HTMLElement;
   section: HTMLElement;
   onStage: (i: number) => void;
-  /** where the film is, 0 to 1, eased like the film itself (for a progress line) */
-  onProgress?: (p: number) => void;
+  /** where the film is, 0 to 1, eased like the film itself, and how much of each part of it is done (for the line) */
+  onProgress?: (p: number, parts: number[]) => void;
+  /** hands over a way to scroll the page to where a stage of the film begins (for the line's parts) */
+  onControl?: (toStage: (stage: number) => void) => void;
   onReady: () => void;
   onFail: () => void;
 }) {
-  const { host, section, onStage, onProgress, onReady, onFail } = o;
+  const { host, section, onStage, onProgress, onControl, onReady, onFail } = o;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) { onFail(); return () => {}; }
@@ -83,8 +97,9 @@ export function mountHeroSequence(o: {
   let box = { dx: 0, dy: 0, sw: 0, sh: 0 };
   let wide = true;
   let target = 0, prog = 0, lastProg = -1, drawn = -1, stageIdx = -1, visible = true, raf = 0, last = performance.now(), ready = false;
-  // self-play: 'wait' for the frames, 'play', then 'done' for good; base is where it left the film
-  let auto: 'wait' | 'play' | 'done' = 'wait', autoT = 0, autoFrom = 0, autoTo = 0, base = 0, readyAt = 0;
+  // self-play: 'wait' for the frames, 'play' the sketch, then 'done': the scroll's. base: the film's place at the top of
+  // the page; stick: the scroll between the top of the section and where its frame is held
+  let auto: 'wait' | 'play' | 'done' = 'wait', autoT = 0, autoFrom = 0, autoTo = 0, base = 0, readyAt = 0, stick = 0;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let queue: number[] = [];
 
@@ -98,6 +113,8 @@ export function mountHeroSequence(o: {
     if (!seq || !set) return;
     const r = host.getBoundingClientRect();
     W = Math.max(1, r.width); H = Math.max(1, r.height);
+    // the frame stands below the section's own padding and is held at its sticky top: the scroll between the two
+    stick = (parseFloat(getComputedStyle(section.firstElementChild ?? section).top) || 0) - (parseFloat(getComputedStyle(section).paddingTop) || 0);
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     const aspect = set.width / set.height, b = seq.ball;
@@ -107,8 +124,9 @@ export function mountHeroSequence(o: {
       // the free side of the frame: the words take the left half, the ball sits in the middle of the rest
       const D = Math.min(H * 0.68, W * 0.37);
       sh = D / b.d;
-      // on a wide, short frame the ball moves further right, so it keeps clear of the words
-      X = Math.max(W * 0.74, W - D * 0.5 - W * 0.05); Y = H * 0.5;
+      // on a wide, short frame the ball moves further right, so it keeps clear of the words; never so far that the
+      // rugby ball at the end, the widest of the three, is cut by the screen's edge
+      X = Math.min(Math.max(W * 0.74, W - D * 0.5 - W * 0.05), W - D * 0.72); Y = H * 0.5;
     } else {
       // a little smaller and higher than the football alone needs: the rugby ball at the end is wider and sits lower
       const D = Math.min(W * 0.74, H * 0.4);
@@ -178,14 +196,21 @@ export function mountHeroSequence(o: {
     return true;
   }
 
-  const readScroll = () => {
-    const r = section.getBoundingClientRect(), total = section.offsetHeight - window.innerHeight;
-    const scroll = total > 0 ? clamp01(-r.top / total) : 0;
-    // the visitor's first scroll ends self-play where it stands, or before it began
-    if (auto !== 'done' && scroll > 0.0005) { auto = 'done'; queue.sort((a, b) => coarse(a) - coarse(b)); }
-    target = followScroll(base, scroll);
+  /* the stretch of scroll the hero is pinned for: from where its frame reaches the bar to where the section ends */
+  function pin() {
+    const top = window.scrollY + section.getBoundingClientRect().top;
+    const from = top - stick;
+    return { from, len: Math.max(1, top + section.offsetHeight - window.innerHeight - from) };
+  }
+  const scrolled = () => { const { from, len } = pin(); return clamp01((window.scrollY - from) / len); };
+
+  /* the film is the scroll's from here: at once, and from where it stands (the rest of the sketch draws itself quickly) */
+  function follow() {
+    if (auto !== 'done') { auto = 'done'; base = autoTo; queue.sort((a, b) => coarse(a) - coarse(b)); }
+    target = followScroll(base, scrolled());
     wake();
-  };
+  }
+  const readScroll = () => { if (auto === 'done' || scrolled() > 0.0005) follow(); else wake(); };
 
   /* every second frame of the sketch is in; the ones between arrive while it plays */
   function sketchLoaded() {
@@ -196,7 +221,7 @@ export function mountHeroSequence(o: {
   function trySelfPlay() {
     if (auto !== 'wait' || !ready || disposed) return;
     const waited = performance.now() - readyAt;
-    if (waited > SELF_PLAY.giveUp) { auto = 'done'; return; }
+    if (waited > SELF_PLAY.giveUp) { follow(); return; }
     if (waited < SELF_PLAY.wait || !sketchLoaded()) return;
     auto = 'play'; autoT = 0;
     wake();
@@ -208,9 +233,8 @@ export function mountHeroSequence(o: {
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     if (auto === 'play') {
       autoT += dt;
-      prog = autoFrom + (autoTo - autoFrom) * selfPlayEase(autoT / SELF_PLAY.seconds);
-      base = target = prog;
-      if (autoT >= SELF_PLAY.seconds) auto = 'done';
+      prog = target = autoFrom + (autoTo - autoFrom) * selfPlayEase(autoT / SELF_PLAY.seconds);
+      if (autoT >= SELF_PLAY.seconds) follow();
     } else {
       prog += (target - prog) * (1 - Math.exp(-dt * 9));
       if (Math.abs(target - prog) < 0.0004) prog = target;
@@ -227,10 +251,17 @@ export function mountHeroSequence(o: {
     while (s < st.length && prog >= st[s] + STAGE_MARGIN) s++;
     while (s > 0 && prog < st[s - 1] - STAGE_MARGIN) s--;
     if (s !== stageIdx) { stageIdx = s; onStage(s); }
-    if (prog !== lastProg) { lastProg = prog; onProgress?.(prog); }
-    if (auto === 'play' || prog !== target || !ok) raf = requestAnimationFrame(tick);
+    if (prog !== lastProg) { lastProg = prog; onProgress?.(prog, partsDone(prog, st)); }
+    if (!raf && (auto === 'play' || prog !== target || !ok)) raf = requestAnimationFrame(tick);
   }
   function wake() { if (!raf && !disposed) { last = performance.now(); raf = requestAnimationFrame(tick); } }
+
+  /* to where a part of the film begins */
+  function toStage(stage: number) {
+    follow();
+    const { from, len } = pin();
+    window.scrollTo({ top: Math.max(0, from + len * scrollForStage(stage, seq?.stages ?? [], base)), behavior: 'smooth' });
+  }
 
   const ro = new ResizeObserver(() => { layout(); wake(); });
   const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) wake(); });
@@ -288,6 +319,7 @@ export function mountHeroSequence(o: {
       autoFrom = progressAt(0.0001, j.timeline); autoTo = progressAt(SELF_PLAY.until, j.timeline);
       if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) auto = 'done';
       readScroll(); prog = target;
+      onControl?.(toStage);
       load(order(set.count));
     })
     .catch(fail);
