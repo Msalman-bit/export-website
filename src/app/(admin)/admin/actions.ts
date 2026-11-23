@@ -725,12 +725,16 @@ export async function saveTranslations(fd: FormData) {
     if (!k.startsWith('t_') || typeof v !== 'string') continue;
     const key = k.slice(2);
     if (fd.get(`r_${key}`) !== 'on') continue;
-    await db.insert(s.translations).values({ locale, key, value: v.trim().slice(0, 500), status: 'reviewed' })
-      .onConflictDoUpdate({ target: [s.translations.locale, s.translations.key], set: { value: v.trim().slice(0, 500), status: 'reviewed', updatedAt: new Date() } });
+    // page and product text ("x:" keys, tx.ts) can be a whole paragraph or list; interface words stay short
+    const value = v.replace(/\r\n?/g, '\n').trim().slice(0, key.startsWith('x:') ? 6000 : 500);
+    if (!value) continue;
+    await db.insert(s.translations).values({ locale, key, value, status: 'reviewed' })
+      .onConflictDoUpdate({ target: [s.translations.locale, s.translations.key], set: { value, status: 'reviewed', updatedAt: new Date() } });
     n++;
   }
-  await audit(actor, 'translations.review', 'locale', locale, { n });
-  back(`/admin/translations?locale=${locale}`, `${n} strings saved as reviewed.`);
+  const section = str(fd, 'section', 40).replace(/[^a-z]/g, '');
+  await audit(actor, 'translations.review', 'locale', locale, { n, section: section || 'interface' });
+  back(`/admin/translations?locale=${locale}${section ? `&section=${section}` : ''}`, `${n} strings saved as reviewed.`);
 }
 
 export async function uploadDocument(fd: FormData) {

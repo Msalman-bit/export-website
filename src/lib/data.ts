@@ -3,6 +3,7 @@ import { getDb } from './db/client';
 import * as s from './db/schema';
 import { DEFAULT_SETTINGS } from './db/seed';
 import { MARKETS } from './content/markets';
+import type { Tx } from './i18n/tx';
 
 /* Read-side queries for the public site. Everything the public sees is filtered to published rows. */
 
@@ -93,15 +94,18 @@ export async function getAllProducts(): Promise<ProductCard[]> {
   return out;
 }
 
-export async function searchProducts(q: string, limit = 24): Promise<ProductCard[]> {
+/** With tx, a product's name, type and summary in the page's language count as well as the English ones. */
+export async function searchProducts(q: string, limit = 24, tx?: Tx): Promise<ProductCard[]> {
   const term = q.trim().slice(0, 60);
   if (term.length < 2) return [];
   const all = await getAllProducts();
   const words = term.toLowerCase().split(/\s+/).filter(Boolean);
   return all
     .map((p) => {
-      const hay = `${p.name} ${p.subName} ${p.summary} ${p.construction} ${p.sku}`.toLowerCase();
-      const score = words.reduce((n, w) => n + (hay.includes(w) ? (p.name.toLowerCase().includes(w) ? 3 : 1) : 0), 0);
+      const local = tx && tx.locale !== 'en' ? ` ${tx(p.name)} ${tx(p.subName)} ${tx(p.summary)}` : '';
+      const hay = `${p.name} ${p.subName} ${p.summary} ${p.construction} ${p.sku}${local}`.toLowerCase();
+      const names = `${p.name} ${tx && tx.locale !== 'en' ? tx(p.name) : ''}`.toLowerCase();
+      const score = words.reduce((n, w) => n + (hay.includes(w) ? (names.includes(w) ? 3 : 1) : 0), 0);
       return { p, score };
     })
     .filter((x) => x.score > 0)

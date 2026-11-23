@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { localeFrom, getDict } from '@/lib/i18n/server';
+import { localeFrom, getDict, getText } from '@/lib/i18n/server';
+import { seoTitle } from '@/lib/i18n/tx';
 import { getFamily, getProductsInFamily } from '@/lib/data';
 import { pageMeta } from '@/lib/seo';
 import { PageShell } from '@/components/site/PageShell';
@@ -13,12 +14,12 @@ type Props = { params: Promise<{ locale: string; family: string }>; searchParams
 export async function generateMetadata({ params }: Props) {
   const locale = await localeFrom(params);
   const { family } = await params;
-  const f = await getFamily(family);
+  const [f, tx] = await Promise.all([getFamily(family), getText(locale)]);
   if (!f) return {};
   return pageMeta({
     locale, path: `/products/${family}`,
-    title: f.seoTitle ? `${f.seoTitle} | Monolith Sports` : `${f.name} | Monolith Sports`,
-    description: f.seoDescription || f.summary,
+    title: `${seoTitle(tx, f.seoTitle, f.name, '{name} manufacturer for private label and wholesale')} | Monolith Sports`,
+    description: tx(f.seoDescription || f.summary),
     image: pic(f.image?.url, 1200)?.src,
   });
 }
@@ -33,30 +34,34 @@ export default async function FamilyPage({ params, searchParams }: Props) {
   const sp = await searchParams;
   const f = await getFamily(family);
   if (!f) notFound();
-  const [t, products] = await Promise.all([getDict(locale), getProductsInFamily(f)]);
-  const types = f.subs.map((c) => ({ value: c.slug, label: c.name }));
-  const constructions = [...new Set(products.flatMap((p) => constructionKeys(p.construction)))].map((c) => ({ value: c, label: c }));
+  const [t, tx, products] = await Promise.all([getDict(locale), getText(locale), getProductsInFamily(f)]);
+  const types = f.subs.map((c) => ({ value: c.slug, label: tx(c.name) }));
+  // the filter's value stays the English word (it is in the address); its label is in the page's language
+  const constructions = [...new Set(products.flatMap((p) => constructionKeys(p.construction)))].map((c) => ({ value: c, label: tx(c) }));
+  const about = `About ${/^[A-Z][a-z]/.test(f.name) ? f.name.charAt(0).toLowerCase() + f.name.slice(1) : f.name}`;
   const initial = {
     type: ([] as string[]).concat(sp.type ?? []),
     construction: ([] as string[]).concat(sp.construction ?? []),
     studio: sp.studio === '1',
   };
   return (
-    <PageShell locale={locale} crumbs={[{ name: t['nav.products'], path: '/products' }, { name: f.name, path: `/products/${f.slug}` }]} enter="content">
+    <PageShell locale={locale} crumbs={[{ name: t['nav.products'], path: '/products' }, { name: tx(f.name), path: `/products/${f.slug}`, lang: tx.lang(f.name) }]} enter="content">
       <header className="page-head">
-        <h1>{f.name}</h1>
-        <p>{shortLine(f.summary)}</p>
+        <h1 lang={tx.lang(f.name)}>{tx(f.name)}</h1>
+        <p lang={tx.lang(f.summary)}>{shortLine(tx(f.summary))}</p>
       </header>
       <CatalogueFilter
         locale={locale}
         labels={{ type: t['filter.type'], construction: t['filter.construction'], studio: t['filter.studio'], result: t['filter.result'], results: t['filter.results'], all: t['filter.all'] }}
+        text={tx.pick(['Filter products', 'Filter', 'Filter ({n} selected)', 'Apply filters', 'Clear filters', 'No product matches these filters.', 'Describe your requirements'])}
         types={types}
         constructions={constructions}
         initial={initial}
         products={products.map((p) => ({
-          id: p.id, name: p.name, sku: p.sku, summary: p.summary, type: p.subSlug, typeName: p.subName,
+          id: p.id, name: tx(p.name), sku: p.sku, summary: tx(p.summary), type: p.subSlug, typeName: tx(p.subName),
+          lang: tx.lang(p.name) ?? tx.lang(p.summary),
           constructions: constructionKeys(p.construction), studio: !!p.studioModel,
-          href: `/${locale}/products/${f.slug}/${p.slug}`, image: p.images[0] ?? null,
+          href: `/${locale}/products/${f.slug}/${p.slug}`, image: p.images[0] ? { ...p.images[0], alt: tx.has(p.images[0].alt) ? tx(p.images[0].alt) : tx(p.name) } : null,
         }))}
       />
       {f.body || f.image ? (
@@ -64,12 +69,12 @@ export default async function FamilyPage({ params, searchParams }: Props) {
           <div className="split-page">
             <div className="block">
               {/* "About football equipment": the first letter lowered only for an ordinary word, never an acronym */}
-              <h2 id="fam-about-h">About {/^[A-Z][a-z]/.test(f.name) ? f.name.charAt(0).toLowerCase() + f.name.slice(1) : f.name}</h2>
-              {f.body ? <p className="t-body">{f.body}</p> : null}
+              <h2 id="fam-about-h" lang={tx.lang(about)}>{tx(about)}</h2>
+              {f.body ? <p className="t-body" lang={tx.lang(f.body)}>{tx(f.body)}</p> : null}
             </div>
             {f.image ? (
               <figure className="split-page__media" style={{ aspectRatio: '4 / 3', position: 'static' }}>
-                <Img url={f.image.url} alt={f.image.alt ?? f.name} sizes="(max-width: 1023px) 100vw, 520px" prefer={960} />
+                <Img url={f.image.url} alt={tx.has(f.image.alt) ? tx(f.image.alt ?? f.name) : tx(f.name)} sizes="(max-width: 1023px) 100vw, 520px" prefer={960} />
               </figure>
             ) : null}
           </div>

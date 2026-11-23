@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 
 type Hit = { id: string; name: string; sku: string; type: string; image: string | null; href: string };
-type Text = { label: string; short: string; all: string; none: string; result: string; results: string; catalogue: string };
+type Text = { label: string; short: string; all: string; none: string; result: string; results: string; catalogue: string; categories: string; clear: string; close: string };
 
 /* The header's search, on a computer (a phone keeps the sheet's plain link to the search page). At rest it is a grey
    pill, with its word where the bar has room for it. Pointing at it opens it into a small field where it stands; a click (or Tab) gives it the whole row of words, which step
@@ -117,7 +117,7 @@ export function HeaderSearch({ locale, searchHref, catalogueHref, families, text
             aria-activedescendant={open && found && active >= 0 ? `${id}-o${active}` : undefined}
             value={open ? q : ''} onChange={(e) => setQ(e.target.value)} onKeyDown={onKey} />
           {/* empties the field; on an empty field, closes the search */}
-          <button type="button" className="hs__clear" tabIndex={-1} aria-label={q ? 'Clear the search' : 'Close the search'} onMouseDown={(e) => e.preventDefault()}
+          <button type="button" className="hs__clear" tabIndex={-1} aria-label={q ? text.clear : text.close} onMouseDown={(e) => e.preventDefault()}
             onClick={() => { if (q) { setQ(''); box.current?.focus(); } else close(); }}>
             <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
           </button>
@@ -145,7 +145,7 @@ export function HeaderSearch({ locale, searchHref, catalogueHref, families, text
           <div className="hs__none"><p>{text.none}</p><a className="link" href={catalogueHref}>{text.catalogue}</a></div>
         ) : (
           <div className="hs__families">
-            <p className="t-label">Categories</p>
+            <p className="t-label">{text.categories}</p>
             {families.map((f) => (
               <a key={f.href} href={f.href}>
                 <span className="hs__pic">{f.image ? <img src={f.image} alt="" width={48} height={48} loading="lazy" decoding="async" /> : null}</span>

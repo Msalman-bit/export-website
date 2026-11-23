@@ -118,8 +118,12 @@ everyone (the Catalogues page).
 - **Testimonials and certificates:** nothing publishes unless verified (and for testimonials, consented).
 - **Business facts:** shown only when verified.
 - **Export markets:** mark a country "Shipped to" after a delivery.
-- **Translations:** review each interface string per language and tick it; then index the language in
-  Settings.
+- **Translations:** the home page, catalogue, product pages, quotation form, About and Contact are shown in
+  German, French, Spanish, Italian and Dutch from drafts. Pick a language, then a part of the site (Interface
+  words, Home page, Menus and footer, Categories and products, Forms, About and Contact); a native speaker
+  corrects a text if needed, ticks it and saves. Until then the site shows the draft. A product or page text you
+  change in English later shows in English until it is translated again. The legal pages stay English. Index
+  a language in Settings only after its texts are reviewed.
 
 ## System
 

@@ -2,7 +2,7 @@ import Script from 'next/script';
 import { KIT_VERSION } from '@/lib/kit-version';
 import { headers, cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { localeFrom, getDict } from '@/lib/i18n/server';
+import { localeFrom, getDict, getText } from '@/lib/i18n/server';
 import { getFamilies, getPublishedPageSlugs, getSettings } from '@/lib/data';
 import { Header } from '@/components/site/Header';
 import { ConsentBanner } from '@/components/site/ConsentBanner';
@@ -43,7 +43,7 @@ export default async function SiteLayout({ children, params }: { children: React
   const nonce = h.get('x-nonce') ?? undefined;
   const path = h.get('x-pathname') ?? `/${locale}`;
   const isHome = path === `/${locale}` || path === `/${locale}/`;
-  const [t, families, pages] = await Promise.all([getDict(locale), getFamilies(), getPublishedPageSlugs()]);
+  const [t, tx, families, pages] = await Promise.all([getDict(locale), getText(locale), getFamilies(), getPublishedPageSlugs()]);
   const consent = (await cookies()).get('ms_consent')?.value;
   const ga = settings.analytics.ga4?.trim();
 
@@ -78,7 +78,7 @@ export default async function SiteLayout({ children, params }: { children: React
         ) : null}
       </head>
       <body>
-        <Header locale={locale} t={t} families={families} pages={pages} path={path} />
+        <Header locale={locale} t={t} tx={tx} families={families} pages={pages} path={path} />
         {children}
         <SiteMotion />
         {ga ? <ConsentBanner locale={locale} decided={!!consent} /> : null}

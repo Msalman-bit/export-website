@@ -1,16 +1,20 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { addToBasket, readBasket, readMode, writeMode } from '@/lib/basket';
+import { clientTx } from '@/lib/i18n/fill';
 
 /* On a product page: the quantity, "Add to inquiry" and "Request a sample". The status line under the
    buttons says what happened and links to the list. When the visitor picked "Samples first" on the inquiry
    form, the page follows it: "Request a sample" is the main button, the bulk quantity steps aside (a sample is
    one piece; the expected order is asked on the form), and one line offers the way back to a bulk quote. */
-export function AddToInquiry({ product, locale, labels }: {
+export function AddToInquiry({ product, locale, labels, text }: {
   product: { id: string; name: string; sku: string; image?: string; href: string };
   locale: string;
   labels: { add: string; sample: string; added: string; quantity: string; quote: string };
+  /* the box's own sentences in the page's language (English -> translation) */
+  text?: Record<string, string>;
 }) {
+  const x = clientTx(text);
   const [qty, setQty] = useState('100');
   const [status, setStatus] = useState('');
   const [statusN, setStatusN] = useState(0);
@@ -31,22 +35,23 @@ export function AddToInquiry({ product, locale, labels }: {
   const add = (sample: boolean) => {
     const n = Number(qty);
     // a sample needs no quantity: it is one piece, and the order expected later is asked on the inquiry form
-    if (!sample && (!Number.isInteger(n) || n < 1)) { setErr('Enter a whole number of 1 or more.'); return; }
+    if (!sample && (!Number.isInteger(n) || n < 1)) { setErr(x('Enter a whole number of 1 or more.')); return; }
     setErr('');
     addToBasket({ productId: product.id, name: product.name, sku: product.sku, image: product.image, href: product.href, quantity: sample ? 0 : n, notes: '', sample });
-    say(sample ? `Sample request for ${product.name}: ${labels.added.toLowerCase()}.` : `${n.toLocaleString('en-GB')} × ${product.name}: ${labels.added.toLowerCase()}.`);
+    say(sample ? x('Sample request for {name}: added to your inquiry.', { name: product.name })
+      : x('{n} × {name}: added to your inquiry.', { n: n.toLocaleString(locale === 'en' ? 'en-GB' : locale), name: product.name }));
   };
 
   const statusLine = (
     <p className="status-line" role="status">
-      {status ? <span key={statusN} className="status-line__msg">{status}</span> : null}{status || count ? <> <a className="link" href={`/${locale}/inquiry`}>Open your inquiry list{count ? ` (${count})` : ''}</a></> : null}
+      {status ? <span key={statusN} className="status-line__msg">{status}</span> : null}{status || count ? <> <a className="link" href={`/${locale}/inquiry`}>{x('Open your inquiry list')}{count ? ` (${count})` : ''}</a></> : null}
     </p>
   );
 
   if (samplesFirst) {
     return (
       <div className="buy__actions">
-        <p className="buy__mode">You are requesting samples first. <button type="button" className="btn-text" onClick={() => writeMode('quote')}>Switch to a bulk quotation</button></p>
+        <p className="buy__mode">{x('You are requesting samples first.')} <button type="button" className="btn-text" onClick={() => writeMode('quote')}>{x('Switch to a bulk quotation')}</button></p>
         <button type="button" className="btn btn--primary" onClick={() => add(true)}>{labels.sample}</button>
         {statusLine}
       </div>

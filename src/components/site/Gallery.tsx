@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { pic } from '@/lib/media';
 import type { ProductImage } from '@/lib/db/schema';
+import { clientTx } from '@/lib/i18n/fill';
 
 /* Product gallery: the main view, thumbnails for every angle, zoom (click or Enter: 2x under the
    pointer; Escape leaves) and, when the product has spin frames, a 360-degree view dragged by
@@ -13,7 +14,9 @@ const STEP = 12;      // px of drag per spin frame
 const SLOP = 8;       // px a finger may wander before a tap becomes a drag
 const DECAY = 0.995;  // the spin's slow-down per ms after a flick (Apple's projection, a little snappier than scroll)
 
-export function Gallery({ images, spin, name }: { images: ProductImage[]; spin: string[]; name: string }) {
+/* name and the pictures' alt come in the page's language; text holds the gallery's own words for it */
+export function Gallery({ images, spin, name, text }: { images: ProductImage[]; spin: string[]; name: string; text?: Record<string, string> }) {
+  const x = clientTx(text);
   const [i, setI] = useState(0);
   const [prev, setPrev] = useState<number | null>(null); // the photo being replaced, kept under the new one
   const [ready, setReady] = useState(true);              // the current photo has loaded (true at first: no fade on load)
@@ -133,7 +136,7 @@ export function Gallery({ images, spin, name }: { images: ProductImage[]; spin: 
     <div className="gallery">
       {mode === 'photo' ? (
         <div ref={ref} className={`gallery__main${zoom ? ' is-zoomed' : ''}${zoom && touchZoom ? ' is-touch' : ''}${prev !== null ? ' is-swapping' : ''}`} role="button" tabIndex={0}
-          aria-label={zoom ? `Zoom out of ${cur.alt}` : `Zoom into ${cur.alt}`} aria-pressed={zoom}
+          aria-label={x(zoom ? 'Zoom out of {alt}' : 'Zoom into {alt}', { alt: cur.alt })} aria-pressed={zoom}
           onClick={photoClick} onPointerDown={photoDown} onPointerMove={photoMove} onPointerUp={photoUp} onPointerCancel={photoUp}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setTouchZoom(false); setZoom(!zoom); } if (e.key === 'Escape') setZoom(false); }}>
           {pp ? <img className="gallery__under" src={pp.src} srcSet={pp.srcSet} sizes={SIZES} alt="" aria-hidden="true" /> : null}
@@ -143,18 +146,18 @@ export function Gallery({ images, spin, name }: { images: ProductImage[]; spin: 
             onLoad={() => setReady(true)} onError={() => { setReady(true); setPrev(null); }} /> : null}
         </div>
       ) : (
-        <div ref={ref} className="gallery__main" role="slider" tabIndex={0} aria-label={`${name}, 360-degree view`} aria-valuemin={1} aria-valuemax={spin.length} aria-valuenow={frame + 1}
+        <div ref={ref} className="gallery__main" role="slider" tabIndex={0} aria-label={x('{name}, 360-degree view', { name })} aria-valuemin={1} aria-valuemax={spin.length} aria-valuenow={frame + 1}
           onPointerDown={spinDown} onPointerMove={spinMove} onPointerUp={(e) => spinUp(e)} onPointerCancel={(e) => spinUp(e, true)}
           onKeyDown={(e) => { stopCoast(); if (e.key === 'ArrowRight') setFrame((frame + 1) % spin.length); if (e.key === 'ArrowLeft') setFrame((frame - 1 + spin.length) % spin.length); }}
           style={{ cursor: 'grab', touchAction: 'pan-y' }}>
-          <img src={spin[frame]} alt={`${name}, view ${frame + 1} of ${spin.length}`} draggable={false} />
+          <img src={spin[frame]} alt={x('{name}, view {n} of {total}', { name, n: frame + 1, total: spin.length })} draggable={false} />
         </div>
       )}
       <div className="gallery__thumbs">
         {images.length > 1 || spin.length ? images.map((im, n) => {
           const t = pic(im.url, 400);
           return (
-            <button key={im.url + n} type="button" aria-pressed={mode === 'photo' && n === i} aria-label={`Show view ${n + 1}: ${im.alt}`}
+            <button key={im.url + n} type="button" aria-pressed={mode === 'photo' && n === i} aria-label={x('Show view {n}: {alt}', { n: n + 1, alt: im.alt })}
               onPointerEnter={() => preload(n)} onFocus={() => preload(n)} onClick={() => show(n)}>
               {t ? <img src={t.src} alt="" width={72} height={72} /> : null}
             </button>
@@ -162,9 +165,9 @@ export function Gallery({ images, spin, name }: { images: ProductImage[]; spin: 
         }) : null}
         {spin.length ? <button type="button" aria-pressed={mode === 'spin'} onClick={() => { stopCoast(); setMode('spin'); }} className="gallery__spin">360°</button> : null}
       </div>
-      <p className="gallery__hint">{mode === 'spin' ? 'Drag, or use the arrow keys, to turn the product.' : (
-        <><span className="gallery__hint-fine">Click the picture to zoom; move the pointer to look closer.</span>
-          <span className="gallery__hint-touch">Tap the picture to zoom; drag to look closer.</span></>
+      <p className="gallery__hint">{mode === 'spin' ? x('Drag, or use the arrow keys, to turn the product.') : (
+        <><span className="gallery__hint-fine">{x('Click the picture to zoom; move the pointer to look closer.')}</span>
+          <span className="gallery__hint-touch">{x('Tap the picture to zoom; drag to look closer.')}</span></>
       )}</p>
     </div>
   );

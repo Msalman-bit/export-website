@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
-import { localeFrom, getDict, href } from '@/lib/i18n/server';
+import { localeFrom, getDict, getText, href } from '@/lib/i18n/server';
 import { getFamilies, getMarkets, getPublishedPageSlugs, getSettings } from '@/lib/data';
+import { countryIn } from '@/lib/i18n/tx';
 import { pageMeta, jsonLd, organizationLd } from '@/lib/seo';
 import { Img } from '@/components/site/Img';
 import { Footer } from '@/components/site/Footer';
@@ -15,14 +16,18 @@ import { pic } from '@/lib/media';
    buttons block, mark dots, palette = the client's own (obsidian, white, lime) via start.mjs brand,
    pairing archivo (condensed by the brief), compositions trio / split / bleed
    moments: pinned-chapters (#process: eight stages walked in four chapters beside one changing frame),
-            picture-develops (#customise: the custom range develops like a print as it enters) */
+            picture-develops (#customise: the custom range develops like a print as it enters)
+
+   Every text is written in English here and shown through tx() in the page's language (drafts in
+   src/lib/i18n/drafts/home.ts); a text with no translation shows in English and is marked lang="en". */
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await localeFrom(params);
+  const tx = await getText(locale);
   return pageMeta({
     locale, path: '/',
-    title: 'Monolith Sports: custom sports equipment made in Pakistan for European clubs and brands',
-    description: 'Footballs, gloves, teamwear and training equipment made in Pakistan for your brand, sampled before the bulk order and quoted in EUR, GBP or USD.',
+    title: tx('Monolith Sports: custom sports equipment made in Pakistan for European clubs and brands'),
+    description: tx('Footballs, gloves, teamwear and training equipment made in Pakistan for your brand, sampled before the bulk order and quoted in EUR, GBP or USD.'),
   });
 }
 
@@ -48,10 +53,20 @@ const HERO_CHAPTERS = [
   { step: 'Your range', line: 'One manufacturer for your whole range', text: 'Request footballs, handballs and rugby balls in one inquiry, quoted in EUR, GBP or USD.' },
 ];
 
+/* who does what at each stage of the film: the line over the film's step bar (HeroScene) */
+const FILM_PARTS = ['You send the design', 'We make it', 'We add your branding', 'We cover your full range'];
+
+const FAQ = [
+  ['Do you sell to individual players?', 'No. We supply businesses: clubs, academies, schools, retailers, distributors and brands.'],
+  ['Can we order a sample before the bulk order?', 'Yes. Request one from any product page; the quotation lists its cost and lead time.'],
+  ['Can you make a product to our own design?', 'Yes. Send drawings, a reference product or a written brief, and we will develop the product with you.'],
+  ['Are your products certified?', 'We list a certificate on this site only when the document itself is published here. Tell us your market, and the quotation will name the tests that apply.'],
+];
+
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await localeFrom(params);
-  const [t, families, markets, pages, settings] = await Promise.all([
-    getDict(locale), getFamilies(), getMarkets(), getPublishedPageSlugs(), getSettings(),
+  const [t, tx, families, markets, pages, settings] = await Promise.all([
+    getDict(locale), getText(locale), getFamilies(), getMarkets(), getPublishedPageSlugs(), getSettings(),
   ]);
   const p = (await headers()).get('x-pathname') ?? `/${locale}`;
   const L = (x: string) => href(locale, x);
@@ -61,7 +76,13 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const termsPhone = pic('gen:terms-swatches-phone', 648);
   const faqPhone = pic('gen:faq-valve-phone', 720);
   const qualityPhone = pic('gen:quality-seam-phone', 720);
-  const enLang = locale === 'en' ? undefined : 'en';
+  // the export map: country names from the browser's own data (Intl), regions and the map's words from the drafts
+  const collate = new Intl.Collator(locale);
+  const mapMarkets = markets.map((m) => ({ ...m, name: countryIn(locale, m.iso2, m.name), regionName: tx(m.region) }))
+    .sort((a, b) => (locale === 'en' ? 0 : collate.compare(a.name, b.name)));
+  const mapText = tx.pick(['Map key', 'Target market', 'Shipped to', '{name} (shipped)', 'See all {n} markets', 'Map of Europe marking {n} target markets', '{name}: shipped to', '{name}: target market']);
+  // a row's text, and lang="en" when it has no translation yet
+  const T = (en: string) => ({ children: tx(en), lang: tx.lang(en) });
 
   return (
     <>
@@ -77,31 +98,34 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                 <picture>
                   {heroPhone ? <source media="(max-width: 639px), (max-width: 1023px) and (orientation: portrait)" srcSet={heroPhone.srcSet} sizes="100vw" /> : null}
                   <img src={hero.src} srcSet={hero.srcSet} sizes="(max-width: 1440px) 100vw, 1280px" width={hero.width} height={hero.height}
-                    alt="A white and black hand-stitched football, seen very close, with lime accent lines"
+                    alt={tx('A white and black hand-stitched football, seen very close, with lime accent lines')}
                     fetchPriority="high" decoding="sync" data-source="stand-in" data-subject="match football"
                     style={{ '--ly-pos': '78% 50%', '--ly-pos-phone': '60% 22%' } as React.CSSProperties} />
                 </picture>
               ) : null}
               <div className="hero__over">
                 <div>
-                  <h1 id="hero-h">Custom and private-label sports equipment made in Pakistan</h1>
+                  <h1 id="hero-h" {...T('Custom and private-label sports equipment made in Pakistan')} />
                   {/* the film's chapters (html.hero-seq only): a large line per stage of the film, led by HeroScene; the
                       paragraph below stays for screen readers and is the words when the film is off */}
-                  <div className="hero-chapters" aria-hidden="true" lang={enLang}>
-                    {HERO_CHAPTERS.map((c, i) => (
-                      <p key={c.step} className="hero-chapter" data-state={i === 0 ? 'on' : 'future'}
-                        style={{ '--n': c.line.split(' ').length } as React.CSSProperties}>
-                        <span className="hero-chapter__step">{c.step}</span>
-                        <span className="hero-chapter__line">
-                          {c.line.split(' ').map((w, k) => (
-                            <span key={k}><span className="hcw"><span className="hcw__in" style={{ '--k': k } as React.CSSProperties}>{w}</span></span>{' '}</span>
-                          ))}
-                        </span>
-                        <span className="hero-chapter__text">{c.text}</span>
-                      </p>
-                    ))}
+                  <div className="hero-chapters" aria-hidden="true">
+                    {HERO_CHAPTERS.map((c, i) => {
+                      const line = tx(c.line);
+                      return (
+                        <p key={c.step} className="hero-chapter" data-state={i === 0 ? 'on' : 'future'} lang={tx.lang(c.line)}
+                          style={{ '--n': line.split(' ').length } as React.CSSProperties}>
+                          <span className="hero-chapter__step">{tx(c.step)}</span>
+                          <span className="hero-chapter__line">
+                            {line.split(' ').map((w, k) => (
+                              <span key={k}><span className="hcw"><span className="hcw__in" style={{ '--k': k } as React.CSSProperties}>{w}</span></span>{' '}</span>
+                            ))}
+                          </span>
+                          <span className="hero-chapter__text">{tx(c.text)}</span>
+                        </p>
+                      );
+                    })}
                   </div>
-                  <p className="hero__lead" lang={enLang}>We make footballs, gloves, teamwear and training equipment for your brand, supply a sample before the bulk order and ship to clubs and distributors across Europe.</p>
+                  <p className="hero__lead" {...T('We make footballs, gloves, teamwear and training equipment for your brand, supply a sample before the bulk order and ship to clubs and distributors across Europe.')} />
                   <div className="btn-row">
                     <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}<QuoteIcon /></a>
                     <a className="btn btn--secondary" href={L('/products')}>{t['cta.catalogue']}</a>
@@ -109,7 +133,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                 </div>
               </div>
               {/* after the words, so the keyboard meets the two main buttons first */}
-              <HeroScene lang={enLang} />
+              <HeroScene parts={FILM_PARTS.map((x) => tx(x))} label={tx('Parts of the film')} lang={tx.lang(FILM_PARTS[0])} />
             </div>
           </div></div>
         </section>
@@ -117,28 +141,31 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <section className="section" id="range" aria-labelledby="range-h">
           <div className="wrap">
             <div className="section-head section-head--row">
-              <div><h2 id="range-h">Product range</h2><p lang={enLang}>One inquiry can cover products from several categories</p></div>
-              <a className="link" href={L('/products')}>See all products</a>
+              <div><h2 id="range-h" {...T('Product range')} /><p {...T('One inquiry can cover products from several categories')} /></div>
+              <a className="link" href={L('/products')} {...T('See all products')} />
             </div>
             {/* the range as an index: one picture beside the ten families; the picture follows the family a
                 visitor points at (first family at rest) */}
             <div className="grid range-index fill">
               <div className="range-index__pics span-6">
                 {families.map((f, i) => (
-                  <Img key={f.slug} url={f.image?.url} alt={f.image?.alt ?? f.name} decorative={i > 0}
+                  <Img key={f.slug} url={f.image?.url} alt={tx.has(f.image?.alt) ? tx(f.image?.alt) : tx(f.name)} decorative={i > 0}
                     sizes="(max-width: 1023px) 100vw, 616px" prefer={i === 0 ? 1200 : 960} />
                 ))}
               </div>
               <ul className="range-index__list span-6 start-7">
-                {families.map((f) => (
-                  <li key={f.slug}>
-                    <a href={L(`/products/${f.slug}`)}>
-                      <span className="range-index__name">{shortName(f)}</span>
-                      <span className="range-index__line" lang={enLang}>{RANGE_TITLE[f.slug] ?? f.summary}</span>
-                      <Arrow />
-                    </a>
-                  </li>
-                ))}
+                {families.map((f) => {
+                  const line = RANGE_TITLE[f.slug] ?? f.summary;
+                  return (
+                    <li key={f.slug}>
+                      <a href={L(`/products/${f.slug}`)}>
+                        <span className="range-index__name" {...T(shortName(f))} />
+                        <span className="range-index__line" {...T(line)} />
+                        <Arrow />
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>
@@ -147,16 +174,16 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <section className="section" id="about" aria-labelledby="about-h">
           <div className="wrap">
             <div className="grid grid--top intro__head">
-              <h2 id="about-h" className="span-5">Sports equipment made for your brand</h2>
-              <div className="intro__text span-7 start-6" lang={enLang}>
-                <p>We make and source sports equipment in Pakistan for businesses abroad. Send us a design or a reference product, and we make a sample, produce the order with your branding and arrange the export.</p>
-                <a className="link" href={L('/about')}>Read about Monolith Sports</a>
+              <h2 id="about-h" className="span-5" {...T('Sports equipment made for your brand')} />
+              <div className="intro__text span-7 start-6">
+                <p {...T('We make and source sports equipment in Pakistan for businesses abroad. Send us a design or a reference product, and we make a sample, produce the order with your branding and arrange the export.')} />
+                <a className="link" href={L('/about')} {...T('Read about Monolith Sports')} />
               </div>
             </div>
             <div className="grid grid--top trio">
-              <figure className="span-5"><Img url="gen:intro-stitching" alt="A curved needle pulling waxed white thread through the edges of a white hexagon and a black pentagon" sizes="(max-width: 639px) 342px, (max-width: 1023px) 300px, 519px" prefer={960} /></figure>
-              <figure className="span-4"><Img url="gen:intro-panels" alt="A stack of die-cut white hexagon and black pentagon football panels with punched stitch holes" sizes="(max-width: 639px) 220px, (max-width: 1023px) 400px, 576px" prefer={800} /></figure>
-              <figure className="span-3"><Img url="gen:intro-thread" alt="Spools of waxed white thread and two curved stitching needles on a steel workbench" sizes="(max-width: 639px) 165px, (max-width: 1023px) 300px, 432px" prefer={640} /></figure>
+              <figure className="span-5"><Img url="gen:intro-stitching" alt={tx('A curved needle pulling waxed white thread through the edges of a white hexagon and a black pentagon')} sizes="(max-width: 639px) 342px, (max-width: 1023px) 300px, 519px" prefer={960} /></figure>
+              <figure className="span-4"><Img url="gen:intro-panels" alt={tx('A stack of die-cut white hexagon and black pentagon football panels with punched stitch holes')} sizes="(max-width: 639px) 220px, (max-width: 1023px) 400px, 576px" prefer={800} /></figure>
+              <figure className="span-3"><Img url="gen:intro-thread" alt={tx('Spools of waxed white thread and two curved stitching needles on a steel workbench')} sizes="(max-width: 639px) 165px, (max-width: 1023px) 300px, 432px" prefer={640} /></figure>
             </div>
           </div>
         </section>
@@ -165,49 +192,49 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           <div className="wrap grid grid--top terms-split">
             <div className="span-5 terms-split__text">
               <div className="section-head">
-                <h2 id="terms-h">Quotation and order terms</h2>
-                <p lang={enLang}>Each quotation is prepared for one order and covers its products, quantities, branding and destination</p>
+                <h2 id="terms-h" {...T('Quotation and order terms')} />
+                <p {...T('Each quotation is prepared for one order and covers its products, quantities, branding and destination')} />
               </div>
-              <ul className="rows terms" lang={enLang}>
-              <li><span className="rows__name">Currencies</span><p>{settings.currencies.enabled.join(', ').replace(/, ([^,]*)$/, ' or $1')}, selected on the inquiry form</p></li>
-              <li><span className="rows__name">Minimum order quantity</span><p>Set per product and stated in the quotation</p></li>
-              <li><span className="rows__name">Samples</span><p>Requested from any product page and approved before production starts</p></li>
-              <li><span className="rows__name">Lead time</span><p>Confirmed in the quotation and counted from sample approval</p></li>
-              <li><span className="rows__name">Shipping</span><p>Sea freight, air freight or courier, to your forwarder or your premises</p></li>
-              <li><span className="rows__name">Artwork</span><p>Up to 5 files of 10 MB each (PDF, AI, EPS, PNG, JPG or WEBP), attached to the inquiry</p></li>
+              <ul className="rows terms">
+              <li><span className="rows__name" {...T('Currencies')} /><p lang={tx.lang('{list}, selected on the inquiry form')}>{tx('{list}, selected on the inquiry form', { list: tx.list(settings.currencies.enabled, 'or') })}</p></li>
+              <li><span className="rows__name" {...T('Minimum order quantity')} /><p {...T('Set per product and stated in the quotation')} /></li>
+              <li><span className="rows__name" {...T('Samples')} /><p {...T('Requested from any product page and approved before production starts')} /></li>
+              <li><span className="rows__name" {...T('Lead time')} /><p {...T('Confirmed in the quotation and counted from sample approval')} /></li>
+              <li><span className="rows__name" {...T('Shipping')} /><p {...T('Sea freight, air freight or courier, to your forwarder or your premises')} /></li>
+              <li><span className="rows__name" {...T('Artwork')} /><p {...T('Up to 5 files of 10 MB each (PDF, AI, EPS, PNG, JPG or WEBP), attached to the inquiry')} /></li>
               </ul>
             </div>
-            <figure className="side-photo side-photo--tall span-7 start-6"><picture>{termsPhone ? <source media="(max-width: 639px)" srcSet={termsPhone.srcSet} sizes="100vw" /> : null}<Img url="gen:terms-swatches" alt="Synthetic leather colour swatches, a cut football panel, a measuring tape and a ruler on a steel desk" sizes="(max-width: 1023px) 100vw, 740px" prefer={1280} /></picture></figure>
+            <figure className="side-photo side-photo--tall span-7 start-6"><picture>{termsPhone ? <source media="(max-width: 639px)" srcSet={termsPhone.srcSet} sizes="100vw" /> : null}<Img url="gen:terms-swatches" alt={tx('Synthetic leather colour swatches, a cut football panel, a measuring tape and a ruler on a steel desk')} sizes="(max-width: 1023px) 100vw, 740px" prefer={1280} /></picture></figure>
           </div>
         </section>
 
         <section className="section" id="process" style={{ '--h': 2 } as React.CSSProperties} data-moment="pinned-chapters" aria-labelledby="process-h">
           <div className="wrap mo-pc__grid">
             <div className="mo-pc__text">
-              <h2 id="process-h">Order process from brief to shipment</h2>
-              <ol className="mo-pc__steps" lang={enLang}>
+              <h2 id="process-h" {...T('Order process from brief to shipment')} />
+              <ol className="mo-pc__steps">
                 <li className="mo-pc__step">
-                  <h3>Product development</h3>
-                  <p>We carry out the research, choose materials that suit where the product is used and draw the design for your approval.</p>
-                  <figure className="mo-pc__visual"><Img url="gen:process-materials" alt="Rolls and swatches of white, black, silver and lime synthetic leather on a steel workbench" sizes="(max-width: 1023px) 100vw, 960px" prefer={1280} /></figure>
+                  <h3 {...T('Product development')} />
+                  <p {...T('We carry out the research, choose materials that suit where the product is used and draw the design for your approval.')} />
+                  <figure className="mo-pc__visual"><Img url="gen:process-materials" alt={tx('Rolls and swatches of white, black, silver and lime synthetic leather on a steel workbench')} sizes="(max-width: 1023px) 100vw, 960px" prefer={1280} /></figure>
                 </li>
                 <li className="mo-pc__step">
-                  <h3>Sample approval</h3>
-                  <p>We make a sample with your materials, colours and branding. Production starts only after you approve it.</p>
-                  <figure className="mo-pc__visual"><Img url="gen:process-prototype" alt="A finished sample football beside die-cut panels, a steel ruler and calipers" sizes="(max-width: 1023px) 100vw, 960px" prefer={1280} /></figure>
+                  <h3 {...T('Sample approval')} />
+                  <p {...T('We make a sample with your materials, colours and branding. Production starts only after you approve it.')} />
+                  <figure className="mo-pc__visual"><Img url="gen:process-prototype" alt={tx('A finished sample football beside die-cut panels, a steel ruler and calipers')} sizes="(max-width: 1023px) 100vw, 960px" prefer={1280} /></figure>
                 </li>
                 <li className="mo-pc__step">
-                  <h3>Production and inspection</h3>
-                  <p>The bulk order is made to match the approved sample and is checked lot by lot before packing.</p>
-                  <figure className="mo-pc__visual"><Img url="gen:process-inspection" alt="A football resting in a ring gauge beside a digital scale and a measuring tape" sizes="(max-width: 1023px) 100vw, 960px" prefer={1280} /></figure>
+                  <h3 {...T('Production and inspection')} />
+                  <p {...T('The bulk order is made to match the approved sample and is checked lot by lot before packing.')} />
+                  <figure className="mo-pc__visual"><Img url="gen:process-inspection" alt={tx('A football resting in a ring gauge beside a digital scale and a measuring tape')} sizes="(max-width: 1023px) 100vw, 960px" prefer={1280} /></figure>
                 </li>
                 <li className="mo-pc__step">
-                  <h3>Packing and shipment</h3>
-                  <p>The order is packed and labelled to your instructions, then booked by sea, air or courier with its export documents.</p>
-                  <figure className="mo-pc__visual"><Img url="gen:process-packing" alt="Export cartons stacked on a wrapped pallet with deflated footballs packed in polybags" sizes="(max-width: 1023px) 100vw, 960px" prefer={1280} /></figure>
+                  <h3 {...T('Packing and shipment')} />
+                  <p {...T('The order is packed and labelled to your instructions, then booked by sea, air or courier with its export documents.')} />
+                  <figure className="mo-pc__visual"><Img url="gen:process-packing" alt={tx('Export cartons stacked on a wrapped pallet with deflated footballs packed in polybags')} sizes="(max-width: 1023px) 100vw, 960px" prefer={1280} /></figure>
                 </li>
               </ol>
-              <p><a className="link" href={L('/manufacturing')}>Read how production works</a></p>
+              <p><a className="link" href={L('/manufacturing')} {...T('Read how production works')} /></p>
             </div>
             <div className="mo-pc__visuals frame" />
           </div>
@@ -216,13 +243,13 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <section className="section" id="customise" aria-labelledby="custom-h">
           <div className="wrap grid grid--top">
             <div className="span-5 stack-5 customise__text">
-              <h2 id="custom-h">Colours, logo and packaging to your specification</h2>
-              <p className="t-lead" lang={enLang}>Choose the panel colours, place your logo and select the packaging in the customisation studio. The preview is attached to your inquiry.</p>
-              <p lang={enLang}>The preview is a visual concept; production follows the approved sample.</p>
+              <h2 id="custom-h" {...T('Colours, logo and packaging to your specification')} />
+              <p className="t-lead" {...T('Choose the panel colours, place your logo and select the packaging in the customisation studio. The preview is attached to your inquiry.')} />
+              <p {...T('The preview is a visual concept; production follows the approved sample.')} />
               <p><a className="link" href={L('/studio')}>{t['cta.configure']}</a></p>
             </div>
             <figure className="develop span-7 start-6" data-moment="picture-develops">
-              <Img url="gen:custom-range" alt="Four footballs in custom club colourways: navy and crimson, black and lime, white and silver, green and white" sizes="(max-width: 1023px) 100vw, 737px" prefer={1200} />
+              <Img url="gen:custom-range" alt={tx('Four footballs in custom club colourways: navy and crimson, black and lime, white and silver, green and white')} sizes="(max-width: 1023px) 100vw, 737px" prefer={1200} />
             </figure>
           </div>
         </section>
@@ -230,15 +257,15 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <section className="section ground-inverse" id="quality" aria-labelledby="quality-h">
           <div className="wrap">
             <div className="grid grid--top quality__head">
-              <div className="span-5"><h2 id="quality-h" data-type-moment="letters">Quality control and inspection</h2></div>
-              <div className="quality__text span-7 start-6" lang={enLang}>
-                <p>Every lot is checked against the sample you approved: size, weight, seams, print and packing count.</p>
-                <a className="link" href={L('/quality-control')}>Read how orders are inspected</a>
+              <div className="span-5"><h2 id="quality-h" data-type-moment="letters" {...T('Quality control and inspection')} /></div>
+              <div className="quality__text span-7 start-6">
+                <p {...T('Every lot is checked against the sample you approved: size, weight, seams, print and packing count.')} />
+                <a className="link" href={L('/quality-control')} {...T('Read how orders are inspected')} />
               </div>
             </div>
             <div className="quality__photo"><picture>
               {qualityPhone ? <source media="(max-width: 639px)" srcSet={qualityPhone.srcSet} sizes="100vw" /> : null}
-              <Img url="gen:quality-seam" alt="Close-up of tight hand-stitched seams where white hexagon panels meet a black pentagon" sizes="(max-width: 639px) 670px, (max-width: 1023px) 130vw, (max-width: 1440px) 90vw, 1280px" prefer={1920} />
+              <Img url="gen:quality-seam" alt={tx('Close-up of tight hand-stitched seams where white hexagon panels meet a black pentagon')} sizes="(max-width: 639px) 670px, (max-width: 1023px) 130vw, (max-width: 1440px) 90vw, 1280px" prefer={1920} />
             </picture></div>
           </div>
         </section>
@@ -246,10 +273,10 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <section className="section" id="markets" aria-labelledby="markets-h">
           <div className="wrap">
             <div className="section-head">
-              <h2 id="markets-h">Export markets in Europe</h2>
-              <p lang={enLang}>Ireland, the United Kingdom and the European Union are our priority markets. Quotations cover delivery to your forwarder, your port or your premises.</p>
+              <h2 id="markets-h" {...T('Export markets in Europe')} />
+              <p {...T('Ireland, the United Kingdom and the European Union are our priority markets. Quotations cover delivery to your forwarder, your port or your premises.')} />
             </div>
-            <ExportMap markets={markets} />
+            <ExportMap markets={mapMarkets} text={mapText} />
           </div>
         </section>
 
@@ -257,25 +284,22 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           <div className="wrap grid grid--top faq-split">
             <div className="span-5 faq-split__text">
               <div className="section-head">
-                <h2 id="faq-h">Frequently asked questions</h2>
-                <p lang={enLang}>Answers for trade buyers on samples, custom designs and certificates</p>
+                <h2 id="faq-h" {...T('Frequently asked questions')} />
+                <p {...T('Answers for trade buyers on samples, custom designs and certificates')} />
               </div>
               <div className="btn-row">
                 <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}<QuoteIcon /></a>
-                {pages.has('faq') ? <a className="btn btn--secondary" href={L('/faq')}>Read all answers</a> : null}
+                {pages.has('faq') ? <a className="btn btn--secondary" href={L('/faq')} {...T('Read all answers')} /> : null}
               </div>
-              <figure className="side-photo side-photo--faq"><picture>{faqPhone ? <source media="(max-width: 639px)" srcSet={faqPhone.srcSet} sizes="100vw" /> : null}<Img url="gen:faq-valve" alt="The inflation valve in a white hexagon panel of a football, its stitched seams sharp" sizes="(max-width: 1023px) 100vw, 519px" prefer={960} /></picture></figure>
+              <figure className="side-photo side-photo--faq"><picture>{faqPhone ? <source media="(max-width: 639px)" srcSet={faqPhone.srcSet} sizes="100vw" /> : null}<Img url="gen:faq-valve" alt={tx('The inflation valve in a white hexagon panel of a football, its stitched seams sharp')} sizes="(max-width: 1023px) 100vw, 519px" prefer={960} /></picture></figure>
             </div>
-            <div className="faq span-7 start-6" lang={enLang}>
-            <div className="faq__item"><h3>Do you sell to individual players?</h3><p>No. We supply businesses: clubs, academies, schools, retailers, distributors and brands.</p></div>
-            <div className="faq__item"><h3>Can we order a sample before the bulk order?</h3><p>Yes. Request one from any product page; the quotation lists its cost and lead time.</p></div>
-            <div className="faq__item"><h3>Can you make a product to our own design?</h3><p>Yes. Send drawings, a reference product or a written brief, and we will develop the product with you.</p></div>
-            <div className="faq__item"><h3>Are your products certified?</h3><p>We list a certificate on this site only when the document itself is published here. Tell us your market, and the quotation will name the tests that apply.</p></div>
+            <div className="faq span-7 start-6">
+            {FAQ.map(([q, a]) => <div key={q} className="faq__item"><h3 {...T(q)} /><p {...T(a)} /></div>)}
             </div>
           </div>
         </section>
       </main>
-      <Footer locale={locale} t={t} families={families} pages={pages} path={p} salesEmail={settings.company.salesEmail}
+      <Footer locale={locale} t={t} tx={tx} families={families} pages={pages} path={p} salesEmail={settings.company.salesEmail}
         close={{ title: 'Send us your product list', line: 'One form covers every product you need. You receive a reference number immediately.' }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(organizationLd())} />
     </>

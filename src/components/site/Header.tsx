@@ -1,4 +1,5 @@
 import type { Dict } from '@/lib/i18n/dictionaries';
+import type { Tx } from '@/lib/i18n/tx';
 import { LOCALES, LOCALE_NAMES, swapLocale, type Locale } from '@/lib/i18n/config';
 import { href } from '@/lib/i18n/server';
 import type { Family } from '@/lib/data';
@@ -30,11 +31,12 @@ const Chev = () => (
 
 type Link = { label: string; line: string; path: string; slug?: string };
 
-export function Header({ locale, t, families, pages, path }: {
-  locale: Locale; t: Dict; families: Family[]; pages: Set<string>; path: string;
+export function Header({ locale, t, tx, families, pages, path }: {
+  locale: Locale; t: Dict; tx: Tx; families: Family[]; pages: Set<string>; path: string;
 }) {
   const L = (p: string) => href(locale, p);
-  const live = (links: Link[]) => links.filter((l) => !l.slug || pages.has(l.slug));
+  // the links on the site's pages, in the page's language
+  const live = (links: Link[]) => links.filter((l) => !l.slug || pages.has(l.slug)).map((l) => ({ ...l, label: tx(l.label), line: tx(l.line) }));
   const section = path.split('/')[2] || '';
   const current = (key: string) => (section === key ? { 'aria-current': 'page' as const } : {});
 
@@ -62,10 +64,10 @@ export function Header({ locale, t, families, pages, path }: {
   ]);
   // the Customisation menu: the studio, and the services that make a product to a buyer's own brief (lines the site
   // already uses in its other menus and on the homepage)
-  const studio: Link[] = [
+  const studio = live([
     { label: 'Customisation studio', line: 'Colours and logo on balls, gloves and kits', path: '/studio' },
     { label: 'Your inquiry list', line: 'Products added so far', path: '/inquiry' },
-  ];
+  ]);
   const madeForYou = live([
     { label: 'Private labelling', line: 'Your labels and packaging', path: '/private-label', slug: 'private-label' },
     { label: 'Custom development', line: 'New products from a brief', path: '/custom-development', slug: 'custom-development' },
@@ -81,14 +83,13 @@ export function Header({ locale, t, families, pages, path }: {
     { label: 'Become a distributor', line: 'Sell our range in your region', path: '/become-a-distributor', slug: 'become-a-distributor' },
     { label: 'Partnerships', line: 'Supply and co-development', path: '/partnerships', slug: 'partnerships' },
     { label: 'Contact', line: 'Send a message to the sales team', path: '/contact', slug: 'contact' },
-    { label: t['footer.portal'], line: 'Quotations, orders and tracking', path: '/account' },
-  ]);
+  ]).concat({ label: t['footer.portal'], line: tx('Quotations, orders and tracking'), path: '/account' });
 
   // the page you are on keeps its row in a menu (aria-current), like the bar's own words do
   const here = (p: string) => (L(p).split('?')[0] === path ? { 'aria-current': 'page' as const } : {});
   const col = (title: string, links: Link[]) => (
     <div className="menu-col span-3">
-      <p className="t-label">{title}</p>
+      <p className="t-label">{tx(title)}</p>
       {links.map((l) => (
         <a key={l.path} href={L(l.path)} {...here(l.path)}>{l.label}<span>{l.line}</span></a>
       ))}
@@ -97,13 +98,13 @@ export function Header({ locale, t, families, pages, path }: {
   // the picture tile that fills the rest of a panel (columns 7-12): one of the site's pages, its photograph over its words
   const tile = (p: { path: string; url: string; alt: string; title: string; line: string }) => (
     <a className="menu-card menu-card--feature span-6 start-7" href={L(p.path)} {...here(p.path)}>
-      <div className="panel"><Img className="frame__img" url={p.url} alt={p.alt} eager sizes="600px" prefer={960} /></div>
-      <span className="t-card">{p.title}</span>
-      <span className="t-small muted">{p.line}</span>
+      <div className="panel"><Img className="frame__img" url={p.url} alt={tx(p.alt)} eager sizes="600px" prefer={960} /></div>
+      <span className="t-card">{tx(p.title)}</span>
+      <span className="t-small muted">{tx(p.line)}</span>
     </a>
   );
   // the next steps at a panel's foot: what its own lists do not already offer (the header bar carries the quote)
-  const nextSteps = [{ label: t['cta.sample'], path: '/inquiry?type=sample' }, pages.has('contact') && { label: 'Contact the sales team', path: '/contact' }] as ({ label: string; path: string } | false)[];
+  const nextSteps = [{ label: t['cta.sample'], path: '/inquiry?type=sample' }, pages.has('contact') && { label: tx('Contact the sales team'), path: '/contact' }] as ({ label: string; path: string } | false)[];
   const foot = (...links: ({ label: string; path: string } | false)[]) => (
     <div className="menu-foot">
       {links.flatMap((l) => (l ? [<a key={l.path} className="link" href={L(l.path)}>{l.label}</a>] : []))}
@@ -120,8 +121,8 @@ export function Header({ locale, t, families, pages, path }: {
             <a className="nav__link" href={L('/products')} {...current('products')}>{t['nav.products']} <Chev /></a>
             <div className="nav__menu">
               <div className="wrap grid">
-                {col('Categories', families.slice(0, half).map((f) => ({ label: shortName(f), line: FAMILY_LINE[f.slug] ?? '', path: `/products/${f.slug}` })))}
-                {col('More categories', families.slice(half).map((f) => ({ label: shortName(f), line: FAMILY_LINE[f.slug] ?? '', path: `/products/${f.slug}` })))}
+                {col('Categories', families.slice(0, half).map((f) => ({ label: tx(shortName(f)), line: tx(FAMILY_LINE[f.slug] ?? ''), path: `/products/${f.slug}` })))}
+                {col('More categories', families.slice(half).map((f) => ({ label: tx(shortName(f)), line: tx(FAMILY_LINE[f.slug] ?? ''), path: `/products/${f.slug}` })))}
                 {tile({ path: '/studio', url: 'gen:nav-footballs', alt: 'Five footballs in different colourways in a row', title: 'Customisation studio', line: 'Colours and logo on balls, gloves and kits' })}
                 {foot({ label: t['cta.catalogue'], path: '/products' }, { label: t['cta.sample'], path: '/inquiry?type=sample' }, { label: t['nav.basket'], path: '/inquiry' })}
               </div>
@@ -179,8 +180,8 @@ export function Header({ locale, t, families, pages, path }: {
               <span className="nav__tool-label">{t['nav.search']}</span>
             </a>
             <HeaderSearch locale={locale} searchHref={L('/search')} catalogueHref={L('/products')}
-              families={families.map((f) => ({ name: shortName(f), href: L(`/products/${f.slug}`), image: pic(f.image?.url, 160)?.src ?? null }))}
-              text={{ label: t['nav.search'], short: t['search.short'], all: t['search.all'], none: t['search.none'], result: t['filter.result'], results: t['filter.results'], catalogue: t['cta.catalogue'] }} />
+              families={families.map((f) => ({ name: tx(shortName(f)), href: L(`/products/${f.slug}`), image: pic(f.image?.url, 160)?.src ?? null }))}
+              text={{ label: t['nav.search'], short: t['search.short'], all: t['search.all'], none: t['search.none'], result: t['filter.result'], results: t['filter.results'], catalogue: t['cta.catalogue'], categories: tx('Categories'), clear: tx('Clear the search'), close: tx('Close the search') }} />
           </div>
           <div className="nav__item nav__item--tool nav__item--lang">
             <a className="nav__link" href={swapLocale(path, locale)} aria-label={`${t['nav.language']}: ${LOCALE_NAMES[locale]}`} lang={locale}>

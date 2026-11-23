@@ -1,4 +1,5 @@
 import type { Dict } from '@/lib/i18n/dictionaries';
+import type { Tx } from '@/lib/i18n/tx';
 import { LOCALES, LOCALE_NAMES, swapLocale, type Locale } from '@/lib/i18n/config';
 import { href } from '@/lib/i18n/server';
 import type { Family } from '@/lib/data';
@@ -14,21 +15,22 @@ const Arrow = () => (
   <svg className="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path className="m-arrow__stem" d="M1 6h8" /><path className="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5" /></svg>
 );
 
-export function Footer({ locale, t, families, pages, path, close, salesEmail }: {
-  locale: Locale; t: Dict; families: Family[]; pages: Set<string>; path: string; close: Close; salesEmail: string;
+export function Footer({ locale, t, tx, families, pages, path, close, salesEmail }: {
+  locale: Locale; t: Dict; tx: Tx; families: Family[]; pages: Set<string>; path: string; close: Close; salesEmail: string;
 }) {
   const L = (p: string) => href(locale, p);
-  const page = (slug: string, label: string) => (pages.has(slug) ? <li key={slug}><a href={L(`/${slug}`)}>{label}</a></li> : null);
+  // a page's link in the page's language (the interface's own words, from t, come translated)
+  const page = (slug: string, label: string) => (pages.has(slug) ? <li key={slug}><a href={L(`/${slug}`)}>{tx(label)}</a></li> : null);
   const year = new Date().getFullYear();
   const legal = (slug: string, label: string) => (pages.has(slug) ? <a key={slug} href={L(`/${slug}`)}>{label}</a> : null);
   return (
-    <footer className="footer closing g2m" id="contact" aria-labelledby={close ? 'close-h' : undefined} aria-label={close ? undefined : 'Footer'}>
+    <footer className="footer closing g2m" id="contact" aria-labelledby={close ? 'close-h' : undefined} aria-label={close ? undefined : tx('Footer')}>
       <div className="wrap">
         {close ? (
           <div className="closing__cta close--type">
             <div className="section-head">
-              <h2 id="close-h">{close.title}</h2>
-              <p>{close.line}</p>
+              <h2 id="close-h">{tx(close.title)}</h2>
+              <p>{tx(close.line)}</p>
             </div>
             <a className="btn btn--primary btn--xl" href={L(close.action?.path ?? '/inquiry')}>{close.action?.label ?? t['cta.quote']}{(close.action?.path ?? '/inquiry') === '/inquiry' ? <QuoteIcon /> : <Arrow />}</a>
           </div>
@@ -49,7 +51,7 @@ export function Footer({ locale, t, families, pages, path, close, salesEmail }: 
                   </div>
                   <p className="field__error" id="nl-email-err" hidden>{t['footer.emailError']}</p>
                 </div>
-                <div className="newsletter__trap" aria-hidden="true"><label htmlFor="nl-company">Company</label><input id="nl-company" name="company" tabIndex={-1} autoComplete="off" /></div>
+                <div className="newsletter__trap" aria-hidden="true"><label htmlFor="nl-company">{tx('Company')}</label><input id="nl-company" name="company" tabIndex={-1} autoComplete="off" /></div>
                 <p className="form__status t-small" role="status" data-form-status></p>
               </form>
               <nav className="footer__langs" aria-label={t['nav.language']}>
@@ -60,7 +62,7 @@ export function Footer({ locale, t, families, pages, path, close, salesEmail }: 
             </div>
             <div className="span-2 footer__col">
               <h3>{t['footer.products']}</h3>
-              <ul>{families.map((f) => <li key={f.slug}><a href={L(`/products/${f.slug}`)}>{shortName(f)}</a></li>)}</ul>
+              <ul>{families.map((f) => <li key={f.slug}><a href={L(`/products/${f.slug}`)}>{tx(shortName(f))}</a></li>)}</ul>
             </div>
             <div className="span-2 footer__col">
               <h3>{t['footer.manufacturing']}</h3>
@@ -85,8 +87,8 @@ export function Footer({ locale, t, families, pages, path, close, salesEmail }: 
                 {page('contact', t['footer.contactForm'])}
                 <li><a href={`mailto:${salesEmail}`}>{t['footer.emailUs']}</a></li>
                 {page('faq', 'FAQ')}{page('sample-ordering', 'Sample ordering')}{page('shipping-logistics', 'Shipping')}
-                <li><a href={L('/catalogues')}>Catalogues</a></li>
-                <li><a href={L('/insights')}>Insights</a></li>
+                <li><a href={L('/catalogues')}>{tx('Catalogues')}</a></li>
+                <li><a href={L('/insights')}>{tx('Insights')}</a></li>
                 <li><a href={L('/account')}>{t['footer.portal']}</a></li>
               </ul>
             </div>

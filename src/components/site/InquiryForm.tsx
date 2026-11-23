@@ -1,9 +1,10 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { readBasket, writeBasket, clearBasket, readMode, writeMode, addToBasket, type BasketItem } from '@/lib/basket';
 import { ProductPicker, type PickedProduct } from '@/components/site/ProductPicker';
 import { COUNTRIES, isOfferedCountry } from '@/lib/inquiry/countries';
 import { QuoteIcon } from '@/components/site/QuoteIcon';
+import { clientTx } from '@/lib/i18n/fill';
 
 type Mode = 'quote' | 'sample' | 'contact' | 'distributor' | 'partnership';
 
@@ -15,13 +16,18 @@ const BUTTON: Record<Mode, string> = {
 /* The consolidated inquiry: the list of products (quantity and notes per line), the company and
    delivery details, branding, packaging and files, sent as one request. Errors show under each field;
    the first one takes the focus; nothing typed is lost when sending fails. */
-export function InquiryForm({ locale, mode: initialMode, pickSaved = false, currencies, user, turnstileKey }: {
+export function InquiryForm({ locale, mode: initialMode, pickSaved = false, currencies, user, turnstileKey, text, countries = COUNTRIES }: {
   locale: string; mode: Mode; currencies: string[];
+  /* the form's words in the page's language (English -> translation, from the server's formText); none in English */
+  text?: Record<string, string>;
+  /* the destination countries with their names in the page's language, in the same order */
+  countries?: { code: string; name: string }[];
   /* the address named no type (/inquiry): the form opens on the type this browser last picked */
   pickSaved?: boolean;
   user?: { company: string; name: string; email: string; country: string } | null;
   turnstileKey?: string;
 }) {
+  const x = clientTx(text);
   const [mode, setMode] = useState<Mode>(initialMode);
   const [items, setItems] = useState<BasketItem[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -85,17 +91,17 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
 
   const validate = (fd: FormData): Record<string, string> => {
     const e: Record<string, string> = {};
-    if (String(fd.get('companyName') || '').trim().length < 2) e.companyName = 'Enter your company name.';
-    if (String(fd.get('contactName') || '').trim().length < 2) e.contactName = 'Enter a contact name.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(fd.get('email') || '').trim())) e.email = 'Enter a business email address, for example name@club.com.';
-    if (!fd.get('country')) e.country = 'Select the destination country.';
+    if (String(fd.get('companyName') || '').trim().length < 2) e.companyName = x('Enter your company name.');
+    if (String(fd.get('contactName') || '').trim().length < 2) e.contactName = x('Enter a contact name.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(fd.get('email') || '').trim())) e.email = x('Enter a business email address, for example name@club.com.');
+    if (!fd.get('country')) e.country = x('Select the destination country.');
     const msg = String(fd.get('message') || '').trim();
-    if (withProducts && items.length === 0 && msg.length < 10) e.message = 'Add products to your list, or describe your requirements in one or two sentences.';
-    if (!withProducts && msg.length < 10) e.message = 'Describe your request in one or two sentences.';
-    items.forEach((i, n) => { if (!asSample(i) && (!Number.isInteger(i.quantity) || i.quantity < 1)) e[`items.${n}.quantity`] = 'Enter a quantity of 1 or more.'; });
+    if (withProducts && items.length === 0 && msg.length < 10) e.message = x('Add products to your list, or describe your requirements in one or two sentences.');
+    if (!withProducts && msg.length < 10) e.message = x('Describe your request in one or two sentences.');
+    items.forEach((i, n) => { if (!asSample(i) && (!Number.isInteger(i.quantity) || i.quantity < 1)) e[`items.${n}.quantity`] = x('Enter a quantity of 1 or more.'); });
     const files = fd.getAll('files').filter((f) => f instanceof File && f.size > 0) as File[];
-    if (files.length > 5) e.files = 'Attach at most 5 files.';
-    if (files.some((f) => f.size > 10 * 1024 * 1024)) e.files = 'Each file must be 10 MB or smaller.';
+    if (files.length > 5) e.files = x('Attach at most 5 files.');
+    if (files.some((f) => f.size > 10 * 1024 * 1024)) e.files = x('Each file must be 10 MB or smaller.');
     return e;
   };
 
@@ -103,6 +109,9 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
      or changed it, and a shown error updates or clears the moment it is fixed. A field that was only passed
      through is never marked, so an empty form is not scolded before anyone has started. */
   const touched = useRef(new Set<string>());
+  // the status line is the count of fields to correct ("Please correct 3 fields.") while this is set
+  const counting = useRef(false);
+  const correct = (n: number) => (n === 1 ? x('Please correct 1 field.') : x('Please correct {n} fields.', { n }));
   const recheck = (also: string[] = []) => {
     if (!formRef.current) return;
     const e = validate(new FormData(formRef.current));
@@ -111,7 +120,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
     setErrors(next);
     // the count under the form follows the fixes ("Please correct 3 fields.", then nothing once all are right)
     const n = Object.keys(next).length;
-    if (/^Please correct/.test(status)) setStatus(n === 0 ? '' : n === 1 ? 'Please correct 1 field.' : `Please correct ${n} fields.`);
+    if (counting.current) { setStatus(n === 0 ? '' : correct(n)); if (n === 0) counting.current = false; }
   };
   const leave = (ev: React.FocusEvent<HTMLFormElement>) => {
     const name = (ev.target as unknown as HTMLInputElement).name;
@@ -139,7 +148,8 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
     const e = validate(fd);
     setErrors(e);
     if (Object.keys(e).length) {
-      setStatus(Object.keys(e).length === 1 ? 'Please correct 1 field.' : `Please correct ${Object.keys(e).length} fields.`);
+      setStatus(correct(Object.keys(e).length));
+      counting.current = true;
       focusFirst(e);
       return;
     }
@@ -171,7 +181,8 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
       }
     }
     setBusy(true);
-    const wait = setTimeout(() => setStatus('Sending'), 300);
+    counting.current = false;
+    const wait = setTimeout(() => setStatus(x('Sending')), 300);
     try {
       const res = await fetch('/api/inquiries', { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
       const data = await res.json().catch(() => ({}));
@@ -181,11 +192,15 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
         location.assign(`/${locale}/inquiry/sent?ref=${encodeURIComponent(data.reference)}&type=${encodeURIComponent(data.type || mode)}`);
         return;
       }
-      if (data.errors) { setErrors(data.errors); setStatus('Please correct the marked fields before sending the form.'); focusFirst(data.errors); }
-      else setStatus(data.error || 'Your request was not sent because the server did not respond. Your entries have been kept; please try again.');
+      // the server's own lines (it checks again) are shown in the page's language where the form knows them
+      if (data.errors) {
+        const shown = Object.fromEntries(Object.entries(data.errors as Record<string, string>).map(([k, v]) => [k, x(String(v))]));
+        setErrors(shown); setStatus(x('Please correct the marked fields before sending the form.')); counting.current = true; focusFirst(shown);
+      }
+      else setStatus(data.error ? x(String(data.error)) : x('Your request was not sent because the server did not respond. Your entries have been kept; please try again.'));
     } catch {
       clearTimeout(wait);
-      setStatus('Your request was not sent because the connection failed. Your entries have been kept; please try again.');
+      setStatus(x('Your request was not sent because the connection failed. Your entries have been kept; please try again.'));
     } finally {
       setBusy(false);
     }
@@ -194,20 +209,20 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
   return (
     <form ref={formRef} className="block" onSubmit={submit} onBlur={leave} onInput={edit} noValidate>
       {initialMode === 'quote' || initialMode === 'sample' ? (
-        <fieldset className="seg" aria-label="Request type">
-          <label><input type="radio" name="mode" value="quote" checked={mode === 'quote'} onChange={() => pick('quote')} /><span>Quotation for a bulk order</span></label>
-          <label><input type="radio" name="mode" value="sample" checked={mode === 'sample'} onChange={() => pick('sample')} /><span>Samples first</span></label>
+        <fieldset className="seg" aria-label={x('Request type')}>
+          <label><input type="radio" name="mode" value="quote" checked={mode === 'quote'} onChange={() => pick('quote')} /><span>{x('Quotation for a bulk order')}</span></label>
+          <label><input type="radio" name="mode" value="sample" checked={mode === 'sample'} onChange={() => pick('sample')} /><span>{x('Samples first')}</span></label>
         </fieldset>
       ) : null}
 
       {withProducts ? (
         <section className="form-section" aria-labelledby="list-h">
-          <h2 id="list-h">Products</h2>
-          <ProductPicker locale={locale} onPick={addPicked} />
+          <h2 id="list-h">{x('Products')}</h2>
+          <ProductPicker locale={locale} onPick={addPicked} text={text} />
           {!loaded ? null : items.length === 0 ? (
             <div className="basket__none">
-              <p>Your list is empty. Search above, or describe your requirements in the message below.</p>
-              <a className="link" href={`/${locale}/products`}>See the catalogue</a>
+              <p>{x('Your list is empty. Search above, or describe your requirements in the message below.')}</p>
+              <a className="link" href={`/${locale}/products`}>{x('See the catalogue')}</a>
             </div>
           ) : (
             <ul className="basket">
@@ -216,19 +231,19 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
                   {i.image ? <img src={i.image} alt="" width={88} height={88} /> : <span />}
                   <div>
                     <p className="basket__name">{i.href ? <a href={i.href}>{i.name}</a> : i.name}</p>
-                    <p className="basket__meta">{[i.sku, asSample(i) ? 'Sample first' : '', i.customisation ? 'Studio design attached' : ''].filter(Boolean).join(', ')}</p>
+                    <p className="basket__meta">{[i.sku, asSample(i) ? x('Sample first') : '', i.customisation ? x('Studio design attached') : ''].filter(Boolean).join(', ')}</p>
                     <div className="field">
-                      <label htmlFor={`items-${n}-notes`}>Notes for this product</label>
+                      <label htmlFor={`items-${n}-notes`}>{x('Notes for this product')}</label>
                       <input id={`items-${n}-notes`} type="text" value={i.notes} maxLength={500} onChange={(e) => update(i.key, { notes: e.target.value })} />
                     </div>
                   </div>
                   <div className="field basket__qty">
-                    <label htmlFor={`items-${n}-quantity`}>{asSample(i) ? <>Expected order quantity <span className="hint">(optional)</span></> : 'Quantity'}</label>
+                    <label htmlFor={`items-${n}-quantity`}>{asSample(i) ? <>{x('Expected order quantity')} <span className="hint">{x('(optional)')}</span></> : x('Quantity')}</label>
                     <input id={`items-${n}-quantity`} type="text" inputMode="numeric" value={String(i.quantity || '')}
                       onChange={(e) => update(i.key, { quantity: Number(e.target.value.replace(/[^\d]/g, '')) || 0 })} {...err(`items.${n}.quantity`)} />
                     {errLine(`items.${n}.quantity`)}
                   </div>
-                  <button type="button" className="btn-text basket__rm" onClick={() => remove(i.key)}>Remove<span className="sr-only"> {i.name}</span></button>
+                  <button type="button" className="btn-text basket__rm" onClick={() => remove(i.key)}>{x('Remove')}<span className="sr-only"> {i.name}</span></button>
                 </li>
               ))}
             </ul>
@@ -237,23 +252,23 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
       ) : null}
 
       <section className="form-section" aria-labelledby="who-h">
-        <h2 id="who-h">Your company</h2>
+        <h2 id="who-h">{x('Your company')}</h2>
         <div className="form-grid">
-          <div className="field"><label htmlFor="companyName">Company name</label>
+          <div className="field"><label htmlFor="companyName">{x('Company name')}</label>
             <input id="companyName" name="companyName" type="text" autoComplete="organization" defaultValue={user?.company} required {...err('companyName')} />{errLine('companyName')}</div>
-          <div className="field"><label htmlFor="contactName">Contact name</label>
+          <div className="field"><label htmlFor="contactName">{x('Contact name')}</label>
             <input id="contactName" name="contactName" type="text" autoComplete="name" defaultValue={user?.name} required {...err('contactName')} />{errLine('contactName')}</div>
-          <div className="field"><label htmlFor="email">Business email</label>
+          <div className="field"><label htmlFor="email">{x('Business email')}</label>
             <input id="email" name="email" type="email" autoComplete="email" inputMode="email" defaultValue={user?.email} required {...err('email')} />{errLine('email')}</div>
-          <div className="field"><label htmlFor="phone">Phone number <span className="hint">(optional)</span></label>
+          <div className="field"><label htmlFor="phone">{x('Phone number')} <span className="hint">{x('(optional)')}</span></label>
             <input id="phone" name="phone" type="tel" autoComplete="tel" {...err('phone')} />{errLine('phone')}</div>
-          <div className="field"><label htmlFor="country">{withProducts ? 'Destination country' : 'Country'}</label>
+          <div className="field"><label htmlFor="country">{withProducts ? x('Destination country') : x('Country')}</label>
             <select id="country" name="country" defaultValue={user && isOfferedCountry(user.country) ? user.country : ''} required {...err('country')}>
-              <option value="" disabled>Select a country</option>
-              {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
+              <option value="" disabled>{x('Select a country')}</option>
+              {countries.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
             </select>{errLine('country')}</div>
           {withProducts ? (
-            <div className="field"><label htmlFor="currency">Quotation currency</label>
+            <div className="field"><label htmlFor="currency">{x('Quotation currency')}</label>
               <select id="currency" name="currency" defaultValue={currencies[0]}>{currencies.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
           ) : null}
         </div>
@@ -261,36 +276,38 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
 
       {withProducts ? (
         <section className="form-section" aria-labelledby="spec-h">
-          <h2 id="spec-h">Branding, packaging and delivery</h2>
+          <h2 id="spec-h">{x('Branding, packaging and delivery')}</h2>
           <div className="form-grid">
-            <div className="field field--full"><label htmlFor="branding">Custom branding <span className="hint">(logo placement, methods, colours)</span></label>
+            <div className="field field--full"><label htmlFor="branding">{x('Custom branding')} <span className="hint">{x('(logo placement, methods, colours)')}</span></label>
               <textarea id="branding" name="branding" maxLength={2000} /></div>
-            <div className="field field--full"><label htmlFor="packaging">Packaging <span className="hint">(polybag, retail box, bulk carton, barcodes)</span></label>
+            <div className="field field--full"><label htmlFor="packaging">{x('Packaging')} <span className="hint">{x('(polybag, retail box, bulk carton, barcodes)')}</span></label>
               <textarea id="packaging" name="packaging" maxLength={2000} /></div>
-            <div className="field"><label htmlFor="targetDate">Target delivery date <span className="hint">(optional)</span></label>
+            <div className="field"><label htmlFor="targetDate">{x('Target delivery date')} <span className="hint">{x('(optional)')}</span></label>
               <input id="targetDate" name="targetDate" type="date" {...err('targetDate')} />{errLine('targetDate')}</div>
-            <div className="field"><label htmlFor="shippingMethod">Preferred shipping method</label>
+            <div className="field"><label htmlFor="shippingMethod">{x('Preferred shipping method')}</label>
               <select id="shippingMethod" name="shippingMethod" defaultValue="">
-                <option value="">No preference</option><option value="sea">Sea freight</option><option value="air">Air freight</option><option value="courier">Courier</option>
+                <option value="">{x('No preference')}</option><option value="sea">{x('Sea freight')}</option><option value="air">{x('Air freight')}</option><option value="courier">{x('Courier')}</option>
               </select></div>
-            <div className="field field--full"><label htmlFor="files">Logo, artwork or brief <span className="hint">(PDF, AI, EPS, PNG, JPG or WEBP; up to 5 files, 10 MB each)</span></label>
+            <div className="field field--full"><label htmlFor="files">{x('Logo, artwork or brief')} <span className="hint">{x('(PDF, AI, EPS, PNG, JPG or WEBP; up to 5 files, 10 MB each)')}</span></label>
               <input id="files" name="files" type="file" multiple accept=".pdf,.ai,.eps,.png,.jpg,.jpeg,.webp" {...err('files')} />{errLine('files')}</div>
           </div>
         </section>
       ) : null}
 
       <section className="form-section" aria-labelledby="msg-h">
-        <h2 id="msg-h">{withProducts ? 'Additional information' : 'Your message'}</h2>
-        <div className="field field--full"><label htmlFor="message">{withProducts ? 'Additional requirements' : mode === 'distributor' ? 'Your region, customers and the products you want to carry' : 'Message'}</label>
+        <h2 id="msg-h">{withProducts ? x('Additional information') : x('Your message')}</h2>
+        <div className="field field--full"><label htmlFor="message">{withProducts ? x('Additional requirements') : mode === 'distributor' ? x('Your region, customers and the products you want to carry') : x('Message')}</label>
           <textarea id="message" name="message" maxLength={5000} rows={6} {...err('message')} />{errLine('message')}</div>
-        <div className="newsletter__trap" aria-hidden="true"><label htmlFor="company_website">Website</label><input id="company_website" name="company_website" tabIndex={-1} autoComplete="off" /></div>
+        <div className="newsletter__trap" aria-hidden="true"><label htmlFor="company_website">{x('Website')}</label><input id="company_website" name="company_website" tabIndex={-1} autoComplete="off" /></div>
         {turnstileKey ? <div className="cf-turnstile" data-sitekey={turnstileKey} /> : null}
         {errors.form ? <p className="err">{errors.form}</p> : null}
-        <div className="btn-row"><button className="btn btn--primary" type="submit" aria-busy={busy || undefined} disabled={busy}>{BUTTON[mode]}{mode === 'quote' ? <QuoteIcon /> : null}</button></div>
+        <div className="btn-row"><button className="btn btn--primary" type="submit" aria-busy={busy || undefined} disabled={busy}>{x(BUTTON[mode])}{mode === 'quote' ? <QuoteIcon /> : null}</button></div>
         {/* keyed by its words: a new message arrives (fades in and rises 6px), the same one repeated while a field is
             being fixed stays still */}
         <p className="status-line" role="status">{status ? <span key={status} className="status-line__msg">{status}</span> : null}</p>
-        <p className="t-small muted">You receive a reference number immediately and a copy by email. We use these details only to answer this request (<a className="link" href={`/${locale}/privacy`}>privacy policy</a>).</p>
+        <p className="t-small muted">{x('You receive a reference number immediately and a copy by email. We use these details only to answer this request ({link}).').split('{link}').map((part, k) => (
+          k === 0 ? part : <Fragment key={k}><a className="link" href={`/${locale}/privacy`}>{x('privacy policy')}</a>{part}</Fragment>
+        ))}</p>
       </section>
     </form>
   );
