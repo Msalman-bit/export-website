@@ -1,4 +1,5 @@
 import React from 'react';
+import { QuoteIcon } from './QuoteIcon';
 
 /* Renders the CMS's small text format as elements (never as raw HTML, so page text cannot inject
    markup): "## " headings, blank-line paragraphs, "- " lists, [label](/path) links and one
@@ -44,7 +45,7 @@ export function RichText({ body, locale, headingLevel = 2 }: { body: string; loc
       else if (cta) {
         flush();
         const url = cta[2].startsWith('/') ? `/${locale}${cta[2]}` : cta[2];
-        out.push(<div className="btn-row" key={`c${bi}`}><a className="btn btn--primary" href={url}>{cta[1]}</a></div>);
+        out.push(<div className="btn-row" key={`c${bi}`}><a className="btn btn--primary" href={url}>{cta[1]}{cta[2] === '/inquiry' ? <QuoteIcon /> : null}</a></div>);
       } else if (line.startsWith('- ')) { if (para.length) flush(); list.push(line.slice(2)); }
       else { if (list.length) flush(); para.push(line); }
     }

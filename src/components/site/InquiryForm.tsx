@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { readBasket, writeBasket, clearBasket, readMode, writeMode, addToBasket, type BasketItem } from '@/lib/basket';
 import { ProductPicker, type PickedProduct } from '@/components/site/ProductPicker';
 import { COUNTRIES, isOfferedCountry } from '@/lib/inquiry/countries';
+import { QuoteIcon } from '@/components/site/QuoteIcon';
 
 type Mode = 'quote' | 'sample' | 'contact' | 'distributor' | 'partnership';
 
@@ -285,7 +286,7 @@ export function InquiryForm({ locale, mode: initialMode, pickSaved = false, curr
         <div className="newsletter__trap" aria-hidden="true"><label htmlFor="company_website">Website</label><input id="company_website" name="company_website" tabIndex={-1} autoComplete="off" /></div>
         {turnstileKey ? <div className="cf-turnstile" data-sitekey={turnstileKey} /> : null}
         {errors.form ? <p className="err">{errors.form}</p> : null}
-        <div className="btn-row"><button className="btn btn--primary" type="submit" aria-busy={busy || undefined} disabled={busy}>{BUTTON[mode]}</button></div>
+        <div className="btn-row"><button className="btn btn--primary" type="submit" aria-busy={busy || undefined} disabled={busy}>{BUTTON[mode]}{mode === 'quote' ? <QuoteIcon /> : null}</button></div>
         {/* keyed by its words: a new message arrives (fades in and rises 6px), the same one repeated while a field is
             being fixed stays still */}
         <p className="status-line" role="status">{status ? <span key={status} className="status-line__msg">{status}</span> : null}</p>

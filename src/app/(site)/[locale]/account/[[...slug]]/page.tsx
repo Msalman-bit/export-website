@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import { and, desc, eq, inArray, or } from 'drizzle-orm';
 import { localeFrom } from '@/lib/i18n/server';
 import { pageMeta } from '@/lib/seo';
+import { QuoteIcon } from '@/components/site/QuoteIcon';
 import { getDb } from '@/lib/db/client';
 import * as s from '@/lib/db/schema';
 import { readSession, requireCustomer } from '@/lib/auth/session';
@@ -118,7 +119,7 @@ export default async function Account({ params, searchParams }: Props) {
           <div className="stat-card"><span className="t-small muted">Orders</span><strong>{orders.length}</strong><a className="link" href={`/${locale}/account/orders`}>Follow production</a></div>
         </div>
         <section className="block"><h2>Latest requests</h2>{requestTable(inquiries.slice(0, 6))}</section>
-        <div className="btn-row"><a className="btn btn--primary" href={`/${locale}/inquiry`}>Request a quotation</a><a className="btn btn--secondary" href={`/${locale}/products`}>See the catalogue</a></div>
+        <div className="btn-row"><a className="btn btn--primary" href={`/${locale}/inquiry`}>Request a quotation<QuoteIcon /></a><a className="btn btn--secondary" href={`/${locale}/products`}>See the catalogue</a></div>
       </>
     );
   } else if (current === 'quotations') {

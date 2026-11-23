@@ -6,6 +6,7 @@ import { Img } from '@/components/site/Img';
 import { Footer } from '@/components/site/Footer';
 import { ExportMap } from '@/components/site/ExportMap';
 import { HeroScene } from '@/components/site/HeroScene';
+import { QuoteIcon } from '@/components/site/QuoteIcon';
 import { shortName } from '@/components/site/Header';
 import { pic } from '@/lib/media';
 
@@ -102,7 +103,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                   </div>
                   <p className="hero__lead" lang={enLang}>We make footballs, gloves, teamwear and training equipment for your brand, supply a sample before the bulk order and ship to clubs and distributors across Europe.</p>
                   <div className="btn-row">
-                    <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}<Arrow /></a>
+                    <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}<QuoteIcon /></a>
                     <a className="btn btn--secondary" href={L('/products')}>{t['cta.catalogue']}</a>
                   </div>
                 </div>
@@ -260,7 +261,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                 <p lang={enLang}>Answers for trade buyers on samples, custom designs and certificates</p>
               </div>
               <div className="btn-row">
-                <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}<Arrow /></a>
+                <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}<QuoteIcon /></a>
                 {pages.has('faq') ? <a className="btn btn--secondary" href={L('/faq')}>Read all answers</a> : null}
               </div>
               <figure className="side-photo side-photo--faq"><picture>{faqPhone ? <source media="(max-width: 639px)" srcSet={faqPhone.srcSet} sizes="100vw" /> : null}<Img url="gen:faq-valve" alt="The inflation valve in a white hexagon panel of a football, its stitched seams sharp" sizes="(max-width: 1023px) 100vw, 519px" prefer={960} /></picture></figure>

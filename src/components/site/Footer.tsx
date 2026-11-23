@@ -3,6 +3,7 @@ import { LOCALES, LOCALE_NAMES, swapLocale, type Locale } from '@/lib/i18n/confi
 import { href } from '@/lib/i18n/server';
 import type { Family } from '@/lib/data';
 import { shortName } from './Header';
+import { QuoteIcon } from './QuoteIcon';
 
 /* footer.closing (layout-v4.md): row 1 the dealt close (close-type), row 2 the directory
    (footer-columns) with the one newsletter field and the legal row. */
@@ -29,7 +30,7 @@ export function Footer({ locale, t, families, pages, path, close, salesEmail }: 
               <h2 id="close-h">{close.title}</h2>
               <p>{close.line}</p>
             </div>
-            <a className="btn btn--primary btn--xl" href={L(close.action?.path ?? '/inquiry')}>{close.action?.label ?? t['cta.quote']}<Arrow /></a>
+            <a className="btn btn--primary btn--xl" href={L(close.action?.path ?? '/inquiry')}>{close.action?.label ?? t['cta.quote']}{(close.action?.path ?? '/inquiry') === '/inquiry' ? <QuoteIcon /> : <Arrow />}</a>
           </div>
         ) : null}
         <div className="closing__links">

@@ -4,6 +4,7 @@ import { href } from '@/lib/i18n/server';
 import type { Family } from '@/lib/data';
 import { Img } from './Img';
 import { HeaderSearch } from './HeaderSearch';
+import { QuoteIcon } from './QuoteIcon';
 import { CATALOGUE } from '@/lib/catalogue-data';
 import { pic } from '@/lib/media';
 
@@ -202,7 +203,7 @@ export function Header({ locale, t, families, pages, path }: {
         </nav>
         <div className="nav__actions">
           <a className="nav__link nav-signin" href={L('/account')}>{t['nav.signIn']}</a>
-          <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}</a>
+          <a className="btn btn--primary" href={L('/inquiry')}>{t['cta.quote']}<QuoteIcon /></a>
         </div>
         <button className="nav__toggle" type="button" aria-expanded="false" aria-label={t['nav.menu']}>
           <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
